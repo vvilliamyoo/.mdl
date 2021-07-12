@@ -1,4 +1,3 @@
-<html>
 	<head>
 		<title>Application Download Links</title>
 		<link rel="Favicon" type="image/jpg" href="https://img.icons8.com/fluent/96/000000/link.png"/>
