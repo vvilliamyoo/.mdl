@@ -11,29 +11,52 @@ Template:
 		<link rel="shortcut icon" type="image/jpg" href="https://img.icons8.com/fluent/96/000000/link.png"/>
 		<style>
 			html {
-				height: 100%;
+				height: 100% auto;
 			}
 			body {
 				background-image: linear-gradient(to right bottom, #2A2A31 0%, #16161D 100%);
+				background-size: cover;
 				color: #fafafa; 
 				font-family: Helvetica, sans-serif;
 			}
+			hr {
+				height: 1px; 
+				border-radius: 15px;
+				border-width: 0px;
+				background-color: #fafafa40;
+			}
 			h1 {
-				font-size: 35px;
+				text-align: center; 
+				font-size: 50px;
 				letter-spacing: 2px;
 			}
-			p {
-				font-size: 20px;
-				letter-spacing: 1px;
+			div {
+				float: left;
+				margin-top: 20px; 
+				width:33%;
+			}
+			.row:after {
+  				content: "";
+ 				display: table;
+  				clear: both;
 			}
 			ul {
 				display: table;
-				margin: 0 auto;
+				margin: 0px auto;
+				border-radius: 15px;
+				box-shadow: 10px 10px 45px #0e0e13;
+				font-size: 20px;
+			}
+			li {
+				padding-right: 25px;
+			}
+			p {
+				letter-spacing: 1px;
 			}
 			/* removes underline */
 			a { 
 				text-decoration: none; 
-			}
+			}	
 			/* unvisited link */
 			a:link {
 				color: #fafafa;
@@ -56,9 +79,11 @@ Template:
 		</style>
 	</head>
 	<body>
-		<h1 style="text-align: center; margin: 50px;"><a href="https://github.com/vvilliamyoo/ADL" target="_blank">Application Download Links</a></h1>
-		<div id="contentBox" style="margin:20px auto; width:100%">
-			<div id="column1" style="float:left; margin:0; width:33%;">
+		<h1>Application Download Links</h1>
+		<hr style="width: 87.5%;">
+		<!--First Column-->
+		<div class="row" id="contentBox" style="width: 100%">
+			<div>
 				<ul>
 					<li>
 						<p><a href="https://developer.android.com/studio/releases/platform-tools" target="_blank">ADB</a></p>
@@ -110,7 +135,8 @@ Template:
 					</li>
 				</ul>
     		</div>
-			<div id="column2" style="float:left; margin:0;width:33%;">
+			<!--Second Column-->
+			<div>
 				<ul>
 					<li>
 						<p><a href="https://www.grammarly.com/office-addin" target="_blank">Grammarly for Microsoft Word and Outlook</a></p>
@@ -135,6 +161,9 @@ Template:
 					</li>
 					<li>
 						<p><a href="https://www.microsoft.com/en-us/software-download/windows11" target="_blank">Media Creation Tool (Windows 11)</a></p>
+					</li>
+					<li>
+						<p><a href="https://www.microsoft.com/store/productId/9NBLGGH5R558" target="_blank">Microsoft To Do</a></p>
 					</li>
 					<li>
 						<p><a href="https://www.minecraft.net/en-us/download" target="_blank">Minecraft</a></p>
@@ -162,7 +191,8 @@ Template:
 					</li>
 				</ul>
     		</div>
-			<div id="column3" style="float:left; margin:0;width:33%">
+			<!--Third Column-->
+			<div>
 				<ul>
 					<li>
 						<p><a href="https://www.microsoft.com/store/productId/9NCTDW2W1BH8" target="_blank">Raw Image Extension</a></p>
@@ -212,5 +242,6 @@ Template:
 				</ul>
 			</div>
 		</div>
+		<p style="margin-top: 25px; font-size: 15px; letter-spacing: 4px; text-align: center; padding: 875px 0px 25px 0px;"><a href="https://github.com/vvilliamyoo/ADL" target="_blank">Source Code</a> | <a href="https://github.com/vvilliamyoo/" target="_blank">William Yoo</a></p>
 </body>
 </html>
