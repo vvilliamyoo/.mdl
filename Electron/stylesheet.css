@@ -1,0 +1,85 @@
+/* Gradient:
+	background-image: linear-gradient(to right bottom, #2A2A31 0%, #16161D 100%);
+*/
+body {
+    background-color: #191919;
+    background-size: cover;
+    color: #d4d4d4;
+    justify-content: center;
+    display: grid;
+    grid-template-columns: 60%;
+    margin: 0px;
+    font-family: Helvetica, sans-serif
+}
+.nav {
+    display: inline-block;
+}
+ul {
+    text-align: center;
+}
+li {
+    display: inline;
+    text-decoration: none;
+    margin: 0% 1% 0% 1%;
+}
+h1 {
+    font-size: 40px;
+    font-weight: normal;
+    letter-spacing: 2px
+}
+h2 {
+    font-size: 30px;
+    font-weight: normal;
+    margin: 0px;
+}
+hr {
+    height: 1px;
+    background-color: #373737;
+    border-width: 0px;
+}
+div {
+    align-items: center;
+    margin: 50px;
+    width: auto;
+}
+p {
+    margin: 10px 0px 10px 0px;
+    font-size: 20px;
+    letter-spacing: 1px
+}
+span {
+    display: flex;
+    align-items: center;
+}
+.left{
+    float: left
+}
+.right{
+    float: right
+}
+/* removes underline */
+a { 
+    text-decoration: none
+}	
+/* unvisited link */
+a:link {
+    color: #d4d4d4
+}
+/* visited link */
+a:visited {
+    color: #d4d4d4
+}
+/* mouse over link */
+a:hover {
+    color: #92919E
+}
+a:focus{
+    color: #8181B4
+}
+/* selected link */
+a:active {
+    color: #B3B3E6
+}
+footer {
+    text-align: center
+}
