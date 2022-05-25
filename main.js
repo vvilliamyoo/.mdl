@@ -19,4 +19,7 @@ function createWindow () {
     win.show()
   })
 }
+if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+  alert("This is for desktop only, loser <3")
+}
 app.on('ready', createWindow)

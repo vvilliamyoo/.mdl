@@ -7,7 +7,7 @@ body {
     color: #d4d4d4;
     justify-content: center;
     display: grid;
-    grid-template-columns: 60%;
+    grid-template-columns: 75%;
     margin: 0px;
     font-family: Helvetica, sans-serif
 }
@@ -44,15 +44,16 @@ div {
 }
 p {
     margin: 10px 0px 10px 0px;
+    padding: 10px 0px 10px 0px;
     font-size: 20px;
     letter-spacing: 1px
+}
+p:hover{
+    background-color: #262626;
 }
 span {
     display: flex;
     align-items: center;
-}
-.left{
-    float: left
 }
 .right{
     float: right
@@ -68,10 +69,6 @@ a:link {
 /* visited link */
 a:visited {
     color: #d4d4d4
-}
-/* mouse over link */
-a:hover {
-    color: #92919E
 }
 a:focus{
     color: #8181B4
