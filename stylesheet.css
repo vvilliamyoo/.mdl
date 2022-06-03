@@ -7,7 +7,7 @@ body {
     color: #d4d4d4;
     justify-content: center;
     display: grid;
-    grid-template-columns: 75%;
+    grid-template-columns: 100%;
     margin: 0px;
     font-family: Helvetica, sans-serif
 }
@@ -20,11 +20,12 @@ ul {
 li {
     display: inline;
     text-decoration: none;
-    margin: 0% 1% 0% 1%;
+    margin: 0px 0.5% 0px 0.5%;
 }
 h1 {
     font-size: 40px;
     font-weight: normal;
+    text-align: center;
     letter-spacing: 2px
 }
 h2 {
@@ -61,7 +62,10 @@ span {
 /* removes underline */
 a { 
     text-decoration: none
-}	
+}
+a:hover{
+    color: #B3B3E6
+}
 /* unvisited link */
 a:link {
     color: #d4d4d4
