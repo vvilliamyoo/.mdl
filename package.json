@@ -1,0 +1,1 @@
+{"name":"adl","version":"2.0.1","main":"main.js","scripts":{"start":"electron ."},"devDependencies":{"electron-packager":"^15.5.1"}}
