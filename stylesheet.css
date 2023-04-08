@@ -1,27 +1,56 @@
-/* Gradient:
-	background-image: linear-gradient(to right bottom, #2A2A31 0%, #16161D 100%);
-*/
 body {
+    min-width: 750px;
+    width: 50%;
+    margin: 0 auto;
     background-color: #191919;
     background-size: cover;
     color: #d4d4d4;
-    justify-content: center;
-    display: grid;
-    grid-template-columns: 100%;
-    margin: 0px;
     font-family: Helvetica, sans-serif
 }
-.nav {
-    display: inline-block;
+button {
+    font-weight: bold;
+    letter-spacing: 1px;
+    border: none;
+    padding: 15px 20px;
+    flex: 1 1 auto;
+    text-align: center;
+    text-transform: uppercase;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: #d4d4d4;
+    text-shadow: 0px 0px 20px #000000;
+    border-radius: 10px;
+    background-image: linear-gradient(to right,  #505285 0%, #585e92 12%, #65689f 25%, #7474b0 37%, #7e7ebb 50%, #8389c7 62%, #9795d4 75%, #a2a1dc 87%, #b5aee4 100%);
 }
-ul {
+button:hover {
+    background-position: right center;
+}
+button:active {
+    background-position: left center;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.container p {
+margin: 0;
+}
+
+nav {
     text-align: center;
 }
+nav ul {
+    padding: 0;
+}
+
 li {
     display: inline;
     text-decoration: none;
-    margin: 0px 0.5% 0px 0.5%;
+    margin: 0% 0.5% 0% 0.5%;
 }
+
 h1 {
     font-size: 40px;
     font-weight: normal;
@@ -32,36 +61,31 @@ h2 {
     font-size: 30px;
     font-weight: normal;
     margin: 0px;
+    padding-top: 25px;
 }
+.exclude {
+    padding-top: 0px;
+}
+
 hr {
-    height: 1px;
+    height: 1.5px;
     background-color: #373737;
     border-width: 0px;
 }
+
 div {
-    align-items: center;
-    margin: 50px;
+    padding: 15px 0px 15px 0px ;
     width: auto;
 }
+
 p {
     margin: 10px 0px 10px 0px;
-    padding: 10px 0px 10px 0px;
     font-size: 20px;
     letter-spacing: 1px
 }
-p:hover{
-    background-color: #262626;
-}
-span {
-    display: flex;
-    align-items: center;
-}
-.right{
-    float: right
-}
 /* removes underline */
 a { 
-    text-decoration: none
+    text-decoration: none;
 }
 a:hover{
     color: #B3B3E6
@@ -82,5 +106,11 @@ a:active {
     color: #B3B3E6
 }
 footer {
-    text-align: center
+    padding: 5% 0% 10% 0%;
+    text-align: center;
+}
+footer p {
+    letter-spacing: 4px;
+    font-size: 15px;
+    margin: 0px;
 }
