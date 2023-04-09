@@ -1,6 +1,7 @@
 body {
     min-width: 750px;
-    width: 75%;
+    max-width: 1200px;
+    width: 90%;
     margin: 0 auto;
     background-color: #191919;
     background-size: cover;
