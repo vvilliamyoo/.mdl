@@ -51,39 +51,6 @@ li {
     margin: 0% 0.5% 0% 0.5%;
 }
 
-.horizontal-list {
-    display: flex;
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .horizontal-list li {
-    position: relative;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .horizontal-list li::before {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 3px;
-    background-color: #ffcc00;
-    transition: width 0.3s;
-  }
-  
-  .horizontal-list li:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .horizontal-list li:hover::before {
-    width: 100%;
-  }
-  
 h1 {
     font-size: 40px;
     font-weight: normal;
