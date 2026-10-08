@@ -88,9 +88,13 @@
             }
             if (!appConfig.markdown) {
                 try {
-                    const res = await fetch('config.md');
-                    const text = await res.text();
-                    appConfig = parseConfig(text);
+                    const res = await fetch(`${import.meta.env.BASE_URL}config.md`);
+                    if (res.ok) {
+                        const text = await res.text();
+                        appConfig = parseConfig(text);
+                    } else {
+                        console.error("Failed to load config.md:", res.status, res.statusText);
+                    }
                 } catch (err) {
                     console.error("Error loading config.md", err);
                 }
