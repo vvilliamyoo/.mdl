@@ -43,7 +43,8 @@ Application Entry Template (* indicates a required element or parameter)
 # G
 - [GIGABYTE B550 AORUS PRO AC](https://www.gigabyte.com/Motherboard/B550-AORUS-PRO-AC-rev-1x/support#Support-Bios)
 - [Git](https://git-scm.com/install/) #[winget:Git.Git]
-- [Github Desktop](https://desktop.github.com/download/) #[winget:Github.GithubDesktop]
+- [GitHub CLI](https://cli.github.com/) #[winget:GitHub.cli]
+- [GitHub Desktop](https://desktop.github.com/download/) #[winget:GitHub.GitHubDesktop]
 - [Google Chrome](https://www.google.com/chrome/) #[winget:Google.Chrome]
 
 # H
