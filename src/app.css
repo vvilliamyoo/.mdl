@@ -459,12 +459,12 @@ footer p {
 }
 
 /* Progressive Enhancement: Backdrop Filter for Floating Containers */
-@supports ((backdrop-filter: contrast(100%) saturate(100%) blur(5px)) or (-webkit-backdrop-filter: contrast(100%) saturate(100%) blur(5px))) {
+@supports ((-webkit-backdrop-filter: blur(5px)) or (backdrop-filter: blur(5px))) {
     .dropdown-content, 
     #floating-action-bar, 
     .pm-bar-instance {
         background-color: transparent;
-        backdrop-filter: contrast(100%) saturate(100%) blur(5px);
-        -webkit-backdrop-filter: contrast(100%) saturate(100%) blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px);
     }
 }
