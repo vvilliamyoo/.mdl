@@ -149,7 +149,10 @@ header h1 {
 }
 
 #main-title .accent-dot {
-    color: var(--accent-color);
+    background-image: linear-gradient(to top right, #32512e, #829a7f);
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
 }
 
 nav {
