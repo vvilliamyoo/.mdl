@@ -48,7 +48,7 @@
     let initialRawText = '';
     let fileInputRef: HTMLInputElement | null = null;
 
-    let pmQueues: Record<PmType, PackageQueue> = {
+    let pmQueues: Record<string, PackageQueue> = {
         winget: new Map(),
         choco: new Map(),
         apt: new Map()
@@ -88,7 +88,7 @@
             }
             if (!appConfig.markdown) {
                 try {
-                    const res = await fetch(`${import.meta.env.BASE_URL}config.md`);
+                    const res = await fetch(`${(import.meta as ImportMeta & { env: { BASE_URL: string } }).env.BASE_URL}config.md`);
                     if (res.ok) {
                         const text = await res.text();
                         appConfig = parseConfig(text);
@@ -124,6 +124,11 @@
     }
 
     function toggleEditMode() {
+        if (isEditMode && appConfig.rawText !== initialRawText) {
+            alert("Please save or cancel unsaved changes");
+            return;
+        }
+        
         isEditMode = !isEditMode;
         if (isEditMode) {
             initialRawText = appConfig.rawText;
@@ -183,6 +188,8 @@
         localStorage.setItem('mdl_full_data', JSON.stringify(appConfig));
         appConfig.state = buildAppState(appConfig.markdown);
         alert("All changes saved to browser memory");
+        
+        initialRawText = appConfig.rawText;
         toggleEditMode();
     }
 
@@ -190,7 +197,7 @@
         handleTextChange(initialRawText);
     }
 
-    function togglePm(type: PmType, id: string | number, domain: string, appName: string) {
+    function togglePm(type: string, id: string | number, domain: string, appName: string) {
         const queue = pmQueues[type];
         const key = `${type}-${id}`;
 
@@ -224,7 +231,8 @@
         );
     }
 
-    function toggleAllPm(pmType: PmType) {
+    function toggleAllPm(pm: string) {
+        const pmType = pm as PmType;
         const allItems = getAllPmItems(pmType);
         const queue = pmQueues[pmType];
 
@@ -240,22 +248,8 @@
 
         pmQueues = { ...pmQueues };
     }
-</script>
 
-<svelte:head>
-    <title>{appConfig.title}</title>
-</svelte:head>
-
-<Header 
-    title={appConfig.title} 
-    sections={appConfig.state || []} 
-    {isEditMode}
-    globalPmItems={Object.fromEntries(pmTypes.map(pm => [pm, getAllPmItems(pm)]))}
-    {pmQueues}
-    ontoggleEdit={toggleEditMode}
-    ontoggleAllPm={(pm) => toggleAllPm(pm as PmType)}
-    ontriggerFileInput={() => fileInputRef?.click()}
-    onimportLink={() => {
+    function handleImportLink() {
         const input = prompt("Paste the share link or #data= hash:");
         if (!input) return;
         let hashData = input.trim();
@@ -279,8 +273,9 @@
             console.error("Failed to import from link", e);
             alert("Invalid share link or hash.");
         }
-    }}
-    ondownloadConfig={() => {
+    }
+
+    function handleDownloadConfig() {
         const blob = new Blob([appConfig.rawText], { type: "text/markdown" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -288,8 +283,9 @@
         a.download = 'config.md';
         a.click();
         URL.revokeObjectURL(url);
-    }}
-    ongenerateShareLink={async () => {
+    }
+
+    async function handleGenerateShareLink() {
         try {
             const brotli = await initBrotli();
             const textBytes = new TextEncoder().encode(appConfig.rawText);
@@ -302,17 +298,16 @@
             console.error("Failed to generate share link", e);
             alert("Failed to generate share link.");
         }
-    }}
-    onreset={() => { if (confirm("Reset everything?")) { localStorage.removeItem('mdl_full_data'); location.reload(); }}}
-/>
+    }
 
-<input 
-    type="file" 
-    bind:this={fileInputRef} 
-    accept=".md" 
-    aria-hidden="true"
-    style="position: absolute; width: 0; height: 0; opacity: 0; overflow: hidden; pointer-events: none;" 
-    on:change={(e) => {
+    function handleReset() {
+        if (confirm("Reset everything?")) { 
+            localStorage.removeItem('mdl_full_data'); 
+            location.reload(); 
+        }
+    }
+
+    function handleFileUpload(e: Event) {
         const target = e.currentTarget as HTMLInputElement | null;
         const file = target?.files?.[0];
         if (!file) return;
@@ -325,7 +320,47 @@
         };
         reader.readAsText(file);
         if (target) target.value = '';
-    }} 
+    }
+
+    function handleCopyCommand(pmStr: string) {
+        const pm = pmStr as PmType;
+        const command = `${PACKAGE_MANAGERS[pm]} ${Array.from(pmQueues[pm].keys()).join(' ')}`;
+        navigator.clipboard?.writeText(command).then(() => alert("Copied command!"));
+    }
+
+    function handleClearQueue(pmStr: string) {
+        const pm = pmStr as PmType;
+        pmQueues[pm].clear();
+        pmQueues = { ...pmQueues };
+    }
+</script>
+
+<svelte:head>
+    <title>{appConfig.title}</title>
+</svelte:head>
+
+<Header 
+    title={appConfig.title} 
+    sections={appConfig.state || []} 
+    {isEditMode}
+    globalPmItems={Object.fromEntries(pmTypes.map(pm => [pm, getAllPmItems(pm)]))}
+    {pmQueues}
+    ontoggleEdit={toggleEditMode}
+    ontoggleAllPm={toggleAllPm}
+    ontriggerFileInput={() => fileInputRef?.click()}
+    onimportLink={handleImportLink}
+    ondownloadConfig={handleDownloadConfig}
+    ongenerateShareLink={handleGenerateShareLink}
+    onreset={handleReset}
+/>
+
+<input 
+    type="file" 
+    bind:this={fileInputRef} 
+    accept=".md" 
+    aria-hidden="true"
+    style="position: absolute; width: 0; height: 0; opacity: 0; overflow: hidden; pointer-events: none;" 
+    on:change={handleFileUpload} 
 />
 
 {#if isEditMode}
@@ -354,11 +389,10 @@
                     </p>
                     <div class="app-actions">
                         {#each app.pmData as pm}
-                            {@const pmType = pm.type as PmType}
-                            {@const isAdded = pmQueues[pmType]?.has(pm.id)}
-                            {@const feedback = pmFeedback[`${pmType}-${pm.id}`]}
+                            {@const isAdded = pmQueues[pm.type]?.has(pm.id)}
+                            {@const feedback = pmFeedback[`${pm.type}-${pm.id}`]}
                             
-                            <button type="button" class="cmd-btn {isAdded ? 'filled' : ''}" on:click={() => togglePm(pmType, pm.id, app.domain ?? '', app.name)}>
+                            <button type="button" class="cmd-btn {isAdded ? 'filled' : ''}" on:click={() => togglePm(pm.type, pm.id, app.domain ?? '', app.name)}>
                                 {#if feedback === "Added"}
                                     Added
                                 {:else if feedback === "Removed"}
@@ -390,13 +424,9 @@
 {/if}
 
 {#if !isEditMode}
-    <PmBar {pmQueues} oncopy={(pmStr) => {
-        const pm = pmStr as PmType;
-        const command = `${PACKAGE_MANAGERS[pm]} ${Array.from(pmQueues[pm].keys()).join(' ')}`;
-        navigator.clipboard?.writeText(command).then(() => alert("Copied command!"));
-    }} onclear={(pmStr) => {
-        const pm = pmStr as PmType;
-        pmQueues[pm].clear();
-        pmQueues = { ...pmQueues };
-    }} />
+    <PmBar 
+        {pmQueues} 
+        oncopy={handleCopyCommand} 
+        onclear={handleClearQueue} 
+    />
 {/if}
