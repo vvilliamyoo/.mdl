@@ -182,7 +182,6 @@ li {
 }
 
 footer {
-    container-type: flex;
     padding: 5% 0 calc(5% + var(--pm-bar-height, 0px));
     text-align: center;
 }
@@ -192,10 +191,11 @@ footer ul {
     gap: 50px;
     justify-content: center;
     list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 
 footer li {
-    font-size: 15px;
     letter-spacing: 3px;
     margin: 0;
 }
@@ -469,12 +469,12 @@ footer li {
 }
 
 /* Progressive Enhancement: Backdrop Filter for Floating Containers */
-@supports ((-webkit-backdrop-filter: blur(5px)) or (backdrop-filter: blur(5px))) {
+@supports ((-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px))) {
     .dropdown-content, 
     #floating-action-bar, 
     .pm-bar-instance {
-        -webkit-backdrop-filter: blur(5px);
-        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
         background-color: transparent;
     }
 }

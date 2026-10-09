@@ -374,6 +374,19 @@
             {/each}
         {/each}
     </div>
+    <footer id="main-footer">
+        <ul>
+            <li>
+                <a href="https://github.com/vvilliamyoo/.mdl" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </li>
+            <li>
+                <a href="https://github.com/vvilliamyoo/.mdl/blob/main/README.md" target="_blank" rel="noopener noreferrer">Documentation</a>
+            </li>
+            <li>
+                <a href="https://github.com/vvilliamyoo/.mdl/blob/main/README.md#configuration-guide" target="_blank" rel="noopener noreferrer">Configuration Guide</a>
+            </li>
+        </ul>
+    </footer>
 {/if}
 
 {#if !isEditMode}
