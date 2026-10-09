@@ -17,9 +17,6 @@
     export let onsave: () => void = () => {};
     export let oncancel: () => void = () => {};
 
-    /**
-     * Normalizes 3-digit hex strings (e.g. #abc) into 6-digit hex strings (#aabbcc) required by <input type="color">.
-     */
     function normalizeHex(color?: string, defaultHex = '#000000'): string {
         if (!color) return defaultHex;
         let c = color.trim();
@@ -33,7 +30,6 @@
         return defaultHex;
     }
 
-    // FIX: Reactive statements separated on distinct lines for Svelte compiler reactivity
     $: colorBg = normalizeHex(theme.background, DEFAULTS.theme.background);
     $: colorWin = normalizeHex(theme.window, DEFAULTS.theme.window);
     $: colorText = normalizeHex(theme.text, DEFAULTS.theme.text);
