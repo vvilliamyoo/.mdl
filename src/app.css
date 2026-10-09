@@ -128,7 +128,7 @@ button:active {
    ========================================= */
 .top-section {
     background-color: var(--background-color);
-    padding-bottom: 20px;
+    padding-bottom: 1px;
     position: sticky;
     top: 0;
     z-index: 100;
