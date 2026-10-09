@@ -1,5 +1,5 @@
 /* =========================================
-   1. FONTS & TYPOGRAPHY
+   Fonts and Typography
    ========================================= */
 /* Source Code Pro */
 @font-face {
@@ -21,7 +21,7 @@ header h1 {
 }
 
 /* =========================================
-   2. GLOBAL RESET & BASE ELEMENTS
+   Global Elements
    ========================================= */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -124,7 +124,7 @@ button:active {
 }
 
 /* =========================================
-   3. STRUCTURAL LAYOUT
+   Structural Layout
    ========================================= */
 .top-section {
     background-color: var(--background-color);
@@ -201,7 +201,7 @@ footer li {
 }
 
 /* =========================================
-   4. APP LIST & UTILITIES
+   App List and Utilities
    ========================================= */
 .d-none {
     display: none !important;
@@ -255,7 +255,7 @@ footer li {
 }
 
 /* =========================================
-   5. ADMIN CONTROLS, DROPDOWNS & EDITOR
+   Configuration Tools
    ========================================= */
 #admin-controls {
     display: flex;
@@ -360,7 +360,7 @@ footer li {
 }
 
 /* =========================================
-   6. FLOATING BARS & PM COMMAND BAR
+   Bars
    ========================================= */
 #floating-action-bar {
     align-items: center;

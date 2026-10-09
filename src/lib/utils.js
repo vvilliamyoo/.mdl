@@ -107,7 +107,6 @@ export function base64UrlToBytes(base64Url) {
 }
 
 /**
- * Validates 3-digit or 6-digit hex color strings.
  * @param {string | undefined} color
  * @returns {boolean}
  */
