@@ -105,6 +105,7 @@
             return;
         }
         appConfig = result.config;
+        applyTheme(result.config.theme);
         showAlert("All changes saved to browser memory");
     }
 
