@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import brotliPromise from 'brotli-wasm';
+import { buildChipContent } from './chipContent.js';
 
 /**
  * @typedef {object} ThemeConfig
@@ -165,7 +166,6 @@ export function parseConfig(rawText) {
 export function buildAppState(markdownText) {
     /** @type {SectionState[]} */
     const state = [];
-    const tagRegex = /#(\w+)|#\[(.*?)\]/g;
     /** @type {any[]} */
     const tokens = marked.lexer(markdownText);
     /** @type {SectionState | null} */
@@ -209,24 +209,7 @@ export function buildAppState(markdownText) {
                         try { domain = new URL(appUrl).hostname; } catch (e) {}
                     }
 
-                    /** @type {string[]} */
-                    let appTags = [];
-                    /** @type {AppPackageData[]} */
-                    let pmData = [];
-
-                    const chipHtml = tagsText.replace(tagRegex, (/** @type {string} */ _m, /** @type {string} */ g1, /** @type {string} */ g2) => {
-                        const tag = g1 || g2;
-                        const pmMatch = tag.match(/^([^:]+):(.+)$/);
-                        if (pmMatch && PACKAGE_MANAGERS[pmMatch[1]]) {
-                            const type = pmMatch[1];
-                            const id = pmMatch[2].trim();
-                            pmData.push({ type, id });
-                            appTags.push(type);
-                            return `<span class="chip">${escapeHTML(type)}</span>`;
-                        }
-                        appTags.push(tag);
-                        return `<span class="chip">${escapeHTML(tag)}</span>`;
-                    });
+                    const { tags: appTags, pmData, chipHtml } = buildChipContent(tagsText, PACKAGE_MANAGERS);
 
                     currentSection.apps.push({
                         name: appName,
