@@ -2,11 +2,11 @@
     import { getFaviconUrl, sanitizeURL } from './utils.js';
     import { isQueueItemAdded } from './pmQueue.js';
     import { feedbackStore } from './uiFeedback.js';
-    import type { AppSection, PackageQueues } from './types.js';
+    import type { AppSection, PackageManagerType, PackageQueues } from './types.js';
 
     export let sections: AppSection[] = [];
     export let pmQueues: PackageQueues;
-    export let ontogglePm: (type: string, id: string | number, domain: string, appName: string) => void = () => {};
+    export let ontogglePm: (type: PackageManagerType, id: string | number, domain: string, appName: string) => void = () => {};
 </script>
 
 <div id="content">

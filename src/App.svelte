@@ -113,7 +113,7 @@
         applyTheme(appConfig.theme);
     }
 
-    function togglePm(type: string, id: string | number, domain: string, appName: string) {
+    function togglePm(type: PmType, id: string | number, domain: string, appName: string) {
         const result = toggleQueuedItem(type, id, domain, appName);
 
         showFeedback(result.key, result.action);
