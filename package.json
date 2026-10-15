@@ -4,12 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vp dev",
+    "build": "vp build",
     "test": "node --test src/lib/appStore.test.js src/lib/config.test.js src/lib/configActions.test.js src/lib/configIO.test.js src/lib/configWorkflow.test.js src/lib/editorScheduler.test.js src/lib/uiFeedback.test.js src/lib/utils.test.js",
-    "preview": "vite preview",
+    "preview": "vp preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist --dotfiles"
+    "deploy": "gh-pages -d dist --dotfiles",
+    "prepare": "vp config"
   },
   "dependencies": {
     "brotli-wasm": "^3.0.1",
@@ -21,6 +22,10 @@
     "gh-pages": "^6.1.1",
     "svelte": "^5.57.0",
     "typescript": "^7.0.2",
-    "vite": "^8.3.4"
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.2.0",
+    "vite-plus": "1.2.0"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.2.0"
   }
 }
