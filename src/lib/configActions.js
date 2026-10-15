@@ -1,4 +1,4 @@
-import { buildShareLink, downloadConfig, importShareLink } from "./configIO.js";
+import { downloadConfig, importShareLink } from "./configIO.js";
 import {
   generateAndCopyShareLink,
   importConfigFile,

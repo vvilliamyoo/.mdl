@@ -173,7 +173,7 @@ export function buildAppState(markdownText) {
           if (appUrl && appUrl.startsWith("http")) {
             try {
               domain = new URL(appUrl).hostname;
-            } catch (e) {}
+            } catch {}
           }
 
           /** @type {string[]} */
