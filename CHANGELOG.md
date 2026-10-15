@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.0.3] - 2026-10-15
+
+### Added
+
+- Migrated the development and build toolchain to Vite+, including integrated formatting, linting, type-aware checks, and staged-file checks.
+
+### Changed
+
+- Updated the README description and documented the current runtime, development, and deployment dependencies.
+- Bumped the application version to 2.0.3 and synchronized the lockfile.
+
+### Fixed
+
+- Resolved lint warnings in configuration, state, and utility modules.
+
 ## [2.0.2] - 2026-10-11
 
 ### Fixed
