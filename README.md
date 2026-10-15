@@ -68,9 +68,21 @@ Svelte builds on these harnesses at the architectural level. Its reactive design
 
 ## Dependencies
 
-- **[Svelte](https://svelte.dev/):** Powers the component-based UI architecture, client-side state management, and reactive rendering pipeline.
+### Runtime
+
 - **[Marked](https://marked.js.org/):** Parses the Markdown configuration file and converts it into the HTML elements used throughout the website.
 - **[`brotli-wasm`](https://github.com/google/brotli):** Compresses and decompresses configuration data via WebAssembly for generating and parsing shareable links in the Export and Import menus.
+
+### Development and Deployment
+
+- **[Svelte](https://svelte.dev/):** Powers the component-based UI architecture, client-side state management, and reactive rendering pipeline.
+- **[Vite+](https://viteplus.dev/):** Provides the development server, production build, and project toolchain.
+- **[`@sveltejs/vite-plugin-svelte`](https://github.com/sveltejs/vite-plugin-svelte):** Integrates Svelte with the Vite build pipeline.
+- **[TypeScript](https://www.typescriptlang.org/) and [`@types/node`](https://www.npmjs.com/package/@types/node):** Provide type-checking and Node.js type definitions for development.
+- **[`gh-pages`](https://github.com/tschaub/gh-pages):** Publishes the production build to GitHub Pages.
+
+### External Services and Assets
+
 - **Google S2 Favicon API:** Uses the `https://www.google.com/s2/favicons` external endpoint to fetch the favicon of an application's provided URL using its root domain.
 - **[Source Code Pro](https://fonts.google.com/specimen/Source+Code+Pro?selected=Material+Symbols+Outlined:markdown_document:FILL@1;wght@400;GRAD@0;opsz@24&icon.query=markdown&icon.size=30&icon.color=%23375534&preview.layout=sample&categoryFilters=Appearance:%2FMonospace%2FMonospace)**: Uses a bundled copy as the default monospace font.
 
