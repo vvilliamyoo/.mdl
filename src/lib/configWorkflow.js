@@ -1,8 +1,8 @@
-import { STORAGE_KEY } from './appState.js';
-import { resetAppStore } from './appStore.js';
-import { resetQueueState } from './queueStore.js';
-import { buildShareLink } from './configIO.js';
-import { copyText } from './browserApi.js';
+import { STORAGE_KEY } from "./appState.js";
+import { resetAppStore } from "./appStore.js";
+import { resetQueueState } from "./queueStore.js";
+import { buildShareLink } from "./configIO.js";
+import { copyText } from "./browserApi.js";
 
 /**
  * Generate a share URL and copy it to the clipboard.
@@ -12,10 +12,15 @@ import { copyText } from './browserApi.js';
  * @param {(text: string) => Promise<void>} [copy]
  * @returns {Promise<string>}
  */
-export async function generateAndCopyShareLink(rawText, location, linkBuilder = buildShareLink, copy = copyText) {
-    const url = await linkBuilder(rawText, location);
-    await copy(url);
-    return url;
+export async function generateAndCopyShareLink(
+  rawText,
+  location,
+  linkBuilder = buildShareLink,
+  copy = copyText,
+) {
+  const url = await linkBuilder(rawText, location);
+  await copy(url);
+  return url;
 }
 
 /**
@@ -24,11 +29,11 @@ export async function generateAndCopyShareLink(rawText, location, linkBuilder = 
  * @returns {Promise<string>}
  */
 export async function importConfigFile(file) {
-    const text = await file.text();
-    if (!text) {
-        throw new Error('The selected configuration file is empty.');
-    }
-    return text;
+  const text = await file.text();
+  if (!text) {
+    throw new Error("The selected configuration file is empty.");
+  }
+  return text;
 }
 
 /**
@@ -36,7 +41,7 @@ export async function importConfigFile(file) {
  * @param {Pick<Storage, 'removeItem'>} [storage=localStorage]
  */
 export function resetConfiguration(storage = localStorage) {
-    storage.removeItem(STORAGE_KEY);
-    resetAppStore();
-    resetQueueState();
+  storage.removeItem(STORAGE_KEY);
+  resetAppStore();
+  resetQueueState();
 }
