@@ -74,7 +74,7 @@ export async function loadInitialConfig(baseUrl) {
     if (saved) {
       try {
         config = JSON.parse(saved);
-      } catch (e) {
+      } catch {
         localStorage.removeItem(STORAGE_KEY);
       }
     }

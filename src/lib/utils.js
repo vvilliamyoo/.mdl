@@ -71,6 +71,6 @@ export function sanitizeURL(url) {
     if (["http:", "https:"].includes(parsed.protocol)) {
       return escapeHTML(url);
     }
-  } catch (e) {}
+  } catch {}
   return "#";
 }
