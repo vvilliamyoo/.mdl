@@ -1,6 +1,6 @@
 # MarkdownLoad (`.mdl`)
 
-Maintain a web-based list of applications, drivers, and other download links with a Markdown configuration file. Written in [Svelte](https://svelte.dev/).
+A [Svelte](https://svelte.dev/) Single-Page Application (SPA) for maintaining a list of applications, drivers, and other download links with a Markdown configuration file.
 
 ## Table of Contents
 
