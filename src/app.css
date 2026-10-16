@@ -1,3 +1,18 @@
+:root {
+  /* Blur */
+  --blur: blur(16px);
+
+  /* Colors */
+  --dark-accent-color: rgb(from var(--accent-color) r g b / 30%);
+  --light-accent-color: rgb(from var(--accent-color) r g b / 50%);
+
+  --dark-text-color: rgb(from var(--text-color) r g b / 5%);
+  --light-text-color: rgb(from var(--text-color) r g b / 25%);
+
+  /* Radii */
+  --large-radius: 16px;
+  --small-radius: 8px;
+}
 /* =========================================
    Fonts and Typography
    ========================================= */
@@ -68,7 +83,7 @@ body {
   background-clip: padding-box;
   background-color: var(--text-color);
   border: 4px solid var(--window-color);
-  border-radius: 10px;
+  border-radius: var(--small-radius);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -90,13 +105,14 @@ p {
 }
 
 hr {
-  background-color: var(--window-color);
+  background-color: var(--dark-text-color);
   border-width: 0;
-  height: 3px;
+  height: 2px;
 }
 
 a {
   text-decoration: none;
+  transition: 0.3s ease;
 }
 a:link,
 a:visited {
@@ -109,9 +125,9 @@ a:active {
 }
 
 button {
-  background-color: var(--accent-color);
-  border: 2px solid var(--accent-color);
-  border-radius: 30px;
+  background-color: var(--dark-accent-color);
+  border: 1px solid var(--light-accent-color);
+  border-radius: var(--small-radius);
   color: var(--button-text-color);
   cursor: pointer;
   flex: 1 1 auto;
@@ -119,13 +135,21 @@ button {
   letter-spacing: 1px;
   padding: 8px;
   text-align: center;
-  transition: 0.3s;
-}
-button:hover {
-  transform: scale(1.1);
+  transition: 0.3s ease;
 }
 button:active {
-  transform: scale(0.9);
+  transform: scale(0.95);
+}
+
+button.quiet-button {
+  background-color: var(--dark-text-color);
+  border: 1px solid var(--light-text-color);
+}
+
+button.quiet-button:hover,
+button.quiet-button:active {
+  background-color: var(--dark-accent-color);
+  border-color: var(--light-accent-color);
 }
 
 /* =========================================
@@ -133,7 +157,7 @@ button:active {
    ========================================= */
 .top-section {
   background-color: var(--background-color);
-  padding-bottom: 1px;
+  padding: 10px 0 1px;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -143,9 +167,7 @@ header {
   align-items: center;
   display: flex;
   justify-content: space-between;
-  padding-top: 10px;
 }
-
 header h1 {
   font-size: 48px;
   font-weight: normal;
@@ -163,15 +185,18 @@ header h1 {
 nav {
   text-align: center;
 }
-
 nav ul {
   padding: 0;
 }
-
-li {
+nav li {
   display: inline;
   margin: 0.5em;
-  text-decoration: none;
+}
+.top-section nav a :hover {
+  background-color: var(--dark-accent-color);
+  border: 1px solid var(--light-accent-color);
+  border-radius: var(--small-radius);
+  padding: 5px 10px;
 }
 
 .container {
@@ -187,13 +212,13 @@ li {
 }
 
 footer {
-  padding: 5% 0 calc(5% + var(--pm-bar-height, 0px));
+  padding: 5% 0 calc(5% + var(--pm-bar-height, 0));
   text-align: center;
 }
 
 footer ul {
   display: flex;
-  gap: 50px;
+  gap: 25px;
   justify-content: center;
   list-style-type: none;
   margin: 0;
@@ -215,7 +240,6 @@ footer li {
 .app-item {
   contain: layout;
 }
-
 .app-item-details {
   align-items: center;
   display: flex;
@@ -229,13 +253,13 @@ footer li {
 }
 
 .chip {
-  background-color: var(--accent-color);
-  border: 2px solid var(--accent-color);
-  border-radius: 30px;
+  background-color: var(--dark-accent-color);
+  border: 1px solid var(--light-accent-color);
+  border-radius: var(--small-radius);
   color: var(--button-text-color);
   display: inline-block;
   font-size: 12px;
-  padding: 4px;
+  padding: 5px;
   text-transform: none;
   vertical-align: middle;
 }
@@ -246,17 +270,9 @@ footer li {
   gap: 10px;
 }
 
-.cmd-btn {
-  background-color: transparent;
-  border-radius: 30px;
-  cursor: pointer;
-  padding: 7px 12px;
-  transition: 0.2s ease;
-}
-
 .cmd-btn.filled {
-  background-color: var(--accent-color);
-  color: var(--button-text-color);
+  background-color: var(--dark-accent-color);
+  border: 1px solid var(--light-accent-color);
 }
 
 /* =========================================
@@ -275,7 +291,7 @@ footer li {
 .dropdown-content {
   background-color: var(--window-color);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--small-radius);
   display: none;
   flex-direction: column;
   left: 0;
@@ -293,17 +309,15 @@ footer li {
 .dropdown-content button {
   background: transparent;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--small-radius);
   margin: 0;
   padding: 10px 15px;
   text-align: left;
-  transition: background 0.2s ease;
   width: 100%;
 }
 
 .dropdown-content button:hover {
-  background-color: var(--accent-color);
-  color: var(--background-color);
+  background-color: var(--dark-accent-color);
 }
 
 #editor-container {
@@ -328,7 +342,7 @@ footer li {
   align-items: center;
   background: var(--window-color);
   border: none;
-  border-radius: 20px;
+  border-radius: var(--large-radius);
   color: var(--text-color);
   display: flex;
   flex-wrap: wrap;
@@ -341,7 +355,7 @@ footer li {
 #editor-area {
   background: var(--window-color);
   border: none;
-  border-radius: 30px;
+  border-radius: var(--large-radius);
   color: var(--text-color);
   height: calc(85vh);
   padding: 25px;
@@ -353,17 +367,6 @@ footer li {
   margin: 25px 0;
 }
 
-.hex-input {
-  background: var(--background-color);
-  border: none;
-  border-radius: 6px;
-  color: var(--text-color);
-  font-size: 14px;
-  padding: 4px 6px;
-  vertical-align: middle;
-  width: calc(7ch + 12px);
-}
-
 /* =========================================
    Bars
    ========================================= */
@@ -371,7 +374,7 @@ footer li {
   align-items: center;
   background-color: var(--window-color);
   border: none;
-  border-radius: 20px;
+  border-radius: var(--large-radius);
   bottom: 20px;
   display: flex;
   gap: 15px;
@@ -379,10 +382,6 @@ footer li {
   padding: 12px 20px;
   position: fixed;
   transform: translateX(-50%);
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s ease;
-  will-change: transform, opacity;
   z-index: 1000;
 }
 
@@ -395,14 +394,6 @@ footer li {
 #floating-action-bar span {
   font-size: 14px;
   margin-right: 5px;
-}
-
-#cancel-changes-btn {
-  background-color: transparent;
-}
-
-#cancel-changes-btn:hover {
-  background-color: var(--accent-color);
 }
 
 #pm-bar-container {
@@ -423,7 +414,7 @@ footer li {
 .pm-bar-instance {
   align-items: center;
   background-color: var(--window-color);
-  border-radius: 20px;
+  border-radius: var(--large-radius);
   color: var(--text-color);
   contain: content;
   display: flex;
@@ -465,7 +456,7 @@ footer li {
 
 .pm-bar-icons-container::-webkit-scrollbar-thumb {
   border: none;
-  border-radius: 3px;
+  border-radius: var(--small-radius);
 }
 
 .pm-bar-favicon {
@@ -476,12 +467,12 @@ footer li {
 }
 
 /* Progressive Enhancement: Backdrop Filter for Floating Containers */
-@supports ((-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px))) {
+@supports ((-webkit-backdrop-filter: var(--blur)) or (backdrop-filter: var(--blur))) {
   .dropdown-content,
   #floating-action-bar,
   .pm-bar-instance {
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: var(--blur);
+    backdrop-filter: var(--blur);
     background-color: transparent;
   }
 }

@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.0.4] - 2026-10-16
+
+This patch is focused on UI consistency and simplifies future design changes.
+
+### Added
+
+- Added custom CSS properties to `:root` for shared colors, blur, and radius values.
+- Animated the navigation links in the header section list.
+
+### Changed
+
+- Reclassified some buttons as "quiet" buttons.
+- Redesigned button and chip visuals.
+- Refined and unified border radii.
+- Adjusted button animations.
+- Increased blur strength throughout.
+- More UI colors are now derived from configured colors.
+
 ## [2.0.3] - 2026-10-15
 
 ### Added

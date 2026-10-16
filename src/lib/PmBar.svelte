@@ -60,7 +60,7 @@
                 </div>
                 <span class="pm-bar-buttons">
                     <button type="button" class="pm-action-btn" on:click={() => oncopy(pm)}>Copy</button>
-                    <button type="button" class="pm-action-btn" on:click={() => onclear(pm)}>Clear</button>
+                    <button type="button" class="quiet-button pm-action-btn" on:click={() => onclear(pm)}>Clear</button>
                 </span>
             </div>
         {/each}
