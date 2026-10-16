@@ -27,7 +27,7 @@
                         {@const isAdded = isQueueItemAdded(pmQueues, pm.type, pm.id)}
                         {@const feedback = $feedbackStore[`${pm.type}-${pm.id}`]}
 
-                        <button type="button" class="cmd-btn {isAdded ? 'filled' : ''}" on:click={() => ontogglePm(pm.type, pm.id, app.domain ?? '', app.name)}>
+                        <button type="button" class="quiet-button cmd-btn {isAdded ? 'filled' : ''}" on:click={() => ontogglePm(pm.type, pm.id, app.domain ?? '', app.name)}>
                             {#if feedback === "Added"}
                                 Added
                             {:else if feedback === "Removed"}

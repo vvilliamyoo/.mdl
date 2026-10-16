@@ -69,7 +69,7 @@
         <div id="floating-action-bar">
             <span>You have unsaved changes</span>
             <button type="button" on:click={() => onsave()}>Save</button>
-            <button type="button" id="cancel-changes-btn" on:click={() => oncancel()}>Cancel</button>
+            <button type="button" id="cancel-changes-btn" class="quiet-button" on:click={() => oncancel()}>Cancel</button>
         </div>
     {/if}
 </div>

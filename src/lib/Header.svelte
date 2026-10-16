@@ -76,7 +76,7 @@
                         {@const isAllAdded = globalPmItems[pm].every(item => pmQueues[pm]?.has(item.id))}
                         {@const feedback = allFeedback[pm]}
                         
-                        <button type="button" class="cmd-btn global-pm-btn {isAllAdded ? 'filled' : ''}" on:click={() => handleToggleAll(pm)}>
+                        <button type="button" class="quiet-button cmd-btn global-pm-btn {isAllAdded ? 'filled' : ''}" on:click={() => handleToggleAll(pm)}>
                             {#if feedback === "Added"}
                                 Added
                             {:else if feedback === "Removed"}
@@ -113,7 +113,7 @@
                 <button type="button" id="reset-btn" on:click={() => onreset()}>Reset</button>
             {/if}
 
-            <button type="button" id="edit-btn" on:click={() => ontoggleEdit()}>
+            <button type="button" id="edit-btn" class:quiet-button={isEditMode} on:click={() => ontoggleEdit()}>
                 {isEditMode ? 'Close' : 'Options'}
             </button>
         </div>
