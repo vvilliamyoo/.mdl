@@ -58,7 +58,7 @@ export function base64UrlToBytes(base64Url) {
  * @returns {string}
  */
 export function getFaviconUrl(domain) {
-  return domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : "";
+  return domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64&format=webp` : "";
 }
 
 /**
