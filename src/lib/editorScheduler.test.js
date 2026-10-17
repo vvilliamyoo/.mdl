@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { createParseScheduler } from "./editorScheduler.js";
 
-test("scheduler emits only the latest text after the pause", async () => {
+void test("scheduler emits only the latest text after the pause", async () => {
   /** @type {string[]} */
   const emitted = [];
   const scheduler = createParseScheduler((text) => emitted.push(text), 10);
@@ -14,7 +14,7 @@ test("scheduler emits only the latest text after the pause", async () => {
   assert.deepEqual(emitted, ["latest"]);
 });
 
-test("flush immediately emits pending text once", () => {
+void test("flush immediately emits pending text once", () => {
   /** @type {string[]} */
   const emitted = [];
   const scheduler = createParseScheduler((text) => emitted.push(text), 1000);
@@ -26,7 +26,7 @@ test("flush immediately emits pending text once", () => {
   scheduler.clear();
 });
 
-test("clear discards pending text", async () => {
+void test("clear discards pending text", async () => {
   /** @type {string[]} */
   const emitted = [];
   const scheduler = createParseScheduler((text) => emitted.push(text), 10);

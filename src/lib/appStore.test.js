@@ -54,7 +54,7 @@ afterEach(() => {
   }
 });
 
-test("editor session tracks draft changes and blocks closing unsaved edits", () => {
+void test("editor session tracks draft changes and blocks closing unsaved edits", () => {
   updateDraftText("# A\n- [App](https://example.com)");
   beginEditing();
   setEditorDraft("# B\n- [Other](https://example.org)");
@@ -64,7 +64,7 @@ test("editor session tracks draft changes and blocks closing unsaved edits", () 
   assert.equal(get(editorSessionStore).isEditing, true);
 });
 
-test("editor draft parsing is scheduled and can be flushed immediately", () => {
+void test("editor draft parsing is scheduled and can be flushed immediately", () => {
   updateDraftText("# A\n- [App](https://example.com)");
   beginEditing();
   setEditorDraft("# B\n- [Other](https://example.org)");
@@ -75,7 +75,7 @@ test("editor draft parsing is scheduled and can be flushed immediately", () => {
   assert.equal(get(appStore).rawText, get(editorSessionStore).draftText);
 });
 
-test("cancel restores the initial text and parsed config", () => {
+void test("cancel restores the initial text and parsed config", () => {
   const original = "# A\n- [App](https://example.com)";
   updateDraftText(original);
   beginEditing();
@@ -92,7 +92,7 @@ test("cancel restores the initial text and parsed config", () => {
   });
 });
 
-test("save parses, persists, and closes the current draft", () => {
+void test("save parses, persists, and closes the current draft", () => {
   const savedValues = new Map();
   globalThis.localStorage = createLocalStorage(savedValues);
   updateDraftText("# A\n- [App](https://example.com)");
@@ -114,7 +114,7 @@ test("save parses, persists, and closes the current draft", () => {
   });
 });
 
-test("invalid drafts are not persisted and remain editable", () => {
+void test("invalid drafts are not persisted and remain editable", () => {
   const savedValues = new Map();
   globalThis.localStorage = createLocalStorage(savedValues);
   updateDraftText("# A\n- [App](https://example.com)");

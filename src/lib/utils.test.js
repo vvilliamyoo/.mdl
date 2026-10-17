@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { buildChipContent } from "./chipContent.js";
 
-test("app chips escape unrecognized HTML while preserving parsed tags", () => {
+void test("app chips escape unrecognized HTML while preserving parsed tags", () => {
   const chips = buildChipContent(" #portable #[winget:Example.App] <img src=x onerror=alert(1)>", {
     winget: "winget install",
   });
