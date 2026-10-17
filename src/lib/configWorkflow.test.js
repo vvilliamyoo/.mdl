@@ -9,7 +9,7 @@ import {
   resetConfiguration,
 } from "./configWorkflow.js";
 
-test("share workflow copies the generated link and returns it", async () => {
+void test("share workflow copies the generated link and returns it", async () => {
   /** @type {string[]} */
   const copied = [];
   const link = await generateAndCopyShareLink(
@@ -25,7 +25,7 @@ test("share workflow copies the generated link and returns it", async () => {
   assert.deepEqual(copied, [link]);
 });
 
-test("share workflow propagates clipboard failures", async () => {
+void test("share workflow propagates clipboard failures", async () => {
   await assert.rejects(
     generateAndCopyShareLink(
       "# Apps",
@@ -39,17 +39,17 @@ test("share workflow propagates clipboard failures", async () => {
   );
 });
 
-test("imports a non-empty file as configuration text", async () => {
+void test("imports a non-empty file as configuration text", async () => {
   const file = { text: async () => "# Apps\n- [Example](https://example.com)" };
 
   assert.equal(await importConfigFile(file), "# Apps\n- [Example](https://example.com)");
 });
 
-test("rejects an empty config file", async () => {
+void test("rejects an empty config file", async () => {
   await assert.rejects(importConfigFile({ text: async () => "" }), /empty/);
 });
 
-test("reset removes persisted config and resets in-memory app and queue state", () => {
+void test("reset removes persisted config and resets in-memory app and queue state", () => {
   appStore.set({
     theme: {},
     markdown: "# Apps",

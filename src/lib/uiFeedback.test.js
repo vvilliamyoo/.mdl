@@ -7,7 +7,7 @@ afterEach(() => {
   clearAllFeedback();
 });
 
-test("new feedback replaces the previous action and timeout for the same key", async () => {
+void test("new feedback replaces the previous action and timeout for the same key", async () => {
   showFeedback("winget-app", "Added", 15);
   await new Promise((resolve) => setTimeout(resolve, 5));
   showFeedback("winget-app", "Removed", 35);
@@ -19,7 +19,7 @@ test("new feedback replaces the previous action and timeout for the same key", a
   assert.equal(get(feedbackStore)["winget-app"], null);
 });
 
-test("clearing all feedback cancels pending timers and resets state", async () => {
+void test("clearing all feedback cancels pending timers and resets state", async () => {
   showFeedback("choco-app", "Added", 15);
   clearAllFeedback();
 

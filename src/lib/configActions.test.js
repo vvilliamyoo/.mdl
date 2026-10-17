@@ -48,7 +48,7 @@ function createDependencies(overrides = {}) {
   };
 }
 
-test("link import updates draft and reports success", async () => {
+void test("link import updates draft and reports success", async () => {
   const { calls, dependencies } = createDependencies();
   const actions = createConfigActions(dependencies);
 
@@ -57,7 +57,7 @@ test("link import updates draft and reports success", async () => {
   assert.deepEqual(calls.notifications, ["Config imported from link! Click 'Save' to apply."]);
 });
 
-test("file import updates draft and reports success", async () => {
+void test("file import updates draft and reports success", async () => {
   const { calls, dependencies } = createDependencies();
   const actions = createConfigActions(dependencies);
 
@@ -66,7 +66,7 @@ test("file import updates draft and reports success", async () => {
   assert.deepEqual(calls.notifications, ["Config imported! Click 'Save' to apply."]);
 });
 
-test("share generation and download delegate to configured workflows", async () => {
+void test("share generation and download delegate to configured workflows", async () => {
   const { calls, dependencies } = createDependencies();
   const actions = createConfigActions(dependencies);
 
@@ -76,7 +76,7 @@ test("share generation and download delegate to configured workflows", async () 
   assert.deepEqual(calls.downloads, ["draft"]);
 });
 
-test("reset only clears and reloads after confirmation", () => {
+void test("reset only clears and reloads after confirmation", () => {
   const { calls, dependencies } = createDependencies({ confirmReset: () => false });
   const actions = createConfigActions(dependencies);
 
