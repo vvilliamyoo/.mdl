@@ -18,7 +18,7 @@ export {
   isValidHex,
 };
 
-/** @type {any | null} */
+/** @type {any} */
 let brotliModule = null;
 
 /**
