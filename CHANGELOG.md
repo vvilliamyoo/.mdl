@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.0.5] - 2026-10-16
+
+### Added
+
+- Added file format parameter for application favicon generation.
+
+### Changed
+
+- Updated dependencies.
+- Updated formatting in some files.
+
 ## [2.0.4] - 2026-10-16
 
 This patch is focused on UI consistency and simplifies future design changes.
