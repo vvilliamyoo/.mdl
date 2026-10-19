@@ -19,6 +19,7 @@
     export let onimportLink: () => void = () => {};
     export let ondownloadConfig: () => void = () => {};
     export let ongenerateShareLink: () => void = () => {};
+    export let onaddApplication: () => void = () => {};
     export let onreset: () => void = () => {};
     export let oncopyPmCommand: (pm: string) => void = () => {};
     export let onclearPmQueue: (pm: string) => void = () => {};
@@ -36,6 +37,7 @@
     onimportLink={onimportLink}
     ondownloadConfig={ondownloadConfig}
     ongenerateShareLink={ongenerateShareLink}
+    onaddApplication={onaddApplication}
     onreset={onreset}
 />
 

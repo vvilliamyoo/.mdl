@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount, onDestroy } from 'svelte';
     import Editor from './lib/Editor.svelte';
+    import AddApplication from './lib/AddApplication.svelte';
     import AppList from './lib/AppList.svelte';
     import PageShell from './lib/PageShell.svelte';
     import { applyTheme as applyDocumentTheme } from './lib/theme.js';
@@ -35,6 +36,7 @@
     let draftText = appConfig.rawText;
     let initialRawText = '';
     let isEditMode = false;
+    let isAddApplicationOpen = false;
 
     const unsubscribeConfig = appStore.subscribe((value) => {
         appConfig = value;
@@ -83,6 +85,7 @@
                 showAlert("Please save or cancel unsaved changes");
                 return;
             }
+            isAddApplicationOpen = false;
             applyTheme(appConfig.theme);
         } else {
             beginEditing();
@@ -109,7 +112,14 @@
         showAlert("All changes saved to browser memory");
     }
 
+    function handleAddApplication(text: string) {
+        setEditorDraft(text);
+        isAddApplicationOpen = false;
+        showAlert("Application added to the draft. Save to apply the changes.");
+    }
+
     function handleCancel() {
+        isAddApplicationOpen = false;
         appConfig = cancelEditorDraft();
         applyTheme(appConfig.theme);
     }
@@ -181,6 +191,7 @@
     onimportLink={handleImportLink}
     ondownloadConfig={handleDownloadConfig}
     ongenerateShareLink={handleGenerateShareLink}
+    onaddApplication={() => { isAddApplicationOpen = true; }}
     onreset={handleReset}
     oncopyPmCommand={handleCopyCommand}
     onclearPmQueue={handleClearQueue}
@@ -207,5 +218,13 @@
     />
 {:else}
     <AppList sections={appConfig.state || []} {pmQueues} ontogglePm={togglePm} />
+{/if}
+
+{#if isEditMode && isAddApplicationOpen}
+    <AddApplication
+        rawText={draftText}
+        onadd={handleAddApplication}
+        oncancel={() => isAddApplicationOpen = false}
+    />
 {/if}
 </PageShell>
