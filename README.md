@@ -50,6 +50,7 @@ Svelte builds on these harnesses at the architectural level. Its reactive design
 ### Configuration Management
 
 - **Built-In Text Editor:** View and edit the configuration directly from the website and save to local browser storage.
+- **Winget Catalog Search:** Add a Winget application from the searchable catalog while editing; its name, URL, package ID, and available tags are filled in automatically.
 - **Color Customization Bar:** Modify YAML theme colors dynamically via quick HEX inputs or rich color pickers.
 - **Import & Export:** Import/export a configuration file or encode its minified data into a URL via [`brotli-wasm`](https://github.com/google/brotli) compression.
 - **Configuration Validation:** Importing or saving an edited configuration file triggers a validator to ensure that configurations adhere to key (but not all) aspects of required configuration file structure and syntax.
@@ -76,10 +77,22 @@ Svelte builds on these harnesses at the architectural level. Its reactive design
 ### Development and Deployment
 
 - **[Svelte](https://svelte.dev/):** Powers the component-based UI architecture, client-side state management, and reactive rendering pipeline.
+- **[`yaml`](https://eemeli.org/yaml/):** Parses Winget package manifests when generating the searchable catalog.
 - **[Vite+](https://viteplus.dev/):** Provides the development server, production build, and project toolchain.
 - **[`@sveltejs/vite-plugin-svelte`](https://github.com/sveltejs/vite-plugin-svelte):** Integrates Svelte with the Vite build pipeline.
 - **[TypeScript](https://www.typescriptlang.org/) and [`@types/node`](https://www.npmjs.com/package/@types/node):** Provide type-checking and Node.js type definitions for development.
 - **[`gh-pages`](https://github.com/tschaub/gh-pages):** Publishes the production build to GitHub Pages.
+
+#### Winget Catalog
+
+The searchable Winget catalog is generated from Microsoft's `winget-pkgs` manifests and served as `public/data/catalog-full.json`. Build it before local development or previewing the app:
+
+```sh
+npm run build:catalog
+npm run dev
+```
+
+`npm run deploy` builds the catalog before producing the site. The first catalog build requires Git and network access; subsequent runs reuse the checkout and manifest cache under `.cache/`. Use `node tools/build-catalog.mjs --max-packages 20` to smoke-test the generator without enforcing the full-catalog threshold.
 
 ### External Services and Assets
 
@@ -116,6 +129,8 @@ Sections must start with `#`, followed by a space, and end with the desired sect
 #### Application Entries`*`
 
 Applications are added to sections as a list item using standard Markdown syntax of `-`, `*`, or `+`. Each item must use the following syntax: `- [<name*>](<url*>) #<shortTag> #[<Long Tag>] #[<command_tag>:<application_id>]`.
+
+In the editor, choose **Add app** to search the built-in Winget catalog. The selected package's name, URL, Winget ID, and available tags are prefilled; choose an existing section or create one. Entries and new sections are inserted alphabetically when the corresponding existing list is alphabetically ordered.
 
 #### Tags
 

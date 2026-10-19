@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Implemented Markdown syntax highlighting and line numbers in the editor for improved configuration file editing experience.
+- Added support for multiple package managers, including `scoop`, `brew`, and `pip`, to broaden application compatibility.
+- Implemented an application metadata panel to display detailed information (description, version, tags) for each application.
+- Added functionality for version tracking and a changelog feature to monitor configuration file changes.
+- Integrated a dark/light theme toggle at runtime, supporting predefined presets and system preference detection.
+- Implemented a service worker and PWA manifest to enable offline support and improved caching.
+
+### Changed
+
+- Refactored the application list management to support manual sorting and automated alphabetical sorting options.
+- Enhanced the package manager registration system to be extensible for new package managers.
+- Introduced new state management for application metadata and theme settings.
+- Reworked the application list rendering to support virtual scrolling for performance with large lists of applications.
+
+### Fixed
+
+- Addressed accessibility issues by implementing ARIA labels, proper heading hierarchy, and improved keyboard navigation across UI components.
+- Introduced error boundaries to gracefully handle unexpected errors within components.
+
+## [2.0.6] - 2026-10-
+
 ## [2.0.5] - 2026-10-16
 
 ### Added

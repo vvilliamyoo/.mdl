@@ -17,6 +17,7 @@
     export let onimportLink: () => void = () => {};
     export let ondownloadConfig: () => void = () => {};
     export let ongenerateShareLink: () => void = () => {};
+    export let onaddApplication: () => void = () => {};
     export let onreset: () => void = () => {};
 
     let activeDropdown: string | null = null;
@@ -90,6 +91,7 @@
             {/if}
             
             {#if isEditMode}
+                <button type="button" on:click={() => onaddApplication()}>Add app</button>
                 <div class="dropdown">
                     <button type="button" on:click={() => toggleDropdown('import')} class="dropbtn" aria-haspopup="true" aria-expanded={activeDropdown === 'import'}>Import ▾</button>
                     {#if activeDropdown === 'import'}
