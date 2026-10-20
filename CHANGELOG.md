@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Added support for Chocolatey and APT in the Package Manager Catalog (PMC).
 - Implemented Markdown syntax highlighting and line numbers in the editor for improved configuration file editing experience.
 - Added support for multiple package managers, including `scoop`, `brew`, and `pip`, to broaden application compatibility.
 - Implemented an application metadata panel to display detailed information (description, version, tags) for each application.
@@ -15,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Refactored the PMC to be more extensible for future PM integrations.
 - Refactored the application list management to support manual sorting and automated alphabetical sorting options.
 - Enhanced the package manager registration system to be extensible for new package managers.
 - Introduced new state management for application metadata and theme settings.
@@ -22,10 +24,31 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- Addressed accessibility issues by implementing ARIA labels, proper heading hierarchy, and improved keyboard navigation across UI components.
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
-## [2.0.6] - 2026-10-
+## [2.1.0] - 2026-10-19
+
+This release adds the Package Manager Catalog (PMC), a feature for searching and adding application entries to the Markdown configuration file using a Winget catalog (additional PMs are under consideration). The catalog is generated from [Microsoft’s `winget-pkgs` manifests](https://github.com/microsoft/winget-pkgs/tree/master/manifests) using a script adapted from [OpenWin](https://github.com/fsamod/openwin).
+
+### Added
+
+- Added a searchable Winget catalog generated from Microsoft’s `winget-pkgs` manifests, including package descriptions, URLs, tags, and inferred categories.
+- Added an editor workflow to search the catalog, review and edit an application’s name and URL, select tags, and add it to an existing or new configuration section.
+- Added duplicate-name resolution options to keep the current entry, replace it with the catalog entry, or merge in its Winget ID.
+- Added a catalog-generation script with local-source and smoke-test options, and wired catalog generation into deployment.
+
+### Changed
+
+- Updated Vite+ to 1.3.0.
+
+### Fixed
+
+- Improved accessibility with named landmarks and controls, corrected heading hierarchy and link semantics, and better keyboard navigation and focus management.
+- Improved wrapping of catalog details and tags.
+
+### Removed
+
+- Removed rendering of redundant package manager chips.
 
 ## [2.0.5] - 2026-10-16
 
