@@ -26,6 +26,12 @@ All notable changes to this project will be documented in this file.
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
+## [2.1.1] - 2026-10-20
+
+### Added
+
+- Added a GitHub workflow to automatically build and update the Winget catalog on a schedule or via manual dispatch.
+
 ## [2.1.0] - 2026-10-19
 
 This release adds the Package Manager Catalog (PMC), a feature for searching and adding application entries to the Markdown configuration file using a Winget catalog (additional PMs are under consideration). The catalog is generated from [Microsoft’s `winget-pkgs` manifests](https://github.com/microsoft/winget-pkgs/tree/master/manifests) using a script adapted from [OpenWin](https://github.com/fsamod/openwin).
