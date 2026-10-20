@@ -11,13 +11,13 @@
 
 <div id="content">
     {#each sections as section}
-        <h2 id={section.letter}>{section.letter}</h2>
+        <h2 id={section.letter} tabindex="-1">{section.letter}</h2>
         <hr>
         {#each section.apps as app}
             <div class="container app-item">
                 <p class="app-item-details">
                     {#if app.domain}
-                        <img src={getFaviconUrl(app.domain)} alt="{app.name} icon" class="favicon-img" loading="lazy" decoding="async">
+                        <img src={getFaviconUrl(app.domain)} alt="" class="favicon-img" loading="lazy" decoding="async">
                     {/if}
                     {app.name}
                     {@html app.chipHtml}
@@ -27,7 +27,7 @@
                         {@const isAdded = isQueueItemAdded(pmQueues, pm.type, pm.id)}
                         {@const feedback = $feedbackStore[`${pm.type}-${pm.id}`]}
 
-                        <button type="button" class="quiet-button cmd-btn {isAdded ? 'filled' : ''}" on:click={() => ontogglePm(pm.type, pm.id, app.domain ?? '', app.name)}>
+                        <button type="button" class="quiet-button cmd-btn {isAdded ? 'filled' : ''}" aria-pressed={isAdded} aria-label="{isAdded ? 'Remove' : 'Add'} {app.name} {isAdded ? 'from' : 'to'} the {pm.type} install queue" on:click={() => ontogglePm(pm.type, pm.id, app.domain ?? '', app.name)}>
                             {#if feedback === "Added"}
                                 Added
                             {:else if feedback === "Removed"}
@@ -37,22 +37,9 @@
                             {/if}
                         </button>
                     {/each}
-                    <a href={sanitizeURL(app.url)} target="_blank" rel="noopener noreferrer"><button type="button">Download</button></a>
+                    <a class="download-button" href={sanitizeURL(app.url)} target="_blank" rel="noopener noreferrer" aria-label="Download {app.name}">Download</a>
                 </div>
             </div>
         {/each}
     {/each}
 </div>
-<footer id="main-footer">
-    <ul>
-        <li>
-            <a href="https://github.com/vvilliamyoo/.mdl" target="_blank" rel="noopener noreferrer">GitHub</a>
-        </li>
-        <li>
-            <a href="https://github.com/vvilliamyoo/.mdl/blob/main/README.md" target="_blank" rel="noopener noreferrer">Documentation</a>
-        </li>
-        <li>
-            <a href="https://github.com/vvilliamyoo/.mdl/blob/main/README.md#configuration-guide" target="_blank" rel="noopener noreferrer">Configuration Guide</a>
-        </li>
-    </ul>
-</footer>

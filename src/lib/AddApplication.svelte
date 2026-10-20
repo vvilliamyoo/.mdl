@@ -49,6 +49,7 @@
     let pendingApplication: PendingApplication | null = null;
     let searchInput: HTMLInputElement | undefined;
     let dialogElement: HTMLDialogElement;
+    let returnFocusTarget: HTMLElement | null = null;
 
     $: sections = getSectionNames(rawText);
     $: normalizedQuery = query.trim();
@@ -56,7 +57,9 @@
     $: tagOptions = selected ? getCatalogTags(selected.category, selected.tags) : [];
 
     onMount(() => {
+        returnFocusTarget = document.activeElement instanceof HTMLElement ? document.activeElement : null;
         dialogElement.showModal();
+        searchInput?.focus();
         const loadCatalog = async () => {
             try {
                 const response = await fetch(catalogUrl);
@@ -107,12 +110,12 @@
                 loadError = error instanceof Error ? error.message : 'The catalog could not be loaded.';
             } finally {
                 isLoading = false;
-                searchInput?.focus();
             }
         };
         void loadCatalog();
         return () => {
             if (dialogElement.open) dialogElement.close();
+            if (returnFocusTarget?.isConnected) returnFocusTarget.focus();
         };
     });
 
@@ -206,13 +209,20 @@
         event.preventDefault();
         oncancel();
     }
+
+    function handleDialogKeydown(event: KeyboardEvent) {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            oncancel();
+        }
+    }
 </script>
 
-<dialog bind:this={dialogElement} class="catalog-dialog" aria-modal="true" aria-labelledby="catalog-title" on:cancel={handleDialogCancel} on:click={(event) => event.target === dialogElement && oncancel()}>
+<dialog bind:this={dialogElement} class="catalog-dialog" aria-modal="true" aria-labelledby="catalog-title" aria-describedby="catalog-description" on:cancel={handleDialogCancel} on:keydown={handleDialogKeydown} on:click={(event) => event.target === dialogElement && oncancel()}>
         <div class="catalog-heading">
             <div>
                 <h2 id="catalog-title">Add Winget application</h2>
-                <p>Search the built-in Winget catalog and add a Markdown entry</p>
+                <p id="catalog-description">Search the built-in Winget catalog and add a Markdown entry. Press Escape or choose Cancel to close.</p>
             </div>
         </div>
 
@@ -221,7 +231,7 @@
         {:else}
             <label class="catalog-search">
                 Search by application, publisher, description, or Winget ID
-                <input bind:this={searchInput} bind:value={query} type="search" placeholder="e.g. Firefox or Mozilla.Firefox" disabled={isLoading}>
+                <input bind:this={searchInput} bind:value={query} type="search" placeholder="e.g. Firefox or Mozilla.Firefox">
             </label>
 
             {#if isLoading}
@@ -229,10 +239,11 @@
             {:else if normalizedQuery && results.length === 0}
                 <p class="catalog-message">No applications found.</p>
             {:else if results.length > 0}
+                <p class="visually-hidden" role="status" aria-live="polite">{results.length} {results.length === 1 ? 'application' : 'applications'} found.</p>
                 <ul class="catalog-results" aria-label="Catalog search results">
                     {#each results as app (app.id)}
                         <li>
-                            <button type="button" class="catalog-result" class:selected={selected?.id === app.id} on:click={() => chooseApplication(app)}>
+                            <button type="button" class="catalog-result" class:selected={selected?.id === app.id} aria-pressed={selected?.id === app.id} on:click={() => chooseApplication(app)}>
                                 <span class="catalog-result-name">{app.name}</span>
                                 <span class="catalog-result-id">{app.id}</span>
                                 {#if app.publisher}<span class="catalog-result-publisher">{app.publisher}</span>{/if}
@@ -294,8 +305,8 @@
                     <div class="catalog-duplicate-entry">
                         <p><strong>{conflict.name}</strong> in section <strong>{conflict.section}</strong></p>
                         <div class="catalog-duplicate-actions">
-                            <button type="button" on:click={() => resolveNameConflict(conflict, 'replace')} disabled={idUsedByAnotherEntry}>Replace with catalog entry</button>
-                            <button type="button" on:click={() => resolveNameConflict(conflict, 'merge')} disabled={conflictHasId || idUsedByAnotherEntry}>Merge Winget ID</button>
+                            <button type="button" aria-label="Replace {conflict.name} in {conflict.section} with catalog entry" on:click={() => resolveNameConflict(conflict, 'replace')} disabled={idUsedByAnotherEntry}>Replace with catalog entry</button>
+                            <button type="button" aria-label="Merge Winget ID into {conflict.name} in {conflict.section}" on:click={() => resolveNameConflict(conflict, 'merge')} disabled={conflictHasId || idUsedByAnotherEntry}>Merge Winget ID</button>
                         </div>
                     </div>
                 {/each}
@@ -310,7 +321,7 @@
         <div class="catalog-actions">
             <button type="button" class="quiet-button" on:click={oncancel}>{nameConflicts.length > 0 ? 'Keep current entry' : 'Cancel'}</button>
             {#if nameConflicts.length === 0}
-                <button type="button" on:click={handleAdd} disabled={!selected || Boolean(loadError) || (sectionChoice === CREATE_SECTION && !newSection.trim())}>Add application</button>
+                <button type="button" on:click={handleAdd} disabled={!selected || Boolean(loadError) || (sectionChoice === CREATE_SECTION && !newSection.trim())}>Add</button>
             {/if}
         </div>
 </dialog>

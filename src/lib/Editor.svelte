@@ -44,30 +44,35 @@
 </script>
 
 <div id="editor-container">
-    <div id="theme-editor">
+    <h2 class="editor-heading">Edit Configuration</h2>
+    <h3 class="theme-editor-heading">Color Pickers</h3>
+    <fieldset id="theme-editor">
+        <legend class="visually-hidden">Color Pickers</legend>
         <label>
-            Background: 
+            Background
             <input type="color" value={colorBg} on:input={(event) => handleInput('background', event)}>
         </label>
         <label>
-            Window: 
+            Window
             <input type="color" value={colorWin} on:input={(event) => handleInput('window', event)}>
         </label>
         <label>
-            Text: 
+            Text
             <input type="color" value={colorText} on:input={(event) => handleInput('text', event)}>
         </label>
         <label>
-            Accent: 
+            Accent
             <input type="color" value={colorAcc} on:input={(event) => handleInput('accent', event)}>
         </label>
-    </div>
+    </fieldset>
 
-    <textarea id="editor-area" bind:value={rawText} spellcheck="false" on:input={() => onchange(rawText)}></textarea>
+    <h3 class="theme-editor-heading">Text Editor</h3>
+    <textarea id="editor-area" aria-describedby="editor-help" bind:value={rawText} spellcheck="false" on:input={() => onchange(rawText)}></textarea>
+    <p id="editor-help" class="editor-help">Edit using the color pickers or text editor, then save your changes or cancel to discard them.</p>
 
     {#if rawText !== initialRawText}
         <div id="floating-action-bar">
-            <span>You have unsaved changes</span>
+            <span role="status" aria-live="polite">You have unsaved changes</span>
             <button type="button" on:click={() => onsave()}>Save</button>
             <button type="button" id="cancel-changes-btn" class="quiet-button" on:click={() => oncancel()}>Cancel</button>
         </div>

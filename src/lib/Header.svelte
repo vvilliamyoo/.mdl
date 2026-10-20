@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, tick } from 'svelte';
 
     type Section = { letter: string };
     type PmItem = { id: string | number };
@@ -21,14 +21,46 @@
     export let onreset: () => void = () => {};
 
     let activeDropdown: string | null = null;
+    let activeDropdownButton: HTMLButtonElement | null = null;
 
-    function toggleDropdown(menu: string) {
-        activeDropdown = activeDropdown === menu ? null : menu;
+    function toggleDropdown(menu: string, event: MouseEvent) {
+        if (activeDropdown === menu) {
+            activeDropdown = null;
+            activeDropdownButton = null;
+            return;
+        }
+        activeDropdown = menu;
+        activeDropdownButton = event.currentTarget as HTMLButtonElement;
+    }
+
+    function closeDropdown(restoreFocus = false) {
+        const button = activeDropdownButton;
+        activeDropdown = null;
+        activeDropdownButton = null;
+        if (restoreFocus && button) void tick().then(() => button.focus());
+    }
+
+    function handleWindowKeydown(event: KeyboardEvent) {
+        if (event.key === 'Escape' && activeDropdown) {
+            event.preventDefault();
+            closeDropdown(true);
+        }
     }
 
     function handleWindowClick(event: MouseEvent) {
-        if (activeDropdown && !(event.target as HTMLElement)?.closest('.dropdown')) {
-            activeDropdown = null;
+        if (activeDropdown && !(event.target instanceof Element && event.target.closest('.dropdown'))) {
+            closeDropdown();
+        }
+    }
+
+    function handleDropdownFocusout(event: FocusEvent) {
+        const dropdown = event.currentTarget;
+        if (
+            activeDropdown &&
+            dropdown instanceof HTMLElement &&
+            !dropdown.contains(event.relatedTarget instanceof Node ? event.relatedTarget : null)
+        ) {
+            closeDropdown();
         }
     }
 
@@ -53,10 +85,12 @@
 
     onMount(() => {
         window.addEventListener('click', handleWindowClick);
+        window.addEventListener('keydown', handleWindowKeydown);
     });
 
     onDestroy(() => {
         window.removeEventListener('click', handleWindowClick);
+        window.removeEventListener('keydown', handleWindowKeydown);
     });
 </script>
 
@@ -77,7 +111,7 @@
                         {@const isAllAdded = globalPmItems[pm].every(item => pmQueues[pm]?.has(item.id))}
                         {@const feedback = allFeedback[pm]}
                         
-                        <button type="button" class="quiet-button cmd-btn global-pm-btn {isAllAdded ? 'filled' : ''}" on:click={() => handleToggleAll(pm)}>
+                        <button type="button" class="quiet-button cmd-btn global-pm-btn {isAllAdded ? 'filled' : ''}" aria-pressed={isAllAdded} aria-label="{isAllAdded ? 'Remove all' : 'Add all'} {pm} applications to the install queue" on:click={() => handleToggleAll(pm)}>
                             {#if feedback === "Added"}
                                 Added
                             {:else if feedback === "Removed"}
@@ -92,37 +126,33 @@
             
             {#if isEditMode}
                 <button type="button" on:click={() => onaddApplication()}>Add app</button>
-                <div class="dropdown">
-                    <button type="button" on:click={() => toggleDropdown('import')} class="dropbtn" aria-haspopup="true" aria-expanded={activeDropdown === 'import'}>Import ▾</button>
-                    {#if activeDropdown === 'import'}
-                        <div class="dropdown-content show">
-                            <button type="button" on:click={() => ontriggerFileInput()}>File</button>
-                            <button type="button" on:click={() => onimportLink()}>Link</button>
-                        </div>
-                    {/if}
+                <div class="dropdown" on:focusout={handleDropdownFocusout}>
+                    <button type="button" on:click={(event) => toggleDropdown('import', event)} class="dropbtn" aria-label="Import configuration" aria-expanded={activeDropdown === 'import'} aria-controls="import-menu">Import ▾</button>
+                    <div id="import-menu" class="dropdown-content" class:show={activeDropdown === 'import'} role="group" aria-label="Import configuration options" hidden={activeDropdown !== 'import'}>
+                        <button type="button" on:click={() => { closeDropdown(true); ontriggerFileInput(); }}>Import from file</button>
+                        <button type="button" on:click={() => { closeDropdown(true); onimportLink(); }}>Import from link</button>
+                    </div>
                 </div>
                 
-                <div class="dropdown">
-                    <button type="button" on:click={() => toggleDropdown('export')} class="dropbtn" aria-haspopup="true" aria-expanded={activeDropdown === 'export'}>Export ▾</button>
-                    {#if activeDropdown === 'export'}
-                        <div class="dropdown-content show">
-                            <button type="button" on:click={() => ondownloadConfig()}>File</button>
-                            <button type="button" on:click={() => ongenerateShareLink()}>Link</button>
-                        </div>
-                    {/if}
+                <div class="dropdown" on:focusout={handleDropdownFocusout}>
+                    <button type="button" on:click={(event) => toggleDropdown('export', event)} class="dropbtn" aria-label="Export configuration" aria-expanded={activeDropdown === 'export'} aria-controls="export-menu">Export ▾</button>
+                    <div id="export-menu" class="dropdown-content" class:show={activeDropdown === 'export'} role="group" aria-label="Export configuration options" hidden={activeDropdown !== 'export'}>
+                        <button type="button" on:click={() => { closeDropdown(true); ondownloadConfig(); }}>Export to file</button>
+                        <button type="button" on:click={() => { closeDropdown(true); ongenerateShareLink(); }}>Export as link</button>
+                    </div>
                 </div>
 
                 <button type="button" id="reset-btn" on:click={() => onreset()}>Reset</button>
             {/if}
 
-            <button type="button" id="edit-btn" class:quiet-button={isEditMode} on:click={() => ontoggleEdit()}>
+            <button type="button" id="edit-btn" class:quiet-button={isEditMode} on:click={() => ontoggleEdit()} aria-label={isEditMode ? 'Close editor' : 'Open options'}>
                 {isEditMode ? 'Close' : 'Options'}
             </button>
         </div>
     </header>
     
     {#if !isEditMode}
-        <nav>
+        <nav aria-label="Application sections">
             <ul id="nav-list">
                 {#each sections as section}
                     <li><a href="#{section.letter}">{section.letter}</a></li>
