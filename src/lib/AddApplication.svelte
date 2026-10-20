@@ -3,11 +3,15 @@
     import {
         addApplicationEntry,
         addNewSectionEntry,
+        findApplicationNameConflicts,
+        findWingetIdEntryLines,
         getSectionNames,
         getSuggestedSection,
-        hasWingetId
+        hasWingetId,
+        mergeWingetIdIntoEntry,
+        replaceApplicationEntry
     } from './appEntry.js';
-    import { searchCatalog } from './catalogSearch.js';
+    import { getCatalogTags, searchCatalog } from './catalogSearch.js';
 
     type CatalogApp = {
         id: string;
@@ -19,6 +23,9 @@
         category: string;
         tags: string[];
     };
+
+    type NameConflict = { name: string; section: string; lineIndex: number };
+    type PendingApplication = { id: string; name: string; url: string; tags: string[] };
 
     const CREATE_SECTION = '__create_section__';
     const catalogUrl = new URL('data/catalog-full.json', new URL(import.meta.env.BASE_URL, window.location.origin));
@@ -37,15 +44,16 @@
     let errorMessage = '';
     let isLoading = true;
     let loadError = '';
+    let selectedTags: string[] = [];
+    let nameConflicts: NameConflict[] = [];
+    let pendingApplication: PendingApplication | null = null;
     let searchInput: HTMLInputElement | undefined;
     let dialogElement: HTMLDialogElement;
 
     $: sections = getSectionNames(rawText);
     $: normalizedQuery = query.trim();
     $: results = searchCatalog(catalog, normalizedQuery);
-    $: selectedTags = selected
-        ? [...new Set([selected.category === 'other' ? '' : selected.category, ...selected.tags].filter(Boolean))]
-        : [];
+    $: tagOptions = selected ? getCatalogTags(selected.category, selected.tags) : [];
 
     onMount(() => {
         dialogElement.showModal();
@@ -109,12 +117,22 @@
     });
 
     function chooseApplication(app: CatalogApp) {
+        nameConflicts = [];
+        pendingApplication = null;
         selected = app;
         searchName = app.name;
         searchUrl = validWebUrl(app.homepage) ? app.homepage : `https://winget.run/pkg/${encodeURIComponent(app.id)}`;
         sectionChoice = getSuggestedSection(rawText, app.name) ?? CREATE_SECTION;
         newSection = Array.from(app.name.trim())[0]?.toLocaleUpperCase() || 'Other';
+        selectedTags = getCatalogTags(app.category, app.tags);
         errorMessage = hasWingetId(rawText, app.id) ? 'This Winget ID is already in your configuration.' : '';
+    }
+
+    function handleTagToggle(tag: string, event: Event) {
+        const checked = (event.currentTarget as HTMLInputElement).checked;
+        selectedTags = checked
+            ? [...selectedTags, tag]
+            : selectedTags.filter((selectedTag) => selectedTag !== tag);
     }
 
     function validWebUrl(value: string) {
@@ -130,10 +148,6 @@
             errorMessage = 'Enter an application name and a valid HTTP or HTTPS URL.';
             return;
         }
-        if (hasWingetId(rawText, selected.id)) {
-            errorMessage = 'This Winget ID is already in your configuration.';
-            return;
-        }
 
         const application = {
             id: selected.id,
@@ -141,6 +155,19 @@
             url: searchUrl.trim(),
             tags: selectedTags
         };
+
+        const conflicts = findApplicationNameConflicts(rawText, application.name);
+        const existingIdLines = findWingetIdEntryLines(rawText, application.id);
+        if (existingIdLines.some((lineIndex) => !conflicts.some((conflict) => conflict.lineIndex === lineIndex))) {
+            errorMessage = 'This Winget ID is already used by another entry.';
+            return;
+        }
+        if (conflicts.length > 0) {
+            nameConflicts = conflicts;
+            pendingApplication = application;
+            errorMessage = '';
+            return;
+        }
 
         try {
             const text = sectionChoice === CREATE_SECTION
@@ -150,6 +177,29 @@
         } catch (error) {
             errorMessage = error instanceof Error ? error.message : 'The application could not be added.';
         }
+    }
+
+    function resolveNameConflict(conflict: NameConflict, resolution: 'replace' | 'merge') {
+        if (!pendingApplication) return;
+
+        try {
+            const text = resolution === 'replace'
+                ? replaceApplicationEntry(rawText, conflict.lineIndex, pendingApplication)
+                : mergeWingetIdIntoEntry(rawText, conflict.lineIndex, pendingApplication.id);
+            onadd(text);
+        } catch (error) {
+            errorMessage = error instanceof Error ? error.message : 'The duplicate entry could not be updated.';
+            nameConflicts = [];
+            pendingApplication = null;
+        }
+    }
+
+    function idUsedByOtherConflict(conflict: NameConflict) {
+        const application = pendingApplication;
+        return application !== null && nameConflicts.some((other) =>
+            other.lineIndex !== conflict.lineIndex &&
+            hasWingetId(rawText.split(/\r?\n/)[other.lineIndex] ?? '', application.id)
+        );
     }
 
     function handleDialogCancel(event: Event) {
@@ -162,9 +212,8 @@
         <div class="catalog-heading">
             <div>
                 <h2 id="catalog-title">Add Winget application</h2>
-                <p>Search the built-in Winget catalog and add a Markdown entry.</p>
+                <p>Search the built-in Winget catalog and add a Markdown entry</p>
             </div>
-            <button type="button" class="quiet-button" aria-label="Close" on:click={oncancel}>Close</button>
         </div>
 
         {#if loadError}
@@ -194,7 +243,7 @@
             {/if}
         {/if}
 
-        {#if selected}
+        {#if selected && nameConflicts.length === 0}
             <div class="catalog-selected">
                 <label>
                     Application name
@@ -205,8 +254,16 @@
                     <input bind:value={searchUrl} type="url">
                 </label>
                 <p class="catalog-id">Winget ID: <code>{selected.id}</code></p>
-                {#if selectedTags.length}
-                    <p class="catalog-tags">Tags to add: {selectedTags.join(', ')}</p>
+                {#if tagOptions.length}
+                    <fieldset class="catalog-tag-options">
+                        <legend>Tags to add</legend>
+                        {#each tagOptions as tag}
+                            <label class="catalog-tag-option">
+                                <input type="checkbox" checked={selectedTags.includes(tag)} on:change={(event) => handleTagToggle(tag, event)}>
+                                <span>{tag}</span>
+                            </label>
+                        {/each}
+                    </fieldset>
                 {/if}
 
                 <label>
@@ -227,10 +284,33 @@
             </div>
         {/if}
 
+        {#if nameConflicts.length > 0 && pendingApplication}
+            <section class="catalog-duplicate-options" aria-labelledby="duplicate-title">
+                <h3 id="duplicate-title">An entry named “{pendingApplication.name}” already exists</h3>
+                <p>Choose how to resolve the matching entry. Replace and merge keep it in its current section.</p>
+                {#each nameConflicts as conflict (conflict.lineIndex)}
+                    {@const conflictHasId = hasWingetId(rawText.split(/\r?\n/)[conflict.lineIndex] ?? '', pendingApplication.id)}
+                    {@const idUsedByAnotherEntry = idUsedByOtherConflict(conflict)}
+                    <div class="catalog-duplicate-entry">
+                        <p><strong>{conflict.name}</strong> in section <strong>{conflict.section}</strong></p>
+                        <div class="catalog-duplicate-actions">
+                            <button type="button" on:click={() => resolveNameConflict(conflict, 'replace')} disabled={idUsedByAnotherEntry}>Replace with catalog entry</button>
+                            <button type="button" on:click={() => resolveNameConflict(conflict, 'merge')} disabled={conflictHasId || idUsedByAnotherEntry}>Merge Winget ID</button>
+                        </div>
+                    </div>
+                {/each}
+                {#if pendingApplication.tags.length > 0}
+                    <p class="catalog-message">Replace adds the selected catalog tags. Merge keeps the existing entry’s name, URL, and tags.</p>
+                {/if}
+            </section>
+        {/if}
+
         {#if errorMessage}<p class="catalog-message error" role="alert">{errorMessage}</p>{/if}
 
         <div class="catalog-actions">
-            <button type="button" class="quiet-button" on:click={oncancel}>Cancel</button>
-            <button type="button" on:click={handleAdd} disabled={!selected || Boolean(loadError) || (sectionChoice === CREATE_SECTION && !newSection.trim())}>Add application</button>
+            <button type="button" class="quiet-button" on:click={oncancel}>{nameConflicts.length > 0 ? 'Keep current entry' : 'Cancel'}</button>
+            {#if nameConflicts.length === 0}
+                <button type="button" on:click={handleAdd} disabled={!selected || Boolean(loadError) || (sectionChoice === CREATE_SECTION && !newSection.trim())}>Add application</button>
+            {/if}
         </div>
 </dialog>

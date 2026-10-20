@@ -195,7 +195,6 @@ export function buildAppState(markdownText) {
               const id = pmMatch[2].trim();
               pmData.push({ type, id });
               appTags.push(type);
-              chipHtml += `<span class="chip">${escapeHTML(type)}</span>`;
             } else {
               appTags.push(tag);
               chipHtml += `<span class="chip">${escapeHTML(tag)}</span>`;

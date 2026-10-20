@@ -1,11 +1,15 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { buildAppState } from "./config.js";
-import { searchCatalog } from "./catalogSearch.js";
+import { getCatalogTags, searchCatalog } from "./catalogSearch.js";
 import {
   addApplicationEntry,
   addNewSectionEntry,
   formatApplicationEntry,
+  findApplicationNameConflicts,
+  findWingetIdEntryLines,
+  mergeWingetIdIntoEntry,
+  replaceApplicationEntry,
   getSectionNames,
   getSuggestedSection,
   hasAlphabeticalSections,
@@ -47,7 +51,7 @@ void test("ranks the exact application-name match ahead of earlier catalog subst
 
   assert.deepEqual(
     searchCatalog(searchFixture, "Firefox").map(({ id }) => id),
-    ["Mozilla.Firefox", "A.First", "B.Second"],
+    ["Mozilla.Firefox", "B.Second", "A.First"],
   );
 });
 
@@ -78,6 +82,58 @@ void test("applies the result limit after relevance ranking", () => {
   assert.equal(searchCatalog([...broadMatches, exactMatch], "Firefox")[0]?.id, exactMatch.id);
 });
 
+void test("keeps package-name and package-ID matches ahead of broad descriptions", () => {
+  const broadMatches = Array.from({ length: 55 }, (_, index) =>
+    catalogApp(`A.Tool${index}`, `Firefox Tool ${index}`),
+  );
+  const minecraftNoise = Array.from({ length: 55 }, (_, index) =>
+    catalogApp(`A.Tool${index}`, `Minecraft Tool ${index}`),
+  );
+  const minecraft = catalogApp("Mojang.MinecraftLauncher", "Mojang Minecraft Launcher");
+  const firefox = catalogApp("Mozilla.Firefox", "Mozilla Firefox");
+
+  const minecraftResults = searchCatalog([...minecraftNoise, minecraft], "Minecraft");
+  const firefoxResults = searchCatalog([...broadMatches, firefox], "Firefox");
+
+  assert.equal(minecraftResults[0]?.id, minecraft.id);
+  assert.equal(firefoxResults[0]?.id, firefox.id);
+});
+
+void test("does not let a large result set hide a name token match behind prefix matches", () => {
+  const prefixMatches = Array.from({ length: 55 }, (_, index) =>
+    catalogApp(`Tool.Firefox${index}`, `Firefox Tool ${index}`),
+  );
+  const firefox = catalogApp("Mozilla.Firefox", "Mozilla Firefox");
+
+  assert.equal(searchCatalog([...prefixMatches, firefox], "Firefox")[0]?.id, firefox.id);
+});
+
+void test("normalizes punctuation and ranks all words in a multi-word query", () => {
+  const desktop = catalogApp("GitHub.GitHubDesktop", "GitHub Desktop");
+  const noise = catalogApp("GitHub.NotDesktop", "GitHub Utility");
+  const firefox = catalogApp("Mozilla.Firefox", "Web Browser");
+
+  assert.deepEqual(
+    searchCatalog([noise, desktop], "Github desktop").map(({ id }) => id),
+    [desktop.id],
+  );
+  assert.deepEqual(
+    searchCatalog([firefox], "Mozilla.Firefox").map(({ id }) => id),
+    [firefox.id],
+  );
+});
+
+void test("offers inferred category and catalog tags as unique selectable labels", () => {
+  assert.deepEqual(getCatalogTags("development", ["git", "editor", "git"]), [
+    "development",
+    "git",
+    "editor",
+  ]);
+  assert.deepEqual(getCatalogTags("other", []), []);
+  assert.match(formatApplicationEntry({ ...app, tags: ["browsers"] }), /#\[browsers\]$/);
+  assert.doesNotMatch(formatApplicationEntry({ ...app, tags: ["browsers"] }), /web browser/);
+});
+
 void test("formats a Winget application as a valid Markdown entry with tags", () => {
   const entry = formatApplicationEntry(app);
   assert.equal(
@@ -89,6 +145,65 @@ void test("formats a Winget application as a valid Markdown entry with tags", ()
   assert.equal(parsed.name, "Firefox");
   assert.deepEqual(parsed.pmData, [{ type: "winget", id: "Mozilla.Firefox" }]);
   assert.ok(parsed.tags.includes("browsers"));
+});
+
+void test("finds same-name entries case-insensitively and reports their sections", () => {
+  const text =
+    "# F\n\n- [Firefox](https://old.example)\n\n# Other\n\n- [FIREFOX](https://other.example)\n";
+
+  assert.deepEqual(
+    findApplicationNameConflicts(text, "Firefox").map(({ name, section }) => ({ name, section })),
+    [
+      { name: "Firefox", section: "F" },
+      { name: "FIREFOX", section: "Other" },
+    ],
+  );
+});
+
+void test("ignores duplicate names in comments and fenced code", () => {
+  const text =
+    "<!--\n# F\n- [Firefox](https://comment.example)\n-->\n# Apps\n\n```md\n- [Firefox](https://code.example)\n```\n\n- [Other](https://example.com)\n";
+  assert.deepEqual(findApplicationNameConflicts(text, "Firefox"), []);
+});
+
+void test("ignores Winget IDs in comments and fenced code when checking duplicates", () => {
+  const text = `<!--\n- [Firefox](https://comment.example) #[winget:${app.id}]\n-->\n# Apps\n\n\`\`\`md\n- [Firefox](https://code.example) #[winget:${app.id}]\n\`\`\`\n\n- [Other](https://example.com)\n`;
+
+  assert.deepEqual(findWingetIdEntryLines(text, app.id), []);
+  assert.equal(hasWingetId(text, app.id), false);
+});
+
+void test("replaces only the selected duplicate entry with the catalog entry", () => {
+  const text =
+    "# F\n\n- [Firefox](https://old.example) #favorite\n\n# Other\n\n- [FIREFOX](https://other.example)\n";
+  const conflict = findApplicationNameConflicts(text, "Firefox")[1];
+  assert.ok(conflict);
+
+  const result = replaceApplicationEntry(text, conflict.lineIndex, app);
+  assert.match(result, /# F\n\n- \[Firefox\]\(https:\/\/old\.example\) #favorite/);
+  assert.match(
+    result,
+    /# Other\n\n- \[Firefox\]\(https:\/\/www\.mozilla\.org\/firefox\/\) #\[winget:Mozilla\.Firefox\]/,
+  );
+});
+
+void test("merges a Winget ID into an existing entry without changing its name, URL, or tags", () => {
+  const text = "# F\n\n- [Firefox ESR](https://old.example) #favorite\n";
+  const conflict = findApplicationNameConflicts(text, "Firefox ESR")[0];
+  assert.ok(conflict);
+
+  const result = mergeWingetIdIntoEntry(text, conflict.lineIndex, app.id);
+  assert.equal(
+    result,
+    "# F\n\n- [Firefox ESR](https://old.example) #favorite #[winget:Mozilla.Firefox]\n",
+  );
+});
+
+void test("does not append an already-present Winget ID twice", () => {
+  const text = `# F\n\n- [Firefox](https://old.example) #[winget:${app.id}]\n`;
+  const conflict = findApplicationNameConflicts(text, "Firefox")[0];
+  assert.ok(conflict);
+  assert.equal(mergeWingetIdIntoEntry(text, conflict.lineIndex, app.id), text);
 });
 
 void test("inserts entries in alphabetical order when entries are already sorted", () => {
