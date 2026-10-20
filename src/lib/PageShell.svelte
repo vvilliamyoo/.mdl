@@ -25,6 +25,8 @@
     export let onclearPmQueue: (pm: string) => void = () => {};
 </script>
 
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
 <Header
     {title}
     {sections}
@@ -41,7 +43,25 @@
     onreset={onreset}
 />
 
-<slot />
+<main id="main-content">
+    <slot />
+</main>
+
+{#if !isEditMode}
+    <footer id="main-footer" aria-label="Site information">
+        <ul>
+            <li>
+                <a href="https://github.com/vvilliamyoo/.mdl" target="_blank" rel="noopener noreferrer">GitHub</a>
+            </li>
+            <li>
+                <a href="https://github.com/vvilliamyoo/.mdl/blob/main/README.md" target="_blank" rel="noopener noreferrer">Documentation</a>
+            </li>
+            <li>
+                <a href="https://github.com/vvilliamyoo/.mdl/blob/main/README.md#configuration-guide" target="_blank" rel="noopener noreferrer">Configuration Guide</a>
+            </li>
+        </ul>
+    </footer>
+{/if}
 
 {#if !isEditMode}
     <PmBar {pmQueues} oncopy={oncopyPmCommand} onclear={onclearPmQueue} />

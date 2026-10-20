@@ -41,7 +41,7 @@
 </script>
 
 {#if activePMs.length > 0}
-    <div id="pm-bar-container" bind:this={containerRef} style="display: flex;">
+    <div id="pm-bar-container" bind:this={containerRef} style="display: flex;" role="region" aria-label="Queued package manager installation commands">
         {#each activePMs as pm}
             {@const items = Array.from(pmQueues[pm].values())}
             <div class="pm-bar-instance">
@@ -51,16 +51,16 @@
                         {#each items as item}
                             {@const iconSrc = getFaviconUrl(item.domain)}
                             {#if iconSrc}
-                                <img src={iconSrc} alt="{item.appName} icon" class="pm-bar-favicon" title={item.appName} decoding="async">
+                                <img src={iconSrc} alt="" class="pm-bar-favicon" decoding="async">
                             {:else}
-                                <span class="pm-bar-favicon" title={item.appName}>📦</span>
+                                <span class="pm-bar-favicon" title={item.appName} aria-hidden="true">📦</span>
                             {/if}
                         {/each}
                     </div>
                 </div>
                 <span class="pm-bar-buttons">
-                    <button type="button" class="pm-action-btn" on:click={() => oncopy(pm)}>Copy</button>
-                    <button type="button" class="quiet-button pm-action-btn" on:click={() => onclear(pm)}>Clear</button>
+                    <button type="button" class="pm-action-btn" aria-label="Copy {packageManagers[pm]} command" on:click={() => oncopy(pm)}>Copy</button>
+                    <button type="button" class="quiet-button pm-action-btn" aria-label="Clear {packageManagers[pm]} queue" on:click={() => onclear(pm)}>Clear</button>
                 </span>
             </div>
         {/each}
