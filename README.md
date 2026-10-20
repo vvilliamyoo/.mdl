@@ -12,6 +12,9 @@ A [Svelte](https://svelte.dev/) Single-Page Application (SPA) for maintaining a 
   - [Svelte Architecture](#svelte-architecture)
   - [Feature-Level Harnesses](#feature-level-harnesses)
 - [Dependencies](#dependencies)
+  - [Runtime](#runtime)
+  - [Development and Deployment](#development-and-deployment)
+    - [Package Manager Catalog (PMC)](#package-manager-catalog-pmc)
 - [Configuration Guide](#configuration-guide)
   - [Structure & Syntax](#structure--syntax)
     - [YAML Frontmatter](#yaml-frontmatter)
@@ -28,6 +31,8 @@ MarkdownLoad (`.mdl`) is a Svelte Single Page Application (SPA) built around a p
 While positioned primarily for applications, the list is flexible. As stated in the configuration guide, an "application" entry only needs a name and a URL, which opens up many options (e.g., drivers, BIOSes, wallpapers, scripts). If it has a name and a URL, it can be added.
 
 The configuration file is complemented by informative and interactive features that minimize friction when using the list. `.mdl` also makes managing a configuration easy with built-in tools for editing, validating, importing, and exporting. Additional features act as feature-level harnesses that focus on efficient processing, data safety, and overhead minimization.
+
+Interactive controls include accessible names and state where applicable. Keyboard users can reach application actions and editor controls with Tab, operate buttons with Enter or Space, close open import/export menus with Escape, and dismiss the catalog dialog with Escape. Section links in the navigation move to their corresponding headings. This support is not a claim of complete WCAG conformance; assistive-technology behavior can vary by browser and platform.
 
 Svelte builds on these harnesses at the architectural level. Its reactive design, modularity, unidirectional data flow, and compile-time performance allow `.mdl` to be flexible and intuitive while being efficient, stable, and highly maintainable.
 
@@ -50,7 +55,8 @@ Svelte builds on these harnesses at the architectural level. Its reactive design
 ### Configuration Management
 
 - **Built-In Text Editor:** View and edit the configuration directly from the website and save to local browser storage.
-- **Winget Catalog Search:** Add a Winget application from the searchable catalog while editing; its name, URL, package ID, and available tags are filled in automatically.
+- **Package Manager Catalog (PMC):** Search the built-in catalog while editing, review or change an application's name and URL, select its tags, and add it to an existing or new section. Resolve same-name entries by keeping the current entry, replacing it, or merging the application ID. The PMC currently supports Winget, with other PMs being considered.
+- **Keyboard and Assistive Technology Support:** Use the skip-to-content link, labeled navigation and editor controls, native keyboard-operable buttons and dialogs, and Escape to dismiss open menus or the application dialog.
 - **Color Customization Bar:** Modify YAML theme colors dynamically via quick HEX inputs or rich color pickers.
 - **Import & Export:** Import/export a configuration file or encode its minified data into a URL via [`brotli-wasm`](https://github.com/google/brotli) compression.
 - **Configuration Validation:** Importing or saving an edited configuration file triggers a validator to ensure that configurations adhere to key (but not all) aspects of required configuration file structure and syntax.
@@ -83,9 +89,11 @@ Svelte builds on these harnesses at the architectural level. Its reactive design
 - **[TypeScript](https://www.typescriptlang.org/) and [`@types/node`](https://www.npmjs.com/package/@types/node):** Provide type-checking and Node.js type definitions for development.
 - **[`gh-pages`](https://github.com/tschaub/gh-pages):** Publishes the production build to GitHub Pages.
 
-#### Winget Catalog
+#### Package Manager Catalog (PMC)
 
-The searchable Winget catalog is generated from Microsoft's `winget-pkgs` manifests and served as `public/data/catalog-full.json`. Build it before local development or previewing the app:
+The PMC is generated from [Microsoft’s `winget-pkgs` manifests](https://github.com/microsoft/winget-pkgs/tree/master/manifests) and served as `public/data/catalog-full.json`. The catalog-generation script was adapted from [OpenWin](https://github.com/fsamod/openwin) and refactored for `.mdl`.
+
+Build the catalog before local development or previewing the app:
 
 ```sh
 npm run build:catalog
@@ -130,7 +138,9 @@ Sections must start with `#`, followed by a space, and end with the desired sect
 
 Applications are added to sections as a list item using standard Markdown syntax of `-`, `*`, or `+`. Each item must use the following syntax: `- [<name*>](<url*>) #<shortTag> #[<Long Tag>] #[<command_tag>:<application_id>]`.
 
-In the editor, choose **Add app** to search the built-in Winget catalog. The selected package's name, URL, Winget ID, and available tags are prefilled; choose an existing section or create one. Entries and new sections are inserted alphabetically when the corresponding existing list is alphabetically ordered.
+In the editor, choose **Add app** to search the Package Manager Catalog (PMC). The selected package's name, URL, and application ID are prefilled; catalog tags are individually selectable. Choose an existing section or create one. Entries and new sections are inserted alphabetically when the corresponding existing list is alphabetically ordered.
+
+If an entry with the same name already exists, choose whether to keep it unchanged, replace it with the catalog entry, or merge the application ID into it. Replacement and merging keep the entry in its current section; an ID already used by another application cannot be reused.
 
 #### Tags
 
