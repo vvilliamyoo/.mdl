@@ -93,6 +93,8 @@ Svelte builds on these harnesses at the architectural level. Its reactive design
 
 The PMC is generated from [Microsoft’s `winget-pkgs` manifests](https://github.com/microsoft/winget-pkgs/tree/master/manifests) and served as `public/data/catalog-full.json`. The catalog-generation script was adapted from [OpenWin](https://github.com/fsamod/openwin) and refactored for `.mdl`.
 
+The Winget catalog is automatically updated every Sunday at 06:00 UTC via a GitHub Action (`.github/workflows/build-winget-catalog.yml`) and can be manually triggered using `workflow_dispatch`.
+
 Build the catalog before local development or previewing the app:
 
 ```sh
