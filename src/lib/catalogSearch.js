@@ -11,40 +11,103 @@
  */
 
 /**
+ * @param {string} value
+ * @returns {string}
+ */
+function normalizeSearchText(value) {
+  return value
+    .toLocaleLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+/**
+ * @param {string} category
+ * @param {string[]} tags
+ * @returns {string[]}
+ */
+export function getCatalogTags(category, tags) {
+  return [
+    ...new Set(
+      [category === "other" ? "" : category, ...tags].map((tag) => tag.trim()).filter(Boolean),
+    ),
+  ];
+}
+
+/**
  * @param {CatalogApplication[]} catalog
  * @param {string} query
  * @returns {CatalogApplication[]}
  */
 export function searchCatalog(catalog, query) {
-  const normalizedQuery = query.trim().toLocaleLowerCase();
+  const normalizedQuery = normalizeSearchText(query);
   if (!normalizedQuery) return [];
 
-  const queryTerms = normalizedQuery.split(/\s+/);
+  const queryTerms = normalizedQuery.split(" ");
   const collator = new Intl.Collator(undefined, { sensitivity: "base", numeric: true });
 
   return catalog
     .flatMap((app) => {
-      const name = app.name.toLocaleLowerCase();
-      const id = app.id.toLocaleLowerCase();
-      const publisher = app.publisher.toLocaleLowerCase();
-      const description = app.description.toLocaleLowerCase();
-      const categoryAndTags = `${app.category} ${app.tags.join(" ")}`.toLocaleLowerCase();
-      const searchableText = `${name} ${id} ${publisher} ${description} ${categoryAndTags}`;
-      if (!queryTerms.every((term) => searchableText.includes(term))) return [];
+      const fields = [
+        { value: app.name, weight: 0, kind: "name" },
+        { value: app.id, weight: 1, kind: "id" },
+        { value: app.publisher, weight: 10, kind: "other" },
+        { value: app.description, weight: 20, kind: "other" },
+        { value: `${app.category} ${app.tags.join(" ")}`, weight: 30, kind: "other" },
+      ].map(({ value, weight, kind }) => ({
+        text: normalizeSearchText(value),
+        tokens: normalizeSearchText(value).split(" ").filter(Boolean),
+        weight,
+        kind,
+      }));
 
-      let rank = 9;
-      if (name === normalizedQuery) rank = 0;
-      else if (name.startsWith(normalizedQuery)) rank = 1;
-      else if (id === normalizedQuery) rank = 2;
-      else if (id.startsWith(normalizedQuery)) rank = 3;
-      else if (name.includes(normalizedQuery)) rank = 4;
-      else if (id.includes(normalizedQuery)) rank = 5;
-      else if (publisher.startsWith(normalizedQuery)) rank = 6;
-      else if (publisher.includes(normalizedQuery)) rank = 7;
-      else if (description.includes(normalizedQuery) || categoryAndTags.includes(normalizedQuery))
-        rank = 8;
+      if (
+        !queryTerms.every((term) =>
+          fields.some(({ tokens }) => tokens.some((token) => token.startsWith(term))),
+        )
+      )
+        return [];
 
-      return [{ app, rank }];
+      const phraseMatch = fields.reduce((best, field) => {
+        if (field.text === normalizedQuery) return Math.min(best, field.weight);
+        if (field.text.startsWith(`${normalizedQuery} `))
+          return Math.min(best, field.weight + (field.kind === "name" ? 3 : 2));
+        return best;
+      }, Number.POSITIVE_INFINITY);
+
+      const termScore = fields.reduce((best, field) => {
+        const qualities = queryTerms.map((term) =>
+          field.tokens.includes(term)
+            ? 0
+            : field.tokens.some((token) => token.startsWith(term))
+              ? 1
+              : Infinity,
+        );
+        if (qualities.some((quality) => !Number.isFinite(quality))) return best;
+        const exactTerms = qualities.filter((quality) => quality === 0).length;
+        const rank =
+          field.weight +
+          (field.kind === "id"
+            ? 1 + (exactTerms === queryTerms.length ? 0 : 0.5)
+            : field.kind === "name"
+              ? 5 + (exactTerms === queryTerms.length ? 0 : 1)
+              : 20);
+        return Math.min(best, rank);
+      }, Number.POSITIVE_INFINITY);
+
+      const splitFieldScore = queryTerms.reduce((total, term) => {
+        const bestMatch = fields.reduce((best, field) => {
+          const exact = field.tokens.includes(term);
+          const prefix = field.tokens.some((token) => token.startsWith(term));
+          if (!prefix) return best;
+          const rank = field.weight + (exact ? 0 : 1);
+          return Math.min(best, rank);
+        }, Number.POSITIVE_INFINITY);
+        return total + bestMatch;
+      }, 0);
+
+      return [{ app, rank: Math.min(phraseMatch, termScore, 40 + splitFieldScore) }];
     })
     .sort(
       (left, right) =>

@@ -39,7 +39,6 @@ export function buildChipContent(tagsText, packageManagers) {
       const id = pmMatch[2].trim();
       pmData.push({ type, id });
       tags.push(type);
-      chipHtml += `<span class="chip">${escapeHTML(type)}</span>`;
     } else {
       tags.push(tag);
       chipHtml += `<span class="chip">${escapeHTML(tag)}</span>`;

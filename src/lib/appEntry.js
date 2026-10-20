@@ -101,6 +101,27 @@ function getAppNames(lines, start, end) {
   });
 }
 
+/**
+ * @param {string} value
+ * @returns {string}
+ */
+function normalizeAppName(value) {
+  return value.trim().replace(/\s+/g, " ").toLocaleLowerCase();
+}
+
+/**
+ * @param {string} line
+ * @returns {{ name: string; bullet: string } | null}
+ */
+function parseApplicationLine(line) {
+  const match = line.match(/^(\s*)([-*+])\s+\[([^\]]+)\]\((?:\\.|[^)])*\)(.*)$/);
+  if (!match) return null;
+  return {
+    name: match[3].replace(/\\([\\[\]])/g, "$1"),
+    bullet: `${match[1]}${match[2]}`,
+  };
+}
+
 /** @param {string} rawText @returns {string[]} */
 export function getSectionNames(rawText) {
   const lines = rawText.split(/\r?\n/);
@@ -231,8 +252,83 @@ export function addNewSectionEntry(rawText, sectionTitle, application) {
   return lines.join("\n");
 }
 
+/**
+ * @param {string} rawText
+ * @param {string} applicationName
+ * @returns {{ name: string; section: string; lineIndex: number }[]}
+ */
+export function findApplicationNameConflicts(rawText, applicationName) {
+  const lines = rawText.split(/\r?\n/);
+  const offset = getMarkdownOffset(rawText);
+  const visibleLines = getVisibleMarkdownLines(lines, offset);
+  const headings = getHeadingLines(visibleLines, offset);
+  const normalizedName = normalizeAppName(applicationName);
+  /** @type {{ name: string; section: string; lineIndex: number }[]} */
+  const matches = [];
+
+  headings.forEach((heading, headingIndex) => {
+    const end = headings[headingIndex + 1]?.index ?? lines.length;
+    for (let lineIndex = heading.index + 1; lineIndex < end; lineIndex += 1) {
+      const entry = parseApplicationLine(visibleLines[lineIndex]);
+      if (entry && normalizeAppName(entry.name) === normalizedName) {
+        matches.push({ name: entry.name, section: heading.title, lineIndex });
+      }
+    }
+  });
+
+  return matches;
+}
+
+/**
+ * @param {string} rawText
+ * @param {number} lineIndex
+ * @param {ApplicationEntry} application
+ * @returns {string}
+ */
+export function replaceApplicationEntry(rawText, lineIndex, application) {
+  const lines = rawText.split(/\r?\n/);
+  const existing = lines[lineIndex];
+  if (existing === undefined || !parseApplicationLine(existing)) {
+    throw new Error("The selected application entry could not be found.");
+  }
+  const bullet = parseApplicationLine(existing)?.bullet ?? "-";
+  lines[lineIndex] = formatApplicationEntry(application).replace(/^-/, bullet);
+  return lines.join("\n");
+}
+
+/**
+ * @param {string} rawText
+ * @param {number} lineIndex
+ * @param {string} id
+ * @returns {string}
+ */
+export function mergeWingetIdIntoEntry(rawText, lineIndex, id) {
+  const lines = rawText.split(/\r?\n/);
+  const existing = lines[lineIndex];
+  if (existing === undefined || !parseApplicationLine(existing)) {
+    throw new Error("The selected application entry could not be found.");
+  }
+  if (hasWingetId(existing, id)) return rawText;
+  lines[lineIndex] = `${existing.trimEnd()} #[winget:${id}]`;
+  return lines.join("\n");
+}
+
+/**
+ * @param {string} rawText
+ * @param {string} id
+ * @returns {number[]}
+ */
+export function findWingetIdEntryLines(rawText, id) {
+  const lines = rawText.split(/\r?\n/);
+  const visibleLines = getVisibleMarkdownLines(lines, getMarkdownOffset(rawText));
+  const escapedId = id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const pattern = new RegExp(`#\\[winget:${escapedId}\\]`, "i");
+  return visibleLines.flatMap((line, lineIndex) =>
+    parseApplicationLine(line) && pattern.test(line) ? [lineIndex] : [],
+  );
+}
+
 /** @param {string} rawText @param {string} id @returns {boolean} */
 export function hasWingetId(rawText, id) {
-  const escapedId = id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return new RegExp(`#\\[winget:${escapedId}\\]`, "i").test(rawText);
+  return findWingetIdEntryLines(rawText, id).length > 0;
 }
