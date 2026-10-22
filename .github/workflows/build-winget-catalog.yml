@@ -1,0 +1,25 @@
+name: Build Winget Catalog
+
+on:
+  schedule:
+    - cron: "0 6 * * 0" # Every Sunday at 06:00 UTC (midnight CST)
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build winget catalog
+        run: npm run build:catalog
