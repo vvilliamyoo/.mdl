@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { execFile, spawn } from "node:child_process";
+import { createHash } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -124,8 +125,8 @@ function listTree(repoDir, revision, directory) {
         .toString("utf8")
         .split("\0")
         .flatMap((record) => {
-          const match = record.match(/^[0-9]+\s+blob\s+[0-9a-f]+\t(.+)$/);
-          return match ? [match[1]] : [];
+          const match = record.match(/^[0-9]+\s+blob\s+([0-9a-f]+)\t(.+)$/);
+          return match ? [{ path: match[2], oid: match[1] }] : [];
         });
       resolve(entries);
     });
@@ -148,13 +149,14 @@ export function compareVersions(left, right) {
 async function collectLocaleManifests(repoDir, revision, maxPackages) {
   const buckets = await listDirectories(repoDir, revision, "manifests");
   const wanted = [];
+  const manifestBlobs = new Map();
   let packageCount = 0;
   let versionCount = 0;
 
   for (const bucket of buckets) {
     const files = await listTree(repoDir, revision, `manifests/${bucket}`);
     const packages = new Map();
-    for (const filePath of files) {
+    for (const { path: filePath, oid } of files) {
       const relative = filePath.slice("manifests/".length);
       const parts = relative.split("/");
       if (parts.length < 4) continue;
@@ -164,7 +166,7 @@ async function collectLocaleManifests(repoDir, revision, maxPackages) {
       const packageKey = parts.slice(0, -2).join("/");
       const versions = packages.get(packageKey) ?? new Map();
       const versionFiles = versions.get(version) ?? [];
-      versionFiles.push(filePath);
+      versionFiles.push({ path: filePath, oid });
       versions.set(version, versionFiles);
       packages.set(packageKey, versions);
     }
@@ -178,13 +180,14 @@ async function collectLocaleManifests(repoDir, revision, maxPackages) {
       );
       for (const [, filesForVersion] of candidates) {
         const locales = filesForVersion.sort((left, right) => {
-          const leftEnglish = /\.locale\.en-US\.ya?ml$/i.test(left) ? 0 : 1;
-          const rightEnglish = /\.locale\.en-US\.ya?ml$/i.test(right) ? 0 : 1;
-          return leftEnglish - rightEnglish || left.localeCompare(right);
+          const leftEnglish = /\.locale\.en-US\.ya?ml$/i.test(left.path) ? 0 : 1;
+          const rightEnglish = /\.locale\.en-US\.ya?ml$/i.test(right.path) ? 0 : 1;
+          return leftEnglish - rightEnglish || left.path.localeCompare(right.path);
         });
         const locale = locales[0];
         if (locale) {
-          wanted.push(locale);
+          wanted.push(locale.path);
+          manifestBlobs.set(locale.path, locale.oid);
           break;
         }
       }
@@ -192,7 +195,7 @@ async function collectLocaleManifests(repoDir, revision, maxPackages) {
     console.log(`[catalog] indexed manifest bucket ${bucket}: ${packageCount} package IDs`);
   }
 
-  return { wanted, packageCount, versionCount };
+  return { wanted, manifestBlobs, packageCount, versionCount };
 }
 
 async function fetchText(url, attempts = 4) {
@@ -220,12 +223,42 @@ async function fetchText(url, attempts = 4) {
   throw new Error(`Could not fetch ${url}.`);
 }
 
-async function downloadManifests(workdir, repoDir, commit, wanted, concurrency = 8) {
-  const destination = path.join(workdir, "subset", commit);
+function gitBlobId(content) {
+  const header = Buffer.from(`blob ${content.length}\0`);
+  return createHash("sha1").update(header).update(content).digest("hex");
+}
+
+async function downloadManifests(
+  workdir,
+  repoDir,
+  commit,
+  wanted,
+  manifestBlobs,
+  allowCache,
+  concurrency = 8,
+) {
+  const cacheRoot = path.join(workdir, "subset");
+  const destination = path.join(cacheRoot, allowCache ? "manifests" : "source-manifests");
+  const cacheMetadataPath = path.join(cacheRoot, "manifest-cache.json");
+  await fs.mkdir(cacheRoot, { recursive: true });
+  let cachedBlobs = {};
+  try {
+    cachedBlobs = JSON.parse(await fs.readFile(cacheMetadataPath, "utf8"));
+    if (!cachedBlobs || typeof cachedBlobs !== "object" || Array.isArray(cachedBlobs)) {
+      throw new Error(`Invalid manifest cache metadata in ${cacheMetadataPath}.`);
+    }
+  } catch (error) {
+    if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
+  }
+  const legacyDirectories = (await fs.readdir(cacheRoot, { withFileTypes: true }))
+    .filter((entry) => entry.isDirectory() && /^[0-9a-f]{40}$/i.test(entry.name))
+    .map((entry) => path.join(cacheRoot, entry.name));
+  const currentBlobs = {};
   const queue = [...wanted];
   const failures = [];
   let completed = 0;
   let downloaded = 0;
+  let reused = 0;
 
   async function worker() {
     while (queue.length > 0) {
@@ -233,20 +266,60 @@ async function downloadManifests(workdir, repoDir, commit, wanted, concurrency =
       if (!manifestPath) continue;
       const localPath = path.join(destination, manifestPath);
       try {
-        const cached = await fs.stat(localPath).catch(() => null);
-        if (!cached || cached.size === 0) {
-          await fs.mkdir(path.dirname(localPath), { recursive: true });
-          const sourcePath = path.join(repoDir, manifestPath);
-          const localSource = await fs.stat(sourcePath).catch(() => null);
-          if (localSource?.isFile()) {
-            await fs.copyFile(sourcePath, localPath);
-          } else {
-            const encodedPath = manifestPath.split("/").map(encodeURIComponent).join("/");
-            const text = await fetchText(`${RAW_URL}/${commit}/${encodedPath}`);
-            await fs.writeFile(localPath, text, "utf8");
-          }
-          downloaded += 1;
+        const blobId = manifestBlobs.get(manifestPath);
+        if (!blobId) throw new Error(`Missing Git blob ID for ${manifestPath}.`);
+        let cacheIsCurrent = false;
+        if (allowCache && cachedBlobs[manifestPath] === blobId) {
+          const cached = await fs.stat(localPath).catch((error) => {
+            if (error instanceof Error && "code" in error && error.code === "ENOENT") return null;
+            throw error;
+          });
+          cacheIsCurrent = Boolean(cached?.isFile() && cached.size > 0);
         }
+
+        if (cacheIsCurrent) {
+          reused += 1;
+        } else {
+          await fs.mkdir(path.dirname(localPath), { recursive: true });
+          let migrated = false;
+          if (allowCache) {
+            for (const legacyDirectory of legacyDirectories) {
+              const legacyPath = path.join(legacyDirectory, manifestPath);
+              let content;
+              try {
+                content = await fs.readFile(legacyPath);
+              } catch (error) {
+                if (error instanceof Error && "code" in error && error.code === "ENOENT") continue;
+                throw error;
+              }
+              if (gitBlobId(content) !== blobId) continue;
+              await fs.writeFile(`${localPath}.${process.pid}.tmp`, content);
+              await fs.rename(`${localPath}.${process.pid}.tmp`, localPath);
+              migrated = true;
+              reused += 1;
+              break;
+            }
+          }
+
+          if (!migrated) {
+            const sourcePath = path.join(repoDir, manifestPath);
+            const localSource = await fs.stat(sourcePath).catch((error) => {
+              if (error instanceof Error && "code" in error && error.code === "ENOENT") return null;
+              throw error;
+            });
+            const temporaryPath = `${localPath}.${process.pid}.tmp`;
+            if (localSource?.isFile()) {
+              await fs.copyFile(sourcePath, temporaryPath);
+            } else {
+              const encodedPath = manifestPath.split("/").map(encodeURIComponent).join("/");
+              const text = await fetchText(`${RAW_URL}/${commit}/${encodedPath}`);
+              await fs.writeFile(temporaryPath, text, "utf8");
+            }
+            await fs.rename(temporaryPath, localPath);
+            downloaded += 1;
+          }
+        }
+        currentBlobs[manifestPath] = blobId;
       } catch (error) {
         failures.push(`${manifestPath}: ${error instanceof Error ? error.message : String(error)}`);
       }
@@ -260,7 +333,10 @@ async function downloadManifests(workdir, repoDir, commit, wanted, concurrency =
   await Promise.all(
     Array.from({ length: Math.min(concurrency, Math.max(queue.length, 1)) }, worker),
   );
-  console.log(`[catalog] downloaded ${downloaded} manifests; ${failures.length} failed`);
+  if (allowCache) await writeJson(cacheMetadataPath, currentBlobs);
+  console.log(
+    `[catalog] downloaded ${downloaded} manifests; reused ${reused}; ${failures.length} failed`,
+  );
   return { destination: path.join(destination, "manifests"), failures };
 }
 
@@ -393,7 +469,7 @@ async function main() {
     console.log(`[catalog] upstream commit ${upstreamSha}`);
   }
 
-  const { wanted, packageCount, versionCount } = await collectLocaleManifests(
+  const { wanted, manifestBlobs, packageCount, versionCount } = await collectLocaleManifests(
     repoDir,
     revision,
     maximum,
@@ -404,7 +480,14 @@ async function main() {
   );
 
   const fullCommit = await git(["rev-parse", revision], repoDir);
-  const { destination, failures } = await downloadManifests(workdir, repoDir, fullCommit, wanted);
+  const { destination, failures } = await downloadManifests(
+    workdir,
+    repoDir,
+    fullCommit,
+    wanted,
+    manifestBlobs,
+    !option("source", null) && !flag("no-clone"),
+  );
   const { apps, skipped } = await readCatalogApps(destination, wanted, maximum);
   if (apps.length === 0)
     throw new Error("No valid application records could be built from the manifests.");
