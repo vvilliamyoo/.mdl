@@ -51,7 +51,7 @@
                         {#each items as item}
                             {@const iconSrc = getFaviconUrl(item.domain)}
                             {#if iconSrc}
-                                <img src={iconSrc} alt="" class="pm-bar-favicon" decoding="async">
+                                <img src={iconSrc} alt={item.appName} class="pm-bar-favicon" decoding="async" title={item.appName} aria-hidden="true"/>
                             {:else}
                                 <span class="pm-bar-favicon" title={item.appName} aria-hidden="true">📦</span>
                             {/if}
