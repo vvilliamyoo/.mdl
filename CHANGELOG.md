@@ -26,6 +26,12 @@ All notable changes to this project will be documented in this file.
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
+## [2.1.4] - 2026-10-22
+
+### Fixed
+
+- Fixed the `predeploy` script to include the Winget catalog builder workflow in `dist`.
+
 ## [2.1.3] - 2026-10-22
 
 ### Fixed
