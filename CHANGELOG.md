@@ -26,6 +26,12 @@ All notable changes to this project will be documented in this file.
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
+## [2.1.3] - 2026-10-22
+
+### Fixed
+
+- Fixed a cache miss that cause the Winget catalog to redownloaded on each update instead of reusing unchanged Winget manifests across upstream commits.
+
 ## [2.1.2] - 2026-10-22
 
 ### Fixed
