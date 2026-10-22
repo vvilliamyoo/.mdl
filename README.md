@@ -102,7 +102,7 @@ npm run build:catalog
 npm run dev
 ```
 
-`npm run deploy` builds the catalog before producing the site. The first catalog build requires Git and network access; subsequent runs reuse the checkout and manifest cache under `.cache/`. Use `node tools/build-catalog.mjs --max-packages 20` to smoke-test the generator without enforcing the full-catalog threshold.
+`npm run deploy` builds the catalog before producing the site. The first catalog build requires Git and network access; subsequent runs reuse the checkout and persistent manifest cache under `.cache/`. Unchanged manifests are reused across upstream commits, while new or changed manifests are downloaded. The cache must persist between runs for this reuse (for example, configure CI to cache `.cache/`). Use `node tools/build-catalog.mjs --max-packages 20` to smoke-test the generator without enforcing the full-catalog threshold.
 
 ### External Services and Assets
 
