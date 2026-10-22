@@ -26,6 +26,14 @@ All notable changes to this project will be documented in this file.
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
+## [2.1.2] - 2026-10-22
+
+### Fixed
+
+- Restored the application name tooltip when hovering an icon in the package manager (PM) bar.
+- Deduplicated dependencies (`vp dedupe`).
+- Fixed formatting (`vp check --fix`).
+
 ## [2.1.1] - 2026-10-20
 
 ### Added
