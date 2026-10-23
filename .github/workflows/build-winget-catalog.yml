@@ -21,10 +21,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build winget catalog
-        run: npm run build:catalog
+      - name: Configure Git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Build frontend and deploy
-        run: npm run build && npm run deploy
+      - name: Build frontend and catalog and deploy
+        run: npm run deploy # Note: "predeploy": "npm run build:catalog && npm run build"
         env:
           GH_TOKEN: ${{ secrets.MDL_WINGET_CATALOG_UPDATE_GH_PAT }}
