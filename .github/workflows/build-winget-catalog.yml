@@ -26,6 +26,10 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Configure Git authentication
+        run: |
+          git config --global url.https://x-access-token:${{ secrets.MDL_WINGET_CATALOG_UPDATE_GH_PAT }}@github.com/.insteadOf https://github.com/
+
       - name: Build frontend and catalog and deploy
         run: npm run deploy # Note: "predeploy": "npm run build:catalog && npm run build"
         env:
