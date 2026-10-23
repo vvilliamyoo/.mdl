@@ -25,7 +25,6 @@ jobs:
         run: npm run build:catalog
 
       - name: Build frontend and deploy
-        run: npm run build
-          npm run deploy
+        run: npm run build && npm run deploy
         env:
-          GITHUB_TOKEN: ${{ secrets.mdl_winget_catalog_GH_PAT }}
+          GH_TOKEN: ${{ secrets.MDL_WINGET_CATALOG_UPDATE_GH_PAT }}
