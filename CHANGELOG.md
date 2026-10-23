@@ -26,6 +26,12 @@ All notable changes to this project will be documented in this file.
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
+## [2.1.8] - 2026-10-22
+
+### Fixed
+
+- Configured missing username and email for the GitHub Actions runner.
+
 ## [2.1.7] - 2026-10-22
 
 ### Fixed
