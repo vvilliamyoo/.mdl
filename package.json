@@ -1,6 +1,6 @@
 {
   "name": ".mdl",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "test": "node --test src/lib/appEntry.test.js src/lib/appStore.test.js src/lib/config.test.js src/lib/configActions.test.js src/lib/configIO.test.js src/lib/configWorkflow.test.js src/lib/editorScheduler.test.js src/lib/uiFeedback.test.js src/lib/utils.test.js",
     "build:catalog": "node tools/build-catalog.mjs",
     "preview": "vp preview",
-    "predeploy": "npm run build:catalog && npm run build && node -e \"const fs = require('fs'); fs.mkdirSync('dist/.github/workflows', { recursive: true }); fs.copyFileSync('.github/workflows/build-winget-catalog.yml', 'dist/.github/workflows/build-winget-catalog.yml');\"",
+    "predeploy": "npm run build:catalog && npm run build",
     "deploy": "gh-pages -d dist --dotfiles",
     "prepare": "vp config"
   },
