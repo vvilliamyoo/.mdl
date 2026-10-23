@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "npm"
 
       - name: Install dependencies
@@ -23,3 +23,9 @@ jobs:
 
       - name: Build winget catalog
         run: npm run build:catalog
+
+      - name: Build frontend and deploy
+        run: npm run build
+          npm run deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.mdl_winget_catalog_GH_PAT }}
