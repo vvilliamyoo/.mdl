@@ -26,6 +26,12 @@ All notable changes to this project will be documented in this file.
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
+## [2.1.6] - 2026-10-22
+
+### Changed
+
+- Bumped Node.js to v24.22.1 in the workflow file.
+
 ## [2.1.5] - 2026-10-22
 
 ## Added
