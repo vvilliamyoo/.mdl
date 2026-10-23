@@ -26,6 +26,20 @@ All notable changes to this project will be documented in this file.
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
+## [2.1.5] - 2026-10-22
+
+## Added
+
+- Added build and deploy commands to the Winget catalog build script.
+
+## Changed
+
+- Pinned the Winget catalog build script Node.js version to 24.
+
+## Removed
+
+- Removed the v2.1.4 patch to the `predeploy` script.
+
 ## [2.1.4] - 2026-10-22
 
 ### Fixed
