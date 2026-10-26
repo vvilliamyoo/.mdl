@@ -134,8 +134,8 @@ Application Entry Template (* indicates a required element or parameter)
 
 - [War Thunder](https://warthunder.com) #[winget:GaijinNetwork.WarThunder]
 - [Windows Edge Light](https://github.com/shanselman/WindowsEdgeLight/releases) #portable
-- [WingetTUI](https://github.com/shanselman/winget-tui/releases) #[winget:hanselman.WingetTUI]
-- [WizTree](https://diskanalyzer.com/download) #portable
+- [`winget-tui`](https://github.com/shanselman/winget-tui/releases) #[winget:hanselman.WingetTUI]
+- [WizTree](https://diskanalyzer.com/download) #portable #[winget:AntibodySoftware.WizTree]
 
 # X
 
