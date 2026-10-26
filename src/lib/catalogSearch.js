@@ -8,19 +8,9 @@
  * @property {string} homepage
  * @property {string} category
  * @property {string[]} tags
+ * @property {string} searchableText
+ * @property {string} idSlug
  */
-
-/**
- * @param {string} value
- * @returns {string}
- */
-function normalizeSearchText(value) {
-  return value
-    .toLocaleLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim()
-    .replace(/\s+/g, " ");
-}
 
 /**
  * @param {string} category
@@ -41,80 +31,38 @@ export function getCatalogTags(category, tags) {
  * @returns {CatalogApplication[]}
  */
 export function searchCatalog(catalog, query) {
-  const normalizedQuery = normalizeSearchText(query);
+  const normalizedQuery = query.trim().toLowerCase();
   if (!normalizedQuery) return [];
 
-  const queryTerms = normalizedQuery.split(" ");
+  const matches = [];
+  const q = normalizedQuery;
   const collator = new Intl.Collator(undefined, { sensitivity: "base", numeric: true });
 
-  return catalog
-    .flatMap((app) => {
-      const fields = [
-        { value: app.name, weight: 0, kind: "name" },
-        { value: app.id, weight: 1, kind: "id" },
-        { value: app.publisher, weight: 10, kind: "other" },
-        { value: app.description, weight: 20, kind: "other" },
-        { value: `${app.category} ${app.tags.join(" ")}`, weight: 30, kind: "other" },
-      ].map(({ value, weight, kind }) => ({
-        text: normalizeSearchText(value),
-        tokens: normalizeSearchText(value).split(" ").filter(Boolean),
-        weight,
-        kind,
-      }));
+  for (let i = 0; i < catalog.length; i++) {
+    const app = catalog[i];
+    if (!app.searchableText.includes(q)) continue;
 
-      if (
-        !queryTerms.every((term) =>
-          fields.some(({ tokens }) => tokens.some((token) => token.startsWith(term))),
-        )
-      )
-        return [];
+    let score = 0;
+    const lowerName = app.name.toLowerCase();
+    const lowerId = app.id.toLowerCase();
+    const lowerPub = app.publisher.toLowerCase();
+    const { idSlug } = app;
 
-      const phraseMatch = fields.reduce((best, field) => {
-        if (field.text === normalizedQuery) return Math.min(best, field.weight);
-        if (field.text.startsWith(`${normalizedQuery} `))
-          return Math.min(best, field.weight + (field.kind === "name" ? 3 : 2));
-        return best;
-      }, Number.POSITIVE_INFINITY);
+    if (idSlug === q || lowerName === q || lowerId === q) {
+      score = 100;
+    } else if (idSlug.startsWith(q) || lowerName.startsWith(q) || lowerId.startsWith(q)) {
+      score = 80;
+    } else if (lowerName.includes(q) || idSlug.includes(q)) {
+      score = 60;
+    } else if (lowerPub.includes(q)) {
+      score = 40;
+    } else {
+      score = 20; // Description or tags match
+    }
 
-      const termScore = fields.reduce((best, field) => {
-        const qualities = queryTerms.map((term) =>
-          field.tokens.includes(term)
-            ? 0
-            : field.tokens.some((token) => token.startsWith(term))
-              ? 1
-              : Infinity,
-        );
-        if (qualities.some((quality) => !Number.isFinite(quality))) return best;
-        const exactTerms = qualities.filter((quality) => quality === 0).length;
-        const rank =
-          field.weight +
-          (field.kind === "id"
-            ? 1 + (exactTerms === queryTerms.length ? 0 : 0.5)
-            : field.kind === "name"
-              ? 5 + (exactTerms === queryTerms.length ? 0 : 1)
-              : 20);
-        return Math.min(best, rank);
-      }, Number.POSITIVE_INFINITY);
+    matches.push({ app, score });
+  }
 
-      const splitFieldScore = queryTerms.reduce((total, term) => {
-        const bestMatch = fields.reduce((best, field) => {
-          const exact = field.tokens.includes(term);
-          const prefix = field.tokens.some((token) => token.startsWith(term));
-          if (!prefix) return best;
-          const rank = field.weight + (exact ? 0 : 1);
-          return Math.min(best, rank);
-        }, Number.POSITIVE_INFINITY);
-        return total + bestMatch;
-      }, 0);
-
-      return [{ app, rank: Math.min(phraseMatch, termScore, 40 + splitFieldScore) }];
-    })
-    .sort(
-      (left, right) =>
-        left.rank - right.rank ||
-        collator.compare(left.app.name, right.app.name) ||
-        collator.compare(left.app.id, right.app.id),
-    )
-    .slice(0, 50)
-    .map(({ app }) => app);
+  matches.sort((a, b) => b.score - a.score || collator.compare(a.app.name, b.app.name));
+  return matches.slice(0, 50).map((m) => m.app);
 }

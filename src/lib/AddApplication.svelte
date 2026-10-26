@@ -11,19 +11,9 @@
         mergeWingetIdIntoEntry,
         replaceApplicationEntry
     } from './appEntry.js';
-    import { getCatalogTags, searchCatalog } from './catalogSearch.js';
+    import { getCatalogTags, searchCatalog, type CatalogApplication } from './catalogSearch.js';
 
-    type CatalogApp = {
-        id: string;
-        name: string;
-        publisher: string;
-        description: string;
-        version: string;
-        homepage: string;
-        category: string;
-        tags: string[];
-    };
-
+    type CatalogApp = CatalogApplication;
     type NameConflict = { name: string; section: string; lineIndex: number };
     type PendingApplication = { id: string; name: string; url: string; tags: string[] };
 
@@ -36,6 +26,8 @@
 
     let catalog: CatalogApp[] = [];
     let query = '';
+    let debouncedQuery = '';
+    let debounceTimer: ReturnType<typeof setTimeout> | undefined;
     let selected: CatalogApp | null = null;
     let searchName = '';
     let searchUrl = '';
@@ -52,9 +44,28 @@
     let returnFocusTarget: HTMLElement | null = null;
 
     $: sections = getSectionNames(rawText);
-    $: normalizedQuery = query.trim();
+
+    function handleSearchInput(event: Event) {
+        const value = (event.target as HTMLInputElement).value;
+        query = value;
+        if (debounceTimer) clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            debouncedQuery = value;
+        }, 250);
+    }
+
+    $: normalizedQuery = debouncedQuery.trim();
     $: results = searchCatalog(catalog, normalizedQuery);
     $: tagOptions = selected ? getCatalogTags(selected.category, selected.tags) : [];
+
+    function formatIdSlug(id: string): string {
+        const dotIndex = id.indexOf('.');
+        const remainder = dotIndex !== -1 ? id.slice(dotIndex + 1) : id;
+        return remainder
+            .replace(/\./g, ' ')
+            .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+            .toLowerCase();
+    }
 
     onMount(() => {
         returnFocusTarget = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -93,15 +104,24 @@
                         const id = value('id');
                         const name = value('name');
                         if (!id || !name) return null;
+                        const publisher = value('publisher');
+                        const description = value('description');
+                        const tagsStr = value('tags');
+                        const tags = tagsStr.split(/\s+/).filter(Boolean);
+                        const idSlug = formatIdSlug(id);
+                        const searchableText = `${id} ${idSlug} ${name} ${publisher} ${description} ${tagsStr}`.toLowerCase();
+
                         return {
                             id,
                             name,
-                            publisher: value('publisher'),
-                            description: value('description'),
+                            publisher,
+                            description,
                             version: value('version'),
                             homepage: value('homepage'),
                             category: value('category'),
-                            tags: value('tags').split(/\s+/).filter(Boolean)
+                            tags,
+                            searchableText,
+                            idSlug
                         };
                     })
                     .filter((app): app is CatalogApp => app !== null);
@@ -231,7 +251,7 @@
         {:else}
             <label class="catalog-search">
                 Search by application, publisher, description, or Winget ID
-                <input bind:this={searchInput} bind:value={query} type="search" placeholder="e.g. Firefox or Mozilla.Firefox">
+                <input bind:this={searchInput} value={query} on:input={handleSearchInput} type="search" placeholder="e.g. Firefox or Mozilla.Firefox">
             </label>
 
             {#if isLoading}
