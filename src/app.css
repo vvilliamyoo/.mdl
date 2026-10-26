@@ -32,7 +32,11 @@
 .pm-bar-command,
 #editor-area,
 .hex-input,
-header h1 {
+header h1,
+.catalog-tags,
+.catalog-tag-option,
+.catalog-id code,
+.catalog-result-id {
   font-family: var(--mono-font, "Source Code Pro", "Courier New", monospace);
 }
 
@@ -484,13 +488,6 @@ footer li {
   font-size: 14px;
   letter-spacing: normal;
   margin: 6px 0 0;
-}
-
-.catalog-tags,
-.catalog-tag-option,
-.catalog-id code,
-.catalog-result-id {
-  font-family: var(--mono-font, "Source Code Pro", "Courier New", monospace);
 }
 
 .catalog-tag-option {
