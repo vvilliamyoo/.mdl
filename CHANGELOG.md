@@ -26,6 +26,23 @@ All notable changes to this project will be documented in this file.
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
+## [2.1.10] - 2026-10-25
+
+This release improves the search experience when adding an application using the catalog.
+
+### Added
+
+- Implemented a pre-computed index based on searchable text and ID slugs for the Winget catalog.
+
+### Changed
+
+- Improved search result relevance by including Winget ID slugs in the ranking system.
+- Debounced search input to avoid unnecessary and expensive re-evaluations on every keystroke.
+- Grouped monospace font family declarations in the stylesheet.
+- Bumped Vite+ to v1.4.0.
+- Updated and deduplicated dependencies.
+- Tweaked the default configuration file.
+
 ## [2.1.9] - 2026-10-22
 
 ### Fixed
