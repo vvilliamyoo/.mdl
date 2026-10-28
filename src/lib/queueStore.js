@@ -1,5 +1,6 @@
 import { writable, get } from "svelte/store";
 import { buildPmCommand, createPmQueues, toggleAllQueueItems, toggleQueueItem } from "./pmQueue.js";
+import { PACKAGE_MANAGERS } from "./packageManagers.js";
 /** @typedef {import('./types.js').PackageManagerType} PackageManagerType */
 /** @typedef {import('./types.js').PackageQueues} PackageQueues */
 /** @typedef {import('./types.js').AppSection} AppSection */
@@ -14,11 +15,12 @@ export function getQueueState() {
 
 /** @param {PackageQueues} queues @returns {PackageQueues} */
 function cloneQueues(queues) {
-  return {
-    winget: new Map(queues.winget),
-    choco: new Map(queues.choco),
-    apt: new Map(queues.apt),
-  };
+  /** @type {Partial<PackageQueues>} */
+  const cloned = {};
+  for (const pm of /** @type {PackageManagerType[]} */ (Object.keys(PACKAGE_MANAGERS))) {
+    cloned[pm] = new Map(queues[pm] || []);
+  }
+  return /** @type {PackageQueues} */ (cloned);
 }
 
 /**
@@ -51,8 +53,10 @@ export function getQueuedCommand(type) {
 /** @param {PackageManagerType} type */
 export function clearQueuedItems(type) {
   const queues = cloneQueues(getQueueState());
-  queues[type].clear();
-  queueStore.set(queues);
+  if (queues[type]) {
+    queues[type].clear();
+    queueStore.set(queues);
+  }
 }
 
 export function resetQueueState() {

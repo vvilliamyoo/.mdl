@@ -13,7 +13,7 @@ accent: #375534
 Application Entry Template (* indicates a required element or parameter)
 
 # <Section*>
-- [<name*>](<url*>) #<shortTag> #[<Long Tag>] #[<command_tag>:<application_id>]
+- [<name*>](url*) #<shortTag> #[<Long Tag>] #[<pm_id>:<application_id>]
 
 -->
 
@@ -30,7 +30,7 @@ Application Entry Template (* indicates a required element or parameter)
 
 # C
 
-- [Cherry Studio](https://cherryai.com/download) #[winget:kangfenmao:CherryStudio]
+<!-- - [Cherry Studio](https://cherryai.com/download) #[winget:kangfenmao.CherryStudio] -->
 
 # D
 
@@ -116,6 +116,7 @@ Application Entry Template (* indicates a required element or parameter)
 # S
 
 - [Spotify](https://apps.microsoft.com/detail/9ncbcszsjrsb?hl=en-US&gl=US) #[Microsoft Store] #[winget:Spotify.Spotify]
+- [Steam](https://store.steampowered.com/about/) #[winget:Valve.Steam]
 
 # T
 
@@ -134,7 +135,7 @@ Application Entry Template (* indicates a required element or parameter)
 
 - [War Thunder](https://warthunder.com) #[winget:GaijinNetwork.WarThunder]
 - [Windows Edge Light](https://github.com/shanselman/WindowsEdgeLight/releases) #portable
-- [`winget-tui`](https://github.com/shanselman/winget-tui/releases) #[winget:hanselman.WingetTUI]
+- [winget-tui](https://github.com/shanselman/winget-tui/releases) #[winget:hanselman.WingetTUI]
 - [WizTree](https://diskanalyzer.com/download) #portable #[winget:AntibodySoftware.WizTree]
 
 # X

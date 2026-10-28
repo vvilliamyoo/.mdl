@@ -15,13 +15,13 @@ function escapeHTML(value) {
  * Convert recognized tags to chip markup and escape all other config text.
  * @param {string} tagsText
  * @param {Record<string, string>} packageManagers
- * @returns {{ tags: string[], pmData: Array<{ type: string, id: string }>, chipHtml: string }}
+ * @returns {{ tags: string[], pmData: import('./types.js').PackageManagerItem[], chipHtml: string }}
  */
 export function buildChipContent(tagsText, packageManagers) {
   const tagRegex = /#(\w+)|#\[(.*?)\]/g;
   /** @type {string[]} */
   const tags = [];
-  /** @type {Array<{ type: string, id: string }>} */
+  /** @type {import('./types.js').PackageManagerItem[]} */
   const pmData = [];
   let lastTagEnd = 0;
   let chipHtml = "";
@@ -35,7 +35,7 @@ export function buildChipContent(tagsText, packageManagers) {
 
     const pmMatch = tag.match(/^([^:]+):(.+)$/);
     if (pmMatch && packageManagers[pmMatch[1]]) {
-      const type = pmMatch[1];
+      const type = /** @type {import('./types.js').PackageManagerType} */ (pmMatch[1]);
       const id = pmMatch[2].trim();
       pmData.push({ type, id });
       tags.push(type);
