@@ -1,4 +1,17 @@
-export type PackageManagerType = "winget" | "choco" | "apt";
+export type PackageManagerType =
+  | "brew"
+  | "brewcask"
+  | "nix"
+  | "apt"
+  | "dnf"
+  | "flatpak"
+  | "pacman"
+  | "snap"
+  | "zypper"
+  | "macports"
+  | "choco"
+  | "scoop"
+  | "winget";
 
 export interface QueueItem {
   id: string | number;

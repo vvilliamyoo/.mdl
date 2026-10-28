@@ -5,26 +5,34 @@ import { parseConfig } from "./config.js";
 import { updateThemeValue } from "./theme.js";
 import { getQueueItemsForManager } from "./pmQueue.js";
 import { createParseScheduler } from "./editorScheduler.js";
+import { PACKAGE_MANAGERS } from "./packageManagers.js";
+
 /** @typedef {import('./types.js').AppConfig} AppConfig */
 /** @typedef {import('./types.js').EditorSession} EditorSession */
 /** @typedef {import('./types.js').SaveResult} SaveResult */
 /** @typedef {import('./types.js').PackageManagerType} PackageManagerType */
 /** @typedef {import('./types.js').AppSection} AppSection */
+/** @typedef {import('./types.js').QueueItem} QueueItem */
 
 /** @type {import('svelte/store').Writable<AppConfig>} */
 export const appStore = writable(createEmptyConfig());
+
 /** @type {import('svelte/store').Writable<EditorSession>} */
 export const editorSessionStore = writable({
   draftText: "",
   initialText: "",
   isEditing: false,
 });
-/** @type {import('svelte/store').Readable<Record<PackageManagerType, import('./types.js').QueueItem[]>>} */
-export const pmItemsStore = derived(appStore, ($config) => ({
-  winget: getQueueItemsForManager($config.state, "winget"),
-  choco: getQueueItemsForManager($config.state, "choco"),
-  apt: getQueueItemsForManager($config.state, "apt"),
-}));
+
+/** @type {import('svelte/store').Readable<Record<PackageManagerType, QueueItem[]>>} */
+export const pmItemsStore = derived(appStore, ($config) => {
+  /** @type {Partial<Record<PackageManagerType, QueueItem[]>>} */
+  const queues = {};
+  for (const type of /** @type {PackageManagerType[]} */ (Object.keys(PACKAGE_MANAGERS))) {
+    queues[type] = getQueueItemsForManager($config.state, type);
+  }
+  return /** @type {Record<PackageManagerType, QueueItem[]>} */ (queues);
+});
 
 const draftParseScheduler = createParseScheduler((text) => {
   const next = updateConfigFromText(get(appStore), text);

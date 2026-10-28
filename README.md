@@ -15,6 +15,7 @@ A [Svelte](https://svelte.dev/) Single-Page Application (SPA) for maintaining a 
   - [Runtime](#runtime)
   - [Development and Deployment](#development-and-deployment)
     - [Package Manager Catalog (PMC)](#package-manager-catalog-pmc)
+  - [External Services and Assets](#external-services-and-assets)
 - [Configuration Guide](#configuration-guide)
   - [Structure & Syntax](#structure--syntax)
     - [YAML Frontmatter](#yaml-frontmatter)
@@ -26,15 +27,15 @@ A [Svelte](https://svelte.dev/) Single-Page Application (SPA) for maintaining a 
 
 ## Overview
 
-MarkdownLoad (`.mdl`) is a Svelte Single Page Application (SPA) built around a portable Markdown configuration file. The file holds the core application list with support for tags as categories and package manager install commands. Optional visual customization parameters can be set by adding YAML frontmatter to the file.
+MarkdownLoad (`.mdl`) is a Svelte Single Page Application (SPA) built around a portable Markdown configuration file. The file holds the core application list with support for optional tags as categories and package manager (PM) install commands. Optional visual customization parameters can be set by adding YAML frontmatter to the file.
 
 While positioned primarily for applications, the list is flexible. As stated in the configuration guide, an "application" entry only needs a name and a URL, which opens up many options (e.g., drivers, BIOSes, wallpapers, scripts). If it has a name and a URL, it can be added.
 
 The configuration file is complemented by informative and interactive features that minimize friction when using the list. `.mdl` also makes managing a configuration easy with built-in tools for editing, validating, importing, and exporting. Additional features act as feature-level harnesses that focus on efficient processing, data safety, and overhead minimization.
 
-Interactive controls include accessible names and state where applicable. Keyboard users can reach application actions and editor controls with Tab, operate buttons with Enter or Space, close open import/export menus with Escape, and dismiss the catalog dialog with Escape. Section links in the navigation move to their corresponding headings. This support is not a claim of complete WCAG conformance; assistive-technology behavior can vary by browser and platform.
-
 Svelte builds on these harnesses at the architectural level. Its reactive design, modularity, unidirectional data flow, and compile-time performance allow `.mdl` to be flexible and intuitive while being efficient, stable, and highly maintainable.
+
+While not necessarily fully WCAG-compliant, `.mdl` implements good-faith accessibility features. Interactive controls include accessible names and state where applicable. Keyboard users can reach application actions and editor controls with Tab, operate buttons with Enter or Space, close open import/export menus with Escape, and dismiss the catalog dialog with Escape. Section links in the navigation move to their corresponding headings.
 
 ## Features
 
@@ -49,7 +50,7 @@ Svelte builds on these harnesses at the architectural level. Its reactive design
 
 - **Navigation Bar:** Jump to a section using the always-visible navigation bar at the top of the page.
 - **Favicon-Based Application Icons:** Application icons are automatically fetched from the provided URL using the Google S2 Favicon API.
-- **Smart Tags:** Categorize applications using short tags, long tags, and command tags.
+- **Smart Tags:** Categorize applications using short tags, long tags, and package manager (PM) tags.
 - **CLI Batch Installation:** Queue applications tagged with supported package managers to instantly generate and copy batch installation commands.
 
 ### Configuration Management
@@ -91,7 +92,7 @@ Svelte builds on these harnesses at the architectural level. Its reactive design
 
 #### Package Manager Catalog (PMC)
 
-The PMC is generated from [Microsoft’s `winget-pkgs` manifests](https://github.com/microsoft/winget-pkgs/tree/master/manifests) and served as `public/data/catalog-full.json`. The catalog-generation script was adapted from [OpenWin](https://github.com/fsamod/openwin) and refactored for `.mdl`.
+The PMC currently only supports Winget. Its catalog is generated from [Microsoft’s `winget-pkgs` manifests](https://github.com/microsoft/winget-pkgs/tree/master/manifests) and served as `public/data/catalog-full.json`. The catalog generation script was adapted from [OpenWin](https://github.com/fsamod/openwin) and refactored for `.mdl`.
 
 The Winget catalog is automatically updated every Sunday at 06:00 UTC via a GitHub Action (`.github/workflows/build-winget-catalog.yml`) and can be manually triggered using `workflow_dispatch`.
 
@@ -132,13 +133,13 @@ YAML frontmatter must begin and end with `---`. The following key-value pairs ar
 
 HTML comments are allowed but not rendered. If comments appear before the YAML frontmatter, they will suppress the frontmatter. This is a known issue -- not necessarily a feature -- with the regex anchoring logic but has low triage priority. Comments may be used as a quasi-archival feature by commenting out application entries, for keeping an application entry template, for adding miscellaneous comments, etc. Comments should never hold sensitive information like passwords or API keys.
 
-#### Sections`*`
+#### Sections*
 
 Sections must start with `#`, followed by a space, and end with the desired section name. Section names are recommended to be one character long, but can be longer. Each section must have at least one application entry to be rendered. This allows for sections to be added for future use without unnecessarily taking up space on the application list.
 
-#### Application Entries`*`
+#### Application Entries*
 
-Applications are added to sections as a list item using standard Markdown syntax of `-`, `*`, or `+`. Each item must use the following syntax: `- [<name*>](<url*>) #<shortTag> #[<Long Tag>] #[<command_tag>:<application_id>]`.
+Applications are added to sections as a list item using standard Markdown syntax of `-`, `*`, or `+`. Each item must use the following syntax: `- [<name*>](<url*>) #<shortTag> #[<Long Tag>] #[<pm_id>:<application_id>]`.
 
 In the editor, choose **Add app** to search the Package Manager Catalog (PMC). The selected package's name, URL, and application ID are prefilled; catalog tags are individually selectable. Choose an existing section or create one. Entries and new sections are inserted alphabetically when the corresponding existing list is alphabetically ordered.
 
@@ -146,17 +147,41 @@ If an entry with the same name already exists, choose whether to keep it unchang
 
 #### Tags
 
-An application entry can have as many tags as desired, including command tags. All tags begin with `#`. Additional syntax depends on the type of tag; there are three types:
+An application entry can be labeled and categorized using tags. All tags begin with `#`. Additional syntax depends on the type of tag; there are three types:
 
-- `#<shortTag>`: Best for single-word tags.
-- `#[<Long Tag>]`: Best for multi-word tags, but compatible with one-word tags.
-- `#[<command_tag>:<application_id>]`: A special long tag that surfaces CLI installation commands for supported package managers (WinGet (`winget`), Chocolatey (`choco`), APT (`apt`)).
-  - **Note:** Application IDs may vary across package managers and must be verified.
+| Type                     | Format                        | Description/Use Case                                                                                                                           | Example: Google Chrome  |
+| :----------------------- | :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| **Short**                | `#<shortTag>`                 | Best for single-word tags.                                                                                                                     | #browser                |
+| **Long**                 | `#[<Long Tag>]`               | Best for multi-word tags, but compatible with one-word tags.                                                                                   | #[Chromium browser]     |
+| **Package manager (PM)** | `#[<pm_id>:<application_id>]` | A special long tag that enables PM installation commands and batch installation for an application for one or more supported package managers. | #[winget:Google.Chrome] |
+
+- **Note:** Application IDs can vary between package managers and must be verified.
+
+The following PMs are supported:
+
+| Platform       | Package Manager             | `pm_id`    | Command                      |
+| :------------- | :-------------------------- | :--------- | :--------------------------- |
+| Cross-platform | Homebrew                    | `brew`     | `brew install`               |
+| Cross-platform | Homebrew Cask               | `brewcask` | `brew install --cask`        |
+| Cross-platform | Nix                         | `nix`      | `nix profile install`        |
+| Linux          | Advanced package Tool (APT) | `apt`      | `sudo apt install -y`        |
+| Linux          | Dandified YUM (DNF)         | `dnf`      | `sudo dnf install -y`        |
+| Linux          | Flatpak                     | `flatpak`  | `flatpak install -y`         |
+| Linux          | pacman                      | `pacman`   | `sudo pacman -S --noconfirm` |
+| Linux          | Snap                        | `snap`     | `sudo snap install`          |
+| Linux          | Zypper                      | `zypper`   | `sudo zypper install -y`     |
+| macOS          | MacPorts                    | `port`     | `sudo port install`          |
+| Windows        | Chocolatey                  | `choco`    | `choco install -y`           |
+| Windows        | Scoop                       | `scoop`    | `scoop install`              |
+| Windows        | Winget                      | `winget`   | `winget install -e --id`     |
 
 ### Template
 
 ```markdown
+<!-- YAML -->
+
 ---
+
 title: <title>
 monoFont: <font family>
 sansFont: <font family>
@@ -166,17 +191,9 @@ text: #<3- or 6-digit HEX code>
 accent: #<3- or 6-digit HEX code>
 ---
 
-<!-- Make sure to edit this configuration file template before importing -->
-
-<!--
-Application entry Template (* indicates a required element or parameter)
-# <Section*>
-- [<name*>](<url*>) #<shortTag> #[<Long Tag>] #[<command_tag>:<application_id>]
--->
+<!-- Application Entries (* indicates a required element or parameter) -->
 
 # <Section>
 
-- [<name*>](url*) #<shortTag> #[<Long Tag>] #[<command_tag>:<application_id>]
-
-<!-- - [<name*>](<url*>) #<shortTag> #[<Long Tag>] #[<command_tag>:<application_id>] -->
+- [<name*>](url*) #<shortTag> #[<Long Tag>] #[<pm_id>:<application_id>]
 ```

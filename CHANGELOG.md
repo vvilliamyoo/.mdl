@@ -26,6 +26,16 @@ All notable changes to this project will be documented in this file.
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
+## [2.1.11] - 2026-10-26
+
+### Changed
+
+- Changed the Package Manager Catalog's default behavior for tag selection to keep all tags unselected.
+
+### Fixed
+
+- Updated and revised the readme and default configuration files.
+
 ## [2.1.10] - 2026-10-25
 
 This release improves the search experience when adding an application using the catalog.

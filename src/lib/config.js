@@ -1,8 +1,14 @@
 import { marked } from "marked";
+import { PACKAGE_MANAGERS } from "./packageManagers.js";
+import { buildChipContent } from "./chipContent.js";
+
+export { PACKAGE_MANAGERS };
+
 /** @typedef {import('./types.js').ThemeConfig} ThemeConfig */
 /** @typedef {import('./types.js').PackageManagerItem} AppPackageData */
 /** @typedef {import('./types.js').AppItem} AppEntry */
 /** @typedef {import('./types.js').AppSection} SectionState */
+/** @typedef {import('./types.js').PackageManagerType} PackageManagerType */
 
 /**
  * @typedef {object} DefaultConfig
@@ -35,21 +41,6 @@ export const DEFAULTS = /** @type {DefaultConfig} */ ({
   title: ".mdl",
   markdown: "",
 });
-
-/** @type {Record<string, string>} */
-export const PACKAGE_MANAGERS = {
-  winget: "winget install",
-  choco: "choco install -y",
-  apt: "sudo apt install -y",
-};
-
-/**
- * @param {string} type
- * @returns {type is import('./types.js').PackageManagerType}
- */
-function isPackageManagerType(type) {
-  return Object.hasOwn(PACKAGE_MANAGERS, type);
-}
 
 /**
  * @param {string} text
@@ -129,7 +120,6 @@ export function parseConfig(rawText) {
 export function buildAppState(markdownText) {
   /** @type {SectionState[]} */
   const state = [];
-  const tagRegex = /#(\w+)|#\[(.*?)\]/g;
   /** @type {any[]} */
   const tokens = marked.lexer(markdownText);
   /** @type {SectionState | null} */
@@ -176,31 +166,7 @@ export function buildAppState(markdownText) {
             } catch {}
           }
 
-          /** @type {string[]} */
-          let appTags = [];
-          /** @type {AppPackageData[]} */
-          let pmData = [];
-
-          let lastTagEnd = 0;
-          let chipHtml = "";
-          for (const match of tagsText.matchAll(tagRegex)) {
-            const offset = match.index ?? 0;
-            const matchedTag = match[0];
-            const tag = match[1] || match[2];
-            chipHtml += escapeHTML(tagsText.slice(lastTagEnd, offset));
-            lastTagEnd = offset + matchedTag.length;
-            const pmMatch = tag.match(/^([^:]+):(.+)$/);
-            if (pmMatch && isPackageManagerType(pmMatch[1])) {
-              const type = pmMatch[1];
-              const id = pmMatch[2].trim();
-              pmData.push({ type, id });
-              appTags.push(type);
-            } else {
-              appTags.push(tag);
-              chipHtml += `<span class="chip">${escapeHTML(tag)}</span>`;
-            }
-          }
-          chipHtml += escapeHTML(tagsText.slice(lastTagEnd));
+          const { tags: appTags, pmData, chipHtml } = buildChipContent(tagsText, PACKAGE_MANAGERS);
 
           currentSection.apps.push({
             name: appName,
@@ -299,5 +265,14 @@ export function isValidConfigStructure(rawText) {
  * @returns {boolean}
  */
 export function isValidHex(color) {
-  return typeof color === "string" && /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(color.trim());
+  if (typeof color !== "string") return false;
+  let cleaned = color.trim();
+  // Remove surrounding quotes if present
+  if (
+    (cleaned.startsWith('"') && cleaned.endsWith('"')) ||
+    (cleaned.startsWith("'") && cleaned.endsWith("'"))
+  ) {
+    cleaned = cleaned.slice(1, -1);
+  }
+  return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(cleaned);
 }
