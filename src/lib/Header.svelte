@@ -106,22 +106,28 @@
         
         <div id="admin-controls">
             {#if !isEditMode}
-                {#each Object.keys(globalPmItems) as pm}
-                    {#if globalPmItems[pm].length > 0}
-                        {@const isAllAdded = globalPmItems[pm].every(item => pmQueues[pm]?.has(item.id))}
-                        {@const feedback = allFeedback[pm]}
-                        
-                        <button type="button" class="quiet-button cmd-btn global-pm-btn {isAllAdded ? 'filled' : ''}" aria-pressed={isAllAdded} aria-label="{isAllAdded ? 'Remove all' : 'Add all'} {pm} applications to the install queue" on:click={() => handleToggleAll(pm)}>
-                            {#if feedback === "Added"}
-                                Added
-                            {:else if feedback === "Removed"}
-                                Removed
-                            {:else}
-                                All <span class="pm-command-text">{pm}</span>
-                            {/if}
-                        </button>
-                    {/if}
-                {/each}
+                {@const presentPms = Object.keys(globalPmItems).filter(pm => globalPmItems[pm].length > 0)}
+                {#if presentPms.length > 0}
+                    <div class="dropdown" on:focusout={handleDropdownFocusout}>
+                        <button type="button" on:click={(event) => toggleDropdown('all-pm', event)} class="dropbtn" aria-label="Batch package manager actions" aria-expanded={activeDropdown === 'all-pm'} aria-controls="all-pm-menu">All PM ▾</button>
+                        <div id="all-pm-menu" class="dropdown-content" class:show={activeDropdown === 'all-pm'} role="group" aria-label="Package manager batch actions" hidden={activeDropdown !== 'all-pm'}>
+                            {#each presentPms as pm}
+                                {@const isAllAdded = globalPmItems[pm].every(item => pmQueues[pm]?.has(item.id))}
+                                {@const feedback = allFeedback[pm]}
+                                
+                                <button type="button" class="cmd-btn global-pm-btn {isAllAdded ? 'filled' : ''}" style="white-space: nowrap;" aria-pressed={isAllAdded} aria-label="{isAllAdded ? 'Remove all' : 'Add all'} {pm} applications to the install queue" on:click={() => handleToggleAll(pm)}>
+                                    {#if feedback === "Added"}
+                                        Added
+                                    {:else if feedback === "Removed"}
+                                        Removed
+                                    {:else}
+                                        <span class="pm-command-text">{pm}</span>
+                                    {/if}
+                                </button>
+                            {/each}
+                        </div>
+                    </div>
+                {/if}
             {/if}
             
             {#if isEditMode}
