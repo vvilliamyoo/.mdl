@@ -87,6 +87,58 @@ void test("matches all query words across catalog fields, including package IDs"
   );
 });
 
+void test("matches query tokens regardless of order within a field", () => {
+  const result = searchCatalog(
+    [catalogApp("Mozilla.Firefox", "Web Browser"), catalogApp("Other.Browser", "Firefox Mozilla")],
+    "Firefox Mozilla",
+  );
+
+  assert.deepEqual(
+    result.map(({ id }) => id),
+    ["Other.Browser", "Mozilla.Firefox"],
+  );
+});
+
+void test("normalizes accented and non-Latin application names", () => {
+  const catalog = [catalogApp("Vendor.Cafe", "Café Tool"), catalogApp("Vendor.Tokyo", "東京")];
+
+  assert.deepEqual(
+    searchCatalog(catalog, "cafe").map(({ id }) => id),
+    ["Vendor.Cafe"],
+  );
+  assert.deepEqual(
+    searchCatalog(catalog, "東京").map(({ id }) => id),
+    ["Vendor.Tokyo"],
+  );
+});
+
+void test("matches a misspelled name token within a bounded edit distance", () => {
+  assert.deepEqual(
+    searchCatalog([catalogApp("Mozilla.Firefox", "Firefox")], "fierfox").map(({ id }) => id),
+    ["Mozilla.Firefox"],
+  );
+});
+
+void test("does not use edit distance for description-only matches", () => {
+  const app = catalogApp("Vendor.Browser", "Web Browser", {
+    description: "Firefox compatible",
+  });
+
+  assert.deepEqual(searchCatalog([app], "fierfox"), []);
+});
+
+void test("uses package ID as a deterministic secondary sort key", () => {
+  const catalog = [
+    catalogApp("Vendor.zulu", "Shared Tool"),
+    catalogApp("Vendor.Zulu", "Shared Tool"),
+  ];
+
+  assert.deepEqual(
+    searchCatalog(catalog, "Shared Tool").map(({ id }) => id),
+    ["Vendor.Zulu", "Vendor.zulu"],
+  );
+});
+
 void test("sorts by relevance before applying the 50-result limit", () => {
   const broadMatches = Array.from({ length: 55 }, (_, index) =>
     catalogApp(`A.Description${index}`, `Browser ${index}`, {
@@ -113,7 +165,7 @@ void test("ranks package-name matches above description matches", () => {
 
 void test("normalizes punctuation for multi-word names and package IDs", () => {
   const desktop = catalogApp("GitHub.GitHubDesktop", "GitHub Desktop");
-  const noise = catalogApp("GitHub.NotDesktop", "GitHub Utility");
+  const noise = catalogApp("Other.NotDesktop", "Other Utility");
 
   assert.deepEqual(
     searchCatalog([noise, desktop], "Github desktop").map(({ id }) => id),
