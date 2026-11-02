@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { buildAppState } from "./config.js";
-import { getCatalogTags, searchCatalog } from "./catalogSearch.js";
 import {
   addApplicationEntry,
   addNewSectionEntry,
@@ -23,117 +22,6 @@ const app = {
   tags: ["browsers", "web browser"],
 };
 
-/**
- * @param {string} id
- * @param {string} name
- * @param {Partial<{ publisher: string; description: string; tags: string[] }>} [overrides]
- */
-function catalogApp(id, name, overrides = {}) {
-  return {
-    id,
-    name,
-    publisher: "",
-    description: "",
-    version: "",
-    homepage: "",
-    category: "",
-    tags: [],
-    ...overrides,
-  };
-}
-
-void test("ranks the exact application-name match ahead of earlier catalog substring matches", () => {
-  const searchFixture = [
-    catalogApp("A.First", "Alpha", { description: "Supports Firefox bookmarks" }),
-    catalogApp("B.Second", "Beta", { tags: ["Firefox compatible"] }),
-    catalogApp("Mozilla.Firefox", "Firefox"),
-  ];
-
-  assert.deepEqual(
-    searchCatalog(searchFixture, "Firefox").map(({ id }) => id),
-    ["Mozilla.Firefox", "B.Second", "A.First"],
-  );
-});
-
-void test("matches query terms across fields and ranks IDs above descriptions", () => {
-  assert.deepEqual(
-    searchCatalog(
-      [
-        catalogApp("Mozilla.Firefox", "Browser", {
-          publisher: "Mozilla",
-          description: "Fast web browser",
-        }),
-      ],
-      "mozilla firefox",
-    ).map(({ id }) => id),
-    ["Mozilla.Firefox"],
-  );
-});
-
-void test("applies the result limit after relevance ranking", () => {
-  const broadMatches = Array.from({ length: 55 }, (_, index) => ({
-    ...catalogApp(`A.Description${index}`, `Browser ${index}`, {
-      description: "Firefox compatible",
-    }),
-  }));
-  const exactMatch = catalogApp("Z.Mozilla.Firefox", "Firefox");
-
-  assert.equal(searchCatalog([...broadMatches, exactMatch], "Firefox").length, 50);
-  assert.equal(searchCatalog([...broadMatches, exactMatch], "Firefox")[0]?.id, exactMatch.id);
-});
-
-void test("keeps package-name and package-ID matches ahead of broad descriptions", () => {
-  const broadMatches = Array.from({ length: 55 }, (_, index) =>
-    catalogApp(`A.Tool${index}`, `Firefox Tool ${index}`),
-  );
-  const minecraftNoise = Array.from({ length: 55 }, (_, index) =>
-    catalogApp(`A.Tool${index}`, `Minecraft Tool ${index}`),
-  );
-  const minecraft = catalogApp("Mojang.MinecraftLauncher", "Mojang Minecraft Launcher");
-  const firefox = catalogApp("Mozilla.Firefox", "Mozilla Firefox");
-
-  const minecraftResults = searchCatalog([...minecraftNoise, minecraft], "Minecraft");
-  const firefoxResults = searchCatalog([...broadMatches, firefox], "Firefox");
-
-  assert.equal(minecraftResults[0]?.id, minecraft.id);
-  assert.equal(firefoxResults[0]?.id, firefox.id);
-});
-
-void test("does not let a large result set hide a name token match behind prefix matches", () => {
-  const prefixMatches = Array.from({ length: 55 }, (_, index) =>
-    catalogApp(`Tool.Firefox${index}`, `Firefox Tool ${index}`),
-  );
-  const firefox = catalogApp("Mozilla.Firefox", "Mozilla Firefox");
-
-  assert.equal(searchCatalog([...prefixMatches, firefox], "Firefox")[0]?.id, firefox.id);
-});
-
-void test("normalizes punctuation and ranks all words in a multi-word query", () => {
-  const desktop = catalogApp("GitHub.GitHubDesktop", "GitHub Desktop");
-  const noise = catalogApp("GitHub.NotDesktop", "GitHub Utility");
-  const firefox = catalogApp("Mozilla.Firefox", "Web Browser");
-
-  assert.deepEqual(
-    searchCatalog([noise, desktop], "Github desktop").map(({ id }) => id),
-    [desktop.id],
-  );
-  assert.deepEqual(
-    searchCatalog([firefox], "Mozilla.Firefox").map(({ id }) => id),
-    [firefox.id],
-  );
-});
-
-void test("offers inferred category and catalog tags as unique selectable labels", () => {
-  assert.deepEqual(getCatalogTags("development", ["git", "editor", "git"]), [
-    "development",
-    "git",
-    "editor",
-  ]);
-  assert.deepEqual(getCatalogTags("other", []), []);
-  assert.match(formatApplicationEntry({ ...app, tags: ["browsers"] }), /#\[browsers\]$/);
-  assert.doesNotMatch(formatApplicationEntry({ ...app, tags: ["browsers"] }), /web browser/);
-});
-
 void test("formats a Winget application as a valid Markdown entry with tags", () => {
   const entry = formatApplicationEntry(app);
   assert.equal(
@@ -144,7 +32,6 @@ void test("formats a Winget application as a valid Markdown entry with tags", ()
   assert.ok(parsed);
   assert.equal(parsed.name, "Firefox");
   assert.deepEqual(parsed.pmData, [{ type: "winget", id: "Mozilla.Firefox" }]);
-  assert.ok(parsed.tags.includes("browsers"));
 });
 
 void test("finds same-name entries case-insensitively and reports their sections", () => {

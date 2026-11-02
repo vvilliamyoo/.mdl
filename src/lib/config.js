@@ -166,13 +166,12 @@ export function buildAppState(markdownText) {
             } catch {}
           }
 
-          const { tags: appTags, pmData, chipHtml } = buildChipContent(tagsText, PACKAGE_MANAGERS);
+          const { pmData, chipHtml } = buildChipContent(tagsText, PACKAGE_MANAGERS);
 
           currentSection.apps.push({
             name: appName,
             url: appUrl,
             domain,
-            tags: appTags,
             pmData,
             chipHtml,
           });
