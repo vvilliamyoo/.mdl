@@ -145,7 +145,7 @@
         searchUrl = validWebUrl(app.homepage) ? app.homepage : `https://winget.run/pkg/${encodeURIComponent(app.id)}`;
         sectionChoice = getSuggestedSection(rawText, app.name) ?? CREATE_SECTION;
         newSection = Array.from(app.name.trim())[0]?.toLocaleUpperCase() || 'Other';
-        selectedTags = getCatalogTags(app.category, app.tags);
+        selectedTags = [];
         errorMessage = hasWingetId(rawText, app.id) ? 'This Winget ID is already in your configuration.' : '';
     }
 
