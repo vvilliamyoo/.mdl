@@ -24,13 +24,26 @@ function catalogApp(id, name, overrides = {}) {
     .replace(/\./g, " ")
     .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
     .toLowerCase();
-  const searchableText =
-    `${app.id} ${idSlug} ${app.name} ${app.publisher} ${app.description} ${app.tags.join(" ")}`.toLowerCase();
-  return { ...app, idSlug, searchableText };
+  return { ...app, idSlug };
 }
 
 void test("returns no catalog results for blank queries", () => {
   assert.deepEqual(searchCatalog([catalogApp("Mozilla.Firefox", "Firefox")], "   "), []);
+});
+
+void test("normalizes catalog fields once and reuses them across searches", () => {
+  const app = catalogApp("Mozilla.Firefox", "Firefox");
+  let nameReads = 0;
+  Object.defineProperty(app, "name", {
+    get() {
+      nameReads += 1;
+      return "Firefox";
+    },
+  });
+
+  assert.equal(searchCatalog([app], "fire").length, 1);
+  assert.equal(searchCatalog([app], "fox").length, 1);
+  assert.equal(nameReads, 1);
 });
 
 void test("ranks exact name matches above earlier catalog substring matches", () => {
@@ -43,6 +56,17 @@ void test("ranks exact name matches above earlier catalog substring matches", ()
   assert.deepEqual(
     searchCatalog(searchFixture, "Firefox").map(({ id }) => id),
     ["Mozilla.Firefox", "B.Second", "A.First"],
+  );
+});
+
+void test("ranks exact package IDs above exact names and partial name matches", () => {
+  const exactId = catalogApp("Mozilla.Firefox", "Web Browser");
+  const exactName = catalogApp("Example.Firefox", "Mozilla Firefox");
+  const partialName = catalogApp("Other.Browser", "Mozilla Firefox ESR");
+
+  assert.deepEqual(
+    searchCatalog([partialName, exactName, exactId], "Mozilla.Firefox").map(({ id }) => id),
+    ["Mozilla.Firefox", "Example.Firefox", "Other.Browser"],
   );
 });
 

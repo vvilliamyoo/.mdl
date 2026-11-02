@@ -8,7 +8,6 @@
  * @property {string} homepage
  * @property {string} category
  * @property {string[]} tags
- * @property {string} searchableText
  * @property {string} idSlug
  */
 
@@ -34,6 +33,47 @@ function normalizeSearchText(value) {
 }
 
 /**
+ * @typedef {object} NormalizedSearchFields
+ * @property {string} name
+ * @property {string} id
+ * @property {string} idSlug
+ * @property {string} publisher
+ * @property {string[]} tags
+ * @property {string[]} searchableFields
+ */
+
+/** @type {WeakMap<CatalogApplication, NormalizedSearchFields>} */
+const normalizedFieldsCache = new WeakMap();
+const collator = new Intl.Collator(undefined, { sensitivity: "base", numeric: true });
+
+/**
+ * Catalog records are built once when loaded and remain unchanged during search.
+ * @param {CatalogApplication} app
+ * @returns {NormalizedSearchFields}
+ */
+function getNormalizedSearchFields(app) {
+  const cached = normalizedFieldsCache.get(app);
+  if (cached) return cached;
+
+  const name = normalizeSearchText(app.name);
+  const id = normalizeSearchText(app.id);
+  const idSlug = normalizeSearchText(app.idSlug);
+  const publisher = normalizeSearchText(app.publisher);
+  const tags = app.tags.map(normalizeSearchText);
+  const searchableFields = [
+    id,
+    idSlug,
+    name,
+    publisher,
+    normalizeSearchText(app.description),
+    ...tags,
+  ];
+  const fields = { name, id, idSlug, publisher, tags, searchableFields };
+  normalizedFieldsCache.set(app, fields);
+  return fields;
+}
+
+/**
  * @param {CatalogApplication[]} catalog
  * @param {string} query
  * @returns {CatalogApplication[]}
@@ -46,27 +86,18 @@ export function searchCatalog(catalog, query) {
   if (!normalizedQuery) return [];
 
   const matches = [];
-  const collator = new Intl.Collator(undefined, { sensitivity: "base", numeric: true });
 
   for (const app of catalog) {
-    const name = normalizeSearchText(app.name);
-    const id = normalizeSearchText(app.id);
-    const idSlug = normalizeSearchText(app.idSlug);
-    const publisher = normalizeSearchText(app.publisher);
-    const tags = app.tags.map(normalizeSearchText);
-    const searchableFields = [
-      id,
-      idSlug,
-      name,
-      publisher,
-      normalizeSearchText(app.description),
-      ...tags,
-    ];
+    const { name, id, idSlug, publisher, tags, searchableFields } = getNormalizedSearchFields(app);
     if (!searchableFields.some((field) => field.includes(normalizedQuery))) continue;
 
     let score;
-    if (idSlug === normalizedQuery || name === normalizedQuery || id === normalizedQuery) {
+    if (id === normalizedQuery) {
+      score = 110;
+    } else if (name === normalizedQuery) {
       score = 100;
+    } else if (idSlug === normalizedQuery) {
+      score = 90;
     } else if (
       idSlug.startsWith(normalizedQuery) ||
       name.startsWith(normalizedQuery) ||

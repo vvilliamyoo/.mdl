@@ -109,7 +109,6 @@
                         const tagsStr = value('tags');
                         const tags = tagsStr.split(/\s+/).filter(Boolean);
                         const idSlug = formatIdSlug(id);
-                        const searchableText = `${id} ${idSlug} ${name} ${publisher} ${description} ${tagsStr}`.toLowerCase();
 
                         return {
                             id,
@@ -120,7 +119,6 @@
                             homepage: value('homepage'),
                             category: value('category'),
                             tags,
-                            searchableText,
                             idSlug
                         };
                     })
