@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { afterEach, test } from "node:test";
 import { get } from "svelte/store";
+import { PACKAGE_MANAGERS } from "./packageManagers.js";
+import { createPmQueues } from "./pmQueue.js";
 import {
   appStore,
   beginEditing,
@@ -8,6 +10,7 @@ import {
   closeEditor,
   editorSessionStore,
   flushEditorDraftParse,
+  pmItemsStore,
   saveEditorDraft,
   setEditorDraft,
   updateDraftText,
@@ -52,6 +55,13 @@ afterEach(() => {
   } else {
     globalThis.localStorage = originalLocalStorage;
   }
+});
+
+void test("package manager state is initialized from the support registry", () => {
+  const packageManagerTypes = Object.keys(PACKAGE_MANAGERS);
+
+  assert.deepEqual(Object.keys(createPmQueues()), packageManagerTypes);
+  assert.deepEqual(Object.keys(get(pmItemsStore)), packageManagerTypes);
 });
 
 void test("editor session tracks draft changes and blocks closing unsaved edits", () => {

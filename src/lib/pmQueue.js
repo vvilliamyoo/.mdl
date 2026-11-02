@@ -1,4 +1,4 @@
-import { PACKAGE_MANAGERS } from "./config.js";
+import { PACKAGE_MANAGERS } from "./packageManagers.js";
 /** @typedef {import('./types.js').PackageManagerType} PackageManagerType */
 /** @typedef {import('./types.js').QueueItem} QueueItem */
 /** @typedef {import('./types.js').PackageQueues} PackageQueues */
@@ -8,11 +8,12 @@ import { PACKAGE_MANAGERS } from "./config.js";
  * @returns {PackageQueues}
  */
 export function createPmQueues() {
-  return {
-    winget: new Map(),
-    choco: new Map(),
-    apt: new Map(),
-  };
+  /** @type {Partial<PackageQueues>} */
+  const queues = {};
+  for (const pm of /** @type {PackageManagerType[]} */ (Object.keys(PACKAGE_MANAGERS))) {
+    queues[pm] = new Map();
+  }
+  return /** @type {PackageQueues} */ (queues);
 }
 
 /**
@@ -59,6 +60,9 @@ export function isQueueItemAdded(pmQueues, pmType, id) {
  */
 export function toggleQueueItem(pmQueues, pmType, id, domain, appName) {
   const queue = pmQueues[pmType];
+  if (!queue) {
+    return { queues: pmQueues, action: "Removed", key: `${pmType}-${id}` };
+  }
   const key = `${pmType}-${id}`;
   const wasAdded = queue.has(id);
 
@@ -84,6 +88,9 @@ export function toggleQueueItem(pmQueues, pmType, id, domain, appName) {
 export function toggleAllQueueItems(pmQueues, state, pmType) {
   const allItems = getQueueItemsForManager(state, pmType);
   const queue = pmQueues[pmType];
+  if (!queue) {
+    return { queues: pmQueues, areAllAdded: false };
+  }
   const areAllAdded = allItems.length > 0 && allItems.every((item) => queue.has(item.id));
 
   allItems.forEach((item) => {
@@ -106,5 +113,7 @@ export function toggleAllQueueItems(pmQueues, state, pmType) {
  * @returns {string}
  */
 export function buildPmCommand(pmQueues, pmType) {
-  return `${PACKAGE_MANAGERS[pmType]} ${Array.from(pmQueues[pmType].keys()).join(" ")}`;
+  const queue = pmQueues[pmType];
+  const ids = queue ? Array.from(queue.keys()).join(" ") : "";
+  return `${PACKAGE_MANAGERS[pmType]} ${ids}`.trim();
 }

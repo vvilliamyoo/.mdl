@@ -6,11 +6,7 @@
     export let title = '.mdl';
     export let sections: AppSection[] = [];
     export let isEditMode = false;
-    export let globalPmItems: Record<PackageManagerType, Array<{ id: string | number }>> = {
-        winget: [],
-        choco: [],
-        apt: []
-    };
+    export let globalPmItems: Partial<Record<PackageManagerType, Array<{ id: string | number }>>> = {};
     export let pmQueues: PackageQueues;
 
     export let ontoggleEdit: () => void = () => {};
