@@ -6,9 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Added support for Chocolatey and APT in the Package Manager Catalog (PMC).
 - Implemented Markdown syntax highlighting and line numbers in the editor for improved configuration file editing experience.
-- Added support for multiple package managers, including `scoop`, `brew`, and `pip`, to broaden application compatibility.
 - Implemented an application metadata panel to display detailed information (description, version, tags) for each application.
 - Added functionality for version tracking and a changelog feature to monitor configuration file changes.
 - Integrated a dark/light theme toggle at runtime, supporting predefined presets and system preference detection.
@@ -16,15 +14,30 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Refactored the PMC to be more extensible for future PM integrations.
 - Refactored the application list management to support manual sorting and automated alphabetical sorting options.
-- Enhanced the package manager registration system to be extensible for new package managers.
-- Introduced new state management for application metadata and theme settings.
 - Reworked the application list rendering to support virtual scrolling for performance with large lists of applications.
 
 ### Fixed
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
+
+## [2.1.12] - 2026-11-02
+
+### Added
+
+- Added an “All PM” dropdown to batch-queue applications by supported package manager.
+- Added tests for package manager queues, catalog search, configuration, storage, themes, browser APIs, and catalog generation.
+
+### Changed
+
+- Centralized package manager definitions and derived manager types from the registry; removed hardcoded manager defaults.
+- Cached normalized catalog fields between searches; added order-independent token matching with phrase bonuses, Unicode-aware normalization, bounded edit-distance name matching, deterministic package-ID tie-breaking, and `exact package-ID > exact name > ID-slug` ranking.
+
+### Fixed
+
+- Prevented inherited object properties from being interpreted as package-manager tags.
+- Removed unused package manager tag data from the app model while preserving PM command actions.
+- Preserved the Package Manager Catalog's default tag selection behavior that was accidentally undone.
 
 ## [2.1.11] - 2026-10-26
 
