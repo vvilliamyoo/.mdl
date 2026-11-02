@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { normalizeShareHash } from "./configIO.js";
+import { importShareLink, normalizeShareHash } from "./configIO.js";
 
 void test("normalizes share URLs and data hashes", () => {
   const encoded = "abc-123_";
@@ -12,4 +12,8 @@ void test("normalizes share URLs and data hashes", () => {
 
 void test("normalizes an empty input to an empty hash", () => {
   assert.equal(normalizeShareHash("   "), "");
+});
+
+void test("rejects empty share input", async () => {
+  await assert.rejects(importShareLink("  "), /Share link or hash is empty/);
 });

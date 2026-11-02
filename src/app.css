@@ -144,7 +144,7 @@ button,
   flex: 1 1 auto;
   font-size: 16px;
   letter-spacing: normal;
-  padding: 8px;
+  padding: 8px 10px;
   text-align: center;
   transition: 0.3s ease;
 }
@@ -353,11 +353,13 @@ footer li {
   border-radius: var(--small-radius);
   display: none;
   flex-direction: column;
+  gap: 10px;
   left: 0;
   margin-top: 8px;
   padding: 5px;
   position: absolute;
   top: 100%;
+  white-space: nowrap;
   z-index: 2000;
 }
 
@@ -366,17 +368,15 @@ footer li {
 }
 
 .dropdown-content button {
-  background: transparent;
-  border: none;
-  border-radius: var(--small-radius);
-  margin: 0;
-  padding: 10px 15px;
+  background-color: var(--dark-text-color);
+  border: 1px solid var(--light-text-color);
   text-align: left;
   width: 100%;
 }
 
 .dropdown-content button:hover {
   background-color: var(--dark-accent-color);
+  border: 1px solid var(--light-accent-color);
 }
 
 #editor-container {
