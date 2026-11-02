@@ -25,39 +25,62 @@ export function getCatalogTags(category, tags) {
   ];
 }
 
+/** @param {string} value */
+function normalizeSearchText(value) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
 /**
  * @param {CatalogApplication[]} catalog
  * @param {string} query
  * @returns {CatalogApplication[]}
  */
 export function searchCatalog(catalog, query) {
-  const normalizedQuery = query.trim().toLowerCase();
+  const normalizedQuery = query
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
   if (!normalizedQuery) return [];
 
   const matches = [];
-  const q = normalizedQuery;
   const collator = new Intl.Collator(undefined, { sensitivity: "base", numeric: true });
 
-  for (let i = 0; i < catalog.length; i++) {
-    const app = catalog[i];
-    if (!app.searchableText.includes(q)) continue;
+  for (const app of catalog) {
+    const name = normalizeSearchText(app.name);
+    const id = normalizeSearchText(app.id);
+    const idSlug = normalizeSearchText(app.idSlug);
+    const publisher = normalizeSearchText(app.publisher);
+    const tags = app.tags.map(normalizeSearchText);
+    const searchableFields = [
+      id,
+      idSlug,
+      name,
+      publisher,
+      normalizeSearchText(app.description),
+      ...tags,
+    ];
+    if (!searchableFields.some((field) => field.includes(normalizedQuery))) continue;
 
-    let score = 0;
-    const lowerName = app.name.toLowerCase();
-    const lowerId = app.id.toLowerCase();
-    const lowerPub = app.publisher.toLowerCase();
-    const { idSlug } = app;
-
-    if (idSlug === q || lowerName === q || lowerId === q) {
+    let score;
+    if (idSlug === normalizedQuery || name === normalizedQuery || id === normalizedQuery) {
       score = 100;
-    } else if (idSlug.startsWith(q) || lowerName.startsWith(q) || lowerId.startsWith(q)) {
+    } else if (
+      idSlug.startsWith(normalizedQuery) ||
+      name.startsWith(normalizedQuery) ||
+      id.startsWith(normalizedQuery)
+    ) {
       score = 80;
-    } else if (lowerName.includes(q) || idSlug.includes(q)) {
+    } else if (idSlug.includes(normalizedQuery) || name.includes(normalizedQuery)) {
       score = 60;
-    } else if (lowerPub.includes(q)) {
+    } else if (publisher.includes(normalizedQuery)) {
       score = 40;
+    } else if (tags.some((tag) => tag.includes(normalizedQuery))) {
+      score = 30;
     } else {
-      score = 20; // Description or tags match
+      score = 20;
     }
 
     matches.push({ app, score });
