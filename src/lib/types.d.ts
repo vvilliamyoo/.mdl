@@ -1,17 +1,4 @@
-export type PackageManagerType =
-  | "brew"
-  | "brewcask"
-  | "nix"
-  | "apt"
-  | "dnf"
-  | "flatpak"
-  | "pacman"
-  | "snap"
-  | "zypper"
-  | "macports"
-  | "choco"
-  | "scoop"
-  | "winget";
+export type PackageManagerType = keyof typeof import("./packageManagers.js").PACKAGE_MANAGERS;
 
 export interface QueueItem {
   id: string | number;
@@ -39,7 +26,6 @@ export interface AppItem {
   name: string;
   url: string;
   domain: string;
-  tags: string[];
   pmData: PackageManagerItem[];
   chipHtml: string;
 }

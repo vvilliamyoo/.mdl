@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount, onDestroy, tick } from 'svelte';
+    import type { PackageManagerType } from './types.js';
 
     type Section = { letter: string };
     type PmItem = { id: string | number };
@@ -8,10 +9,10 @@
     export let title: string = '.mdl';
     export let sections: Section[] = [];
     export let isEditMode: boolean = false;
-    export let globalPmItems: Record<string, PmItem[]> = {};
+    export let globalPmItems: Partial<Record<PackageManagerType, PmItem[]>> = {};
     export let pmQueues: Record<string, PackageQueue> = {};
 
-    export let ontoggleAllPm: (pm: string) => void = () => {};
+    export let ontoggleAllPm: (pm: PackageManagerType) => void = () => {};
     export let ontoggleEdit: () => void = () => {};
     export let ontriggerFileInput: () => void = () => {};
     export let onimportLink: () => void = () => {};
@@ -67,8 +68,9 @@
     let allFeedback: Record<string, string | null> = {};
     let allTimeouts: Record<string, ReturnType<typeof setTimeout>> = {};
 
-    function handleToggleAll(pm: string) {
-        const isAllAdded = globalPmItems[pm].every(item => pmQueues[pm]?.has(item.id));
+    function handleToggleAll(pm: PackageManagerType) {
+        const pmItems = globalPmItems[pm] ?? [];
+        const isAllAdded = pmItems.length > 0 && pmItems.every(item => pmQueues[pm]?.has(item.id));
         
         allFeedback[pm] = isAllAdded ? "Removed" : "Added";
         allFeedback = { ...allFeedback };
@@ -106,13 +108,14 @@
         
         <div id="admin-controls">
             {#if !isEditMode}
-                {@const presentPms = Object.keys(globalPmItems).filter(pm => globalPmItems[pm].length > 0)}
+                {@const presentPms = Object.keys(globalPmItems).filter((pm): pm is PackageManagerType => (globalPmItems[pm as PackageManagerType]?.length ?? 0) > 0)}
                 {#if presentPms.length > 0}
                     <div class="dropdown" on:focusout={handleDropdownFocusout}>
                         <button type="button" on:click={(event) => toggleDropdown('all-pm', event)} class="dropbtn" aria-label="Batch package manager actions" aria-expanded={activeDropdown === 'all-pm'} aria-controls="all-pm-menu">All PM ▾</button>
                         <div id="all-pm-menu" class="dropdown-content" class:show={activeDropdown === 'all-pm'} role="group" aria-label="Package manager batch actions" hidden={activeDropdown !== 'all-pm'}>
                             {#each presentPms as pm}
-                                {@const isAllAdded = globalPmItems[pm].every(item => pmQueues[pm]?.has(item.id))}
+                                {@const pmItems = globalPmItems[pm] ?? []}
+                                {@const isAllAdded = pmItems.every(item => pmQueues[pm]?.has(item.id))}
                                 {@const feedback = allFeedback[pm]}
                                 
                                 <button type="button" class="cmd-btn global-pm-btn {isAllAdded ? 'filled' : ''}" style="white-space: nowrap;" aria-pressed={isAllAdded} aria-label="{isAllAdded ? 'Remove all' : 'Add all'} {pm} applications to the install queue" on:click={() => handleToggleAll(pm)}>
