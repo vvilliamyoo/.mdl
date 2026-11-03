@@ -8,9 +8,8 @@ All notable changes to this project will be documented in this file.
 
 - Implemented Markdown syntax highlighting and line numbers in the editor for improved configuration file editing experience.
 - Implemented an application metadata panel to display detailed information (description, version, tags) for each application.
-- Added functionality for version tracking and a changelog feature to monitor configuration file changes.
+- Added browser-local configuration history with up to five saved versions, text diffs, draft restoration, file/link export, and version rename/delete controls.
 - Integrated a dark/light theme toggle at runtime, supporting predefined presets and system preference detection.
-- Implemented a service worker and PWA manifest to enable offline support and improved caching.
 
 ### Changed
 
