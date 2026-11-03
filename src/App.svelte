@@ -4,8 +4,14 @@
     import AddApplication from './lib/AddApplication.svelte';
     import AppList from './lib/AppList.svelte';
     import PageShell from './lib/PageShell.svelte';
+    import ConfigHistory from './lib/ConfigHistory.svelte';
     import { applyTheme as applyDocumentTheme } from './lib/theme.js';
     import { createEmptyConfig } from './lib/appState.js';
+    import {
+        deleteConfigVersion,
+        getConfigHistory,
+        renameConfigVersion
+    } from './lib/configHistory.js';
     import { clearAllFeedback, showFeedback } from './lib/uiFeedback.js';
     import { copyText, showAlert, showConfirm } from './lib/browserApi.js';
     import { createConfigActions } from './lib/configActions.js';
@@ -29,7 +35,7 @@
         clearQueuedItems
     } from './lib/queueStore.js';
 
-    import type { AppConfig, PackageManagerType, PackageQueues } from './lib/types.js';
+    import type { AppConfig, ConfigVersion, PackageManagerType, PackageQueues } from './lib/types.js';
     type PmType = PackageManagerType;
 
     let appConfig: AppConfig = createEmptyConfig();
@@ -37,6 +43,8 @@
     let initialRawText = '';
     let isEditMode = false;
     let isAddApplicationOpen = false;
+    let isHistoryOpen = false;
+    let configVersions: ConfigVersion[] = [];
 
     const unsubscribeConfig = appStore.subscribe((value) => {
         appConfig = value;
@@ -58,7 +66,10 @@
         setDraft: handleTextChange,
         notify: showAlert,
         confirmReset: showConfirm,
-        reload: () => location.reload(),
+        reload: () => {
+            window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+            window.location.reload();
+        },
         getLocation: () => `${window.location.origin}${window.location.pathname}`
     });
 
@@ -109,7 +120,12 @@
         }
         appConfig = result.config;
         applyTheme(result.config.theme);
-        showAlert("All changes saved to browser memory");
+        if (result.historyError) {
+            console.error("Configuration saved, but history could not be updated:", result.historyError);
+            showAlert("Changes saved, but configuration history could not be updated.");
+        } else {
+            showAlert("All changes saved to browser memory");
+        }
     }
 
     function handleAddApplication(text: string) {
@@ -153,6 +169,61 @@
         configActions.reset();
     }
 
+    function handleShowHistory() {
+        try {
+            configVersions = getConfigHistory();
+            isHistoryOpen = true;
+        } catch (error) {
+            console.error("Failed to load configuration history", error);
+            showAlert("Unable to load configuration history.");
+        }
+    }
+
+    function handleRestoreVersion(rawText: string) {
+        setEditorDraft(rawText);
+        isHistoryOpen = false;
+        showAlert("Version restored to the editor draft. Save to apply it.");
+    }
+
+    function handleExportVersionToFile(rawText: string) {
+        configActions.downloadDraft(rawText);
+    }
+
+    async function handleExportVersionAsLink(rawText: string) {
+        await configActions.generateShareLink(rawText);
+    }
+
+    function handleRenameVersion(index: number, name: string): boolean {
+        if (!configVersions[index]) return false;
+        try {
+            configVersions = renameConfigVersion(index, name);
+            showAlert("Configuration version renamed.");
+            return true;
+        } catch (error) {
+            console.error("Failed to rename configuration version", error);
+            showAlert(error instanceof Error ? error.message : "Unable to rename configuration version.");
+            return false;
+        }
+    }
+
+    function handleDeleteVersion(index: number): boolean {
+        const version = configVersions[index];
+        if (!version) return false;
+
+        const label = version.name || `Version ${configVersions.length - index}`;
+        if (!showConfirm(`Delete "${label}" from configuration history?`)) return false;
+
+        try {
+            configVersions = deleteConfigVersion(index);
+            showAlert("Configuration version deleted.");
+            return true;
+        } catch (error) {
+            console.error("Failed to delete configuration version", error);
+            showAlert(error instanceof Error ? error.message : "Unable to delete configuration version.");
+            return false;
+        }
+    }
+
     async function handleFileUpload(e: Event) {
         const target = e.currentTarget as HTMLInputElement | null;
         const file = target?.files?.[0];
@@ -192,6 +263,7 @@
     ondownloadConfig={handleDownloadConfig}
     ongenerateShareLink={handleGenerateShareLink}
     onaddApplication={() => { isAddApplicationOpen = true; }}
+    onshowHistory={handleShowHistory}
     onreset={handleReset}
     oncopyPmCommand={handleCopyCommand}
     onclearPmQueue={handleClearQueue}
@@ -218,6 +290,18 @@
     />
 {:else}
     <AppList sections={appConfig.state || []} {pmQueues} ontogglePm={togglePm} />
+{/if}
+
+{#if isHistoryOpen}
+    <ConfigHistory
+        versions={configVersions}
+        onrestore={handleRestoreVersion}
+        onexportfile={handleExportVersionToFile}
+        onexportlink={handleExportVersionAsLink}
+        onrename={handleRenameVersion}
+        ondelete={handleDeleteVersion}
+        onclose={() => isHistoryOpen = false}
+    />
 {/if}
 
 {#if isEditMode && isAddApplicationOpen}

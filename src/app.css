@@ -2,6 +2,9 @@
   /* Blur */
   --blur: blur(16px);
 
+  /* Shadow */
+  --shadow: 0 4px 12px rgb(0 0 0 / 30%);
+
   /* Colors */
   --dark-accent-color: rgb(from var(--accent-color) r g b / 30%);
   --light-accent-color: rgb(from var(--accent-color) r g b / 50%);
@@ -139,6 +142,7 @@ button,
   background-color: var(--dark-accent-color);
   border: 1px solid var(--light-accent-color);
   border-radius: var(--small-radius);
+  box-shadow: var(--shadow);
   color: var(--button-text-color);
   cursor: pointer;
   flex: 1 1 auto;
@@ -294,8 +298,9 @@ footer li {
 }
 
 .app-item-details .chip {
-  max-width: 100%;
+  box-shadow: var(--shadow);
   overflow-wrap: anywhere;
+  max-width: 100%;
 }
 
 .favicon-img {
@@ -467,6 +472,275 @@ footer li {
 
 .catalog-dialog::backdrop {
   background: transparent;
+}
+
+.history-dialog {
+  max-width: 900px;
+}
+
+.history-dialog::backdrop {
+  background: rgb(0 0 0 / 65%);
+}
+
+.history-content {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(180px, 0.35fr) minmax(0, 1fr);
+  min-height: 0;
+}
+
+.history-versions {
+  list-style: none;
+  margin: 0;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.history-versions li {
+  padding: 5px 0;
+  margin: 0;
+  transition: 0.3s ease;
+}
+
+.history-version-entry {
+  background: var(--dark-text-color);
+  border: 1px solid var(--light-text-color);
+  border-radius: var(--small-radius);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  position: relative;
+}
+
+button.history-version-select {
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
+  height: 100%;
+  inset: 0;
+  padding: 0;
+  position: absolute;
+  width: 100%;
+  z-index: 0;
+}
+
+button.history-version-select:hover,
+button.history-version-select:active {
+  background: transparent;
+  border: 0;
+  transform: none;
+}
+
+.history-version-select:focus-visible {
+  outline-offset: -2px;
+}
+
+.history-version-heading {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.history-version-title-group {
+  align-items: center;
+  display: flex;
+  flex: 0 1 auto;
+  gap: 2px;
+  min-width: 0;
+}
+
+.history-version-title-group strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.catalog-dialog.history-dialog input.history-rename-input {
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: bolder;
+  max-width: 100%;
+  min-width: 1ch;
+  outline: none;
+  padding: 2px 0;
+  pointer-events: auto;
+  width: auto;
+}
+
+.history-icon-button {
+  pointer-events: auto;
+}
+
+.history-version-time {
+  display: block;
+  font-size: 12px;
+  opacity: 0.75;
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.history-version-edit-actions {
+  display: grid;
+  gap: 4px;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  width: 100%;
+}
+
+.history-version-edit-actions button {
+  font-size: 12px;
+  padding: 4px 8px;
+  width: 100%;
+}
+
+.history-version-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 4px;
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+.history-export {
+  display: block;
+  min-width: 0;
+  position: relative;
+  width: 100%;
+}
+
+.history-version-actions > button,
+.history-export > button,
+.history-version-edit-actions button {
+  width: 100%;
+}
+
+.history-export-menu {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: max-content;
+  position: absolute;
+  top: calc(100% + 4px);
+  z-index: 2;
+}
+
+.history-version-actions:has(.history-export-menu) {
+  z-index: 10;
+}
+
+.history-export-menu button {
+  flex: 0 1 auto;
+  font-size: 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.history-version-actions > button,
+.history-export > button,
+.history-version-edit-actions button {
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.history-icon-button {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 30px;
+  height: 30px;
+  justify-content: center;
+  padding: 5px;
+  width: 30px;
+  background: transparent;
+  border: 0;
+}
+
+button.history-rename-button,
+button.history-delete-button {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+button.history-delete-button {
+  color: #ff9b9b;
+}
+
+.history-icon-button svg {
+  fill: none;
+  height: 16px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 0.75;
+  width: 16px;
+}
+
+.history-version-heading > .history-delete-button {
+  margin-left: auto;
+}
+
+.history-version-entry:has(.history-version-select[aria-pressed="true"]),
+.history-version-entry:has(.history-version-select:hover) {
+  background: var(--dark-accent-color);
+  border-color: var(--light-accent-color);
+  transition: 0.3s ease;
+}
+
+.history-version-entry:has(.history-version-select[aria-active="true"]),
+.history-version-entry:has(.history-version-select:active) {
+  transform: scale(0.95);
+}
+
+.history-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.history-preview h3,
+.history-empty {
+  font-size: 16px;
+  letter-spacing: normal;
+  margin: 0;
+}
+
+.history-diff {
+  background: var(--background-color);
+  border: none;
+  border-radius: var(--small-radius);
+  font-size: 12px;
+  line-height: 1.5;
+  max-height: 55vh;
+  overflow: auto;
+  padding: 12px;
+  resize: none;
+  white-space: pre-wrap;
+}
+
+.history-diff span {
+  display: block;
+}
+
+.history-diff .added {
+  background: rgb(40 120 60 / 20%);
+  color: #a7e6b3;
+}
+
+.history-diff .removed {
+  background: rgb(160 50 50 / 20%);
+  color: #ffaaaa;
 }
 
 .catalog-heading {
@@ -693,6 +967,14 @@ footer li {
   .app-actions {
     justify-content: flex-end;
   }
+
+  .history-content {
+    grid-template-columns: 1fr;
+  }
+
+  .history-versions {
+    max-height: 180px;
+  }
 }
 
 /* =========================================
@@ -796,12 +1078,13 @@ footer li {
 
 /* Progressive Enhancement: Backdrop Filter for Floating Containers */
 @supports ((-webkit-backdrop-filter: var(--blur)) or (backdrop-filter: var(--blur))) {
+  #floating-action-bar,
   .catalog-dialog::backdrop,
   .dropdown-content,
-  #floating-action-bar,
+  .history-export-menu button,
   .pm-bar-instance {
     -webkit-backdrop-filter: var(--blur);
-    backdrop-filter: var(--blur);
     background-color: transparent;
+    backdrop-filter: var(--blur);
   }
 }

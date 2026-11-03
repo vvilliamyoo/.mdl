@@ -3,6 +3,7 @@ import { afterEach, test } from "node:test";
 import { get } from "svelte/store";
 import { PACKAGE_MANAGERS } from "./packageManagers.js";
 import { createPmQueues } from "./pmQueue.js";
+import { CONFIG_HISTORY_KEY } from "./configHistory.js";
 import {
   appStore,
   beginEditing,
@@ -117,11 +118,51 @@ void test("save parses, persists, and closes the current draft", () => {
   assert.equal(result.config.rawText, draft);
   assert.equal(result.config.state?.[0]?.letter, "B");
   assert.equal(JSON.parse(savedValues.get("mdl_full_data")).rawText, draft);
+  assert.equal(JSON.parse(savedValues.get(CONFIG_HISTORY_KEY))[0].rawText, draft);
   assert.deepEqual(get(editorSessionStore), {
     draftText: draft,
     initialText: draft,
     isEditing: false,
   });
+});
+
+void test("unchanged valid saves do not create duplicate history entries", () => {
+  const savedValues = new Map();
+  globalThis.localStorage = createLocalStorage(savedValues);
+  const draft = "# A\n- [App](https://example.com)";
+  updateDraftText(draft);
+  beginEditing();
+  setEditorDraft("# B\n- [Other](https://example.org)");
+  assert.equal(saveEditorDraft().valid, true);
+
+  beginEditing();
+  setEditorDraft(get(appStore).rawText);
+  assert.equal(saveEditorDraft().valid, true);
+
+  assert.equal(JSON.parse(savedValues.get(CONFIG_HISTORY_KEY)).length, 1);
+});
+
+void test("history storage failure does not hide a successful configuration save", () => {
+  const savedValues = new Map();
+  const storage = createLocalStorage(savedValues);
+  storage.setItem = (key, value) => {
+    if (key === CONFIG_HISTORY_KEY) throw new Error("history storage unavailable");
+    savedValues.set(key, value);
+  };
+  globalThis.localStorage = storage;
+  updateDraftText("# A\n- [App](https://example.com)");
+  beginEditing();
+  setEditorDraft("# B\n- [Other](https://example.org)");
+
+  const result = saveEditorDraft();
+
+  assert.equal(result.valid, true);
+  if (!result.valid) return;
+  assert.equal(result.historyError, "history storage unavailable");
+  assert.equal(
+    JSON.parse(savedValues.get("mdl_full_data")).rawText,
+    "# B\n- [Other](https://example.org)",
+  );
 });
 
 void test("invalid drafts are not persisted and remain editable", () => {

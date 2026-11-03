@@ -6,6 +6,7 @@ import { updateThemeValue } from "./theme.js";
 import { getQueueItemsForManager } from "./pmQueue.js";
 import { createParseScheduler } from "./editorScheduler.js";
 import { PACKAGE_MANAGERS } from "./packageManagers.js";
+import { recordConfigVersion } from "./configHistory.js";
 
 /** @typedef {import('./types.js').AppConfig} AppConfig */
 /** @typedef {import('./types.js').EditorSession} EditorSession */
@@ -110,13 +111,21 @@ export function saveEditorDraft() {
   const result = saveConfig(config);
   if (!result.valid) return result;
 
+  /** @type {string | undefined} */
+  let historyError;
+  try {
+    recordConfigVersion(result.config.rawText, session.initialText);
+  } catch (error) {
+    historyError = error instanceof Error ? error.message : String(error);
+  }
+
   appStore.set(result.config);
   editorSessionStore.set({
     draftText: result.config.rawText,
     initialText: result.config.rawText,
     isEditing: false,
   });
-  return result;
+  return historyError ? { ...result, historyError } : result;
 }
 
 /** @returns {AppConfig} */

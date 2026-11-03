@@ -43,6 +43,17 @@ export interface AppConfig {
   state?: AppSection[];
 }
 
+export interface ConfigVersion {
+  savedAt: string;
+  rawText: string;
+  name?: string;
+}
+
+export interface ConfigDiffLine {
+  type: "added" | "removed" | "unchanged";
+  text: string;
+}
+
 export interface EditorSession {
   draftText: string;
   initialText: string;
@@ -50,5 +61,5 @@ export interface EditorSession {
 }
 
 export type SaveResult =
-  | { valid: true; config: AppConfig }
+  | { valid: true; config: AppConfig; historyError?: string }
   | { valid: false; config: AppConfig; error: string };

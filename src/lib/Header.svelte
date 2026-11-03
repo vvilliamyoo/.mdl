@@ -19,6 +19,7 @@
     export let ondownloadConfig: () => void = () => {};
     export let ongenerateShareLink: () => void = () => {};
     export let onaddApplication: () => void = () => {};
+    export let onshowHistory: () => void = () => {};
     export let onreset: () => void = () => {};
 
     let activeDropdown: string | null = null;
@@ -151,6 +152,7 @@
                     </div>
                 </div>
 
+                <button type="button" id="history-btn" on:click={() => onshowHistory()}>History</button>
                 <button type="button" id="reset-btn" on:click={() => onreset()}>Reset</button>
             {/if}
 

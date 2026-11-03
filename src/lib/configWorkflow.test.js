@@ -8,6 +8,7 @@ import {
   importConfigFile,
   resetConfiguration,
 } from "./configWorkflow.js";
+import { CONFIG_HISTORY_KEY } from "./configHistory.js";
 
 void test("share workflow copies the generated link and returns it", async () => {
   /** @type {string[]} */
@@ -65,7 +66,7 @@ void test("reset removes persisted config and resets in-memory app and queue sta
 
   resetConfiguration({ removeItem: (key) => removedKeys.push(key) });
 
-  assert.deepEqual(removedKeys, ["mdl_full_data"]);
+  assert.deepEqual(removedKeys, ["mdl_full_data", CONFIG_HISTORY_KEY]);
   assert.equal(get(appStore).rawText, "");
   assert.deepEqual(get(queueStore).winget, new Map());
 });

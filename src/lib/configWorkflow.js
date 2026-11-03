@@ -1,4 +1,5 @@
 import { STORAGE_KEY } from "./appState.js";
+import { CONFIG_HISTORY_KEY } from "./configHistory.js";
 import { resetAppStore } from "./appStore.js";
 import { resetQueueState } from "./queueStore.js";
 import { buildShareLink } from "./configIO.js";
@@ -42,6 +43,7 @@ export async function importConfigFile(file) {
  */
 export function resetConfiguration(storage = localStorage) {
   storage.removeItem(STORAGE_KEY);
+  storage.removeItem(CONFIG_HISTORY_KEY);
   resetAppStore();
   resetQueueState();
 }
