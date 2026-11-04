@@ -18,7 +18,6 @@
     export let onimportLink: () => void = () => {};
     export let ondownloadConfig: () => void = () => {};
     export let ongenerateShareLink: () => void = () => {};
-    export let onaddApplication: () => void = () => {};
     export let onshowHistory: () => void = () => {};
     export let onreset: () => void = () => {};
 
@@ -101,7 +100,7 @@
     <header>
         <h1 id="main-title">
             {#if title === '.mdl'}
-                <span class="accent-dot">.</span>mdl
+                <span class="header-logo" role="img" aria-label={title}></span>
             {:else}
                 {title}
             {/if}
@@ -135,7 +134,6 @@
             {/if}
             
             {#if isEditMode}
-                <button type="button" on:click={() => onaddApplication()}>Add app</button>
                 <div class="dropdown" on:focusout={handleDropdownFocusout}>
                     <button type="button" on:click={(event) => toggleDropdown('import', event)} class="dropbtn" aria-label="Import configuration" aria-expanded={activeDropdown === 'import'} aria-controls="import-menu">Import ▾</button>
                     <div id="import-menu" class="dropdown-content" class:show={activeDropdown === 'import'} role="group" aria-label="Import configuration options" hidden={activeDropdown !== 'import'}>
