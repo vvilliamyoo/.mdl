@@ -1,5 +1,5 @@
 export const CONFIG_HISTORY_KEY = "mdl_config_history";
-export const CONFIG_HISTORY_LIMIT = 5;
+export const CONFIG_HISTORY_LIMIT = 10;
 
 /** @typedef {import('./types.js').ConfigVersion} ConfigVersion */
 /** @typedef {import('./types.js').ConfigDiffLine} ConfigDiffLine */

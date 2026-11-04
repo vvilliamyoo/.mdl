@@ -45,6 +45,7 @@
 
 <div id="editor-container">
     <h2 class="editor-heading">Edit Configuration</h2>
+    <p id="editor-help" class="editor-help">Edit using the color pickers or text editor, then save your changes or cancel to discard them.</p>
     <h3 class="theme-editor-heading">Color Pickers</h3>
     <fieldset id="theme-editor">
         <legend class="visually-hidden">Color Pickers</legend>
@@ -68,7 +69,6 @@
 
     <h3 class="theme-editor-heading">Text Editor</h3>
     <textarea id="editor-area" aria-describedby="editor-help" bind:value={rawText} spellcheck="false" on:input={() => onchange(rawText)}></textarea>
-    <p id="editor-help" class="editor-help">Edit using the color pickers or text editor, then save your changes or cancel to discard them.</p>
 
     {#if rawText !== initialRawText}
         <div id="floating-action-bar">

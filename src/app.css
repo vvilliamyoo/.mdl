@@ -12,6 +12,9 @@
   --dark-text-color: rgb(from var(--text-color) r g b / 5%);
   --light-text-color: rgb(from var(--text-color) r g b / 25%);
 
+  --green-accent: #a7e6b3;
+  --red-accent: #ffaaaa;
+
   /* Radii */
   --large-radius: 16px;
   --small-radius: 8px;
@@ -194,7 +197,7 @@ header h1 {
 #main-title .accent-dot {
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  background-image: linear-gradient(to top right, #32512e, #829a7f);
+  background-color: var(--accent-color);
   color: transparent;
 }
 
@@ -722,11 +725,17 @@ button.history-delete-button {
   border-radius: var(--small-radius);
   font-size: 12px;
   line-height: 1.5;
-  max-height: 55vh;
+  max-height: calc(60vh - 100px);
+  min-width: 0;
   overflow: auto;
+  overflow-wrap: anywhere;
   padding: 12px;
   resize: none;
   white-space: pre-wrap;
+}
+
+.history-diff::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 .history-diff span {
@@ -735,12 +744,12 @@ button.history-delete-button {
 
 .history-diff .added {
   background: rgb(40 120 60 / 20%);
-  color: #a7e6b3;
+  color: var(--green-accent);
 }
 
 .history-diff .removed {
   background: rgb(160 50 50 / 20%);
-  color: #ffaaaa;
+  color: var(--red-accent);
 }
 
 .catalog-heading {
@@ -809,12 +818,12 @@ button.history-delete-button {
 }
 
 .catalog-results li {
-  margin: 0;
+  margin: 10px 0 0 10px;
 }
 
 .catalog-result {
   background: transparent;
-  border: 0;
+  border: 1px solid var(--light-text-color);
   display: grid;
   gap: 2px 10px;
   grid-template-columns: minmax(0, 1fr) auto;
