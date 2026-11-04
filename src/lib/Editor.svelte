@@ -14,6 +14,7 @@
 
     export let onupdateColor: (detail: { key: keyof ThemeColors; value: string }) => void = () => {};
     export let onchange: (text: string) => void = () => {};
+    export let onaddApplication: () => void = () => {};
     export let onsave: () => void = () => {};
     export let oncancel: () => void = () => {};
 
@@ -68,7 +69,10 @@
     </fieldset>
 
     <h3 class="theme-editor-heading">Text Editor</h3>
-    <textarea id="editor-area" aria-describedby="editor-help" bind:value={rawText} spellcheck="false" on:input={() => onchange(rawText)}></textarea>
+    <div class="editor-textarea-container">
+        <textarea id="editor-area" aria-describedby="editor-help" bind:value={rawText} spellcheck="false" on:input={() => onchange(rawText)}></textarea>
+        <button type="button" class="add-application-button" aria-label="Add app" title="Add app" on:click={() => onaddApplication()}>+</button>
+    </div>
 
     {#if rawText !== initialRawText}
         <div id="floating-action-bar">

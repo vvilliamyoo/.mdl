@@ -15,7 +15,6 @@
     export let onimportLink: () => void = () => {};
     export let ondownloadConfig: () => void = () => {};
     export let ongenerateShareLink: () => void = () => {};
-    export let onaddApplication: () => void = () => {};
     export let onshowHistory: () => void = () => {};
     export let onreset: () => void = () => {};
     export let oncopyPmCommand: (pm: string) => void = () => {};
@@ -36,7 +35,6 @@
     onimportLink={onimportLink}
     ondownloadConfig={ondownloadConfig}
     ongenerateShareLink={ongenerateShareLink}
-    onaddApplication={onaddApplication}
     onshowHistory={onshowHistory}
     onreset={onreset}
 />

@@ -262,7 +262,6 @@
     onimportLink={handleImportLink}
     ondownloadConfig={handleDownloadConfig}
     ongenerateShareLink={handleGenerateShareLink}
-    onaddApplication={() => { isAddApplicationOpen = true; }}
     onshowHistory={handleShowHistory}
     onreset={handleReset}
     oncopyPmCommand={handleCopyCommand}
@@ -283,6 +282,7 @@
         bind:rawText={draftText}
         theme={appConfig.theme}
         {initialRawText}
+        onaddApplication={() => { isAddApplicationOpen = true; }}
         onupdateColor={handleUpdateColor}
         onchange={handleTextChange}
         onsave={handleSave}
