@@ -56,7 +56,7 @@ While not necessarily fully WCAG-compliant, `.mdl` implements good-faith accessi
 ### Configuration Management
 
 - **Built-In Text Editor:** View and edit the configuration directly from the website and save to local browser storage.
-- **Configuration History:** Review diffs for up to five distinct, successfully saved configurations, rename or delete history entries, restore a version to the editor as an unsaved draft, or export it to a file or share link. History is stored only in the current browser and is cleared by Reset, which returns to the shipped default configuration; it is not a backup or cross-device sync.
+- **Configuration History:** Review diffs for up to ten distinct, successfully saved configurations, rename or delete history entries, restore a version to the editor as an unsaved draft, or export it to a file or share link. History is stored only in the current browser and is cleared by Reset, which returns to the shipped default configuration; it is not a backup or cross-device sync.
 - **Package Manager Catalog (PMC):** Search the built-in catalog while editing, review or change an application's name and URL, select its tags, and add it to an existing or new section. Resolve same-name entries by keeping the current entry, replacing it, or merging the application ID. The PMC currently supports Winget, with other PMs being considered.
 - **Keyboard and Assistive Technology Support:** Use the skip-to-content link, labeled navigation and editor controls, native keyboard-operable buttons and dialogs, and Escape to dismiss open menus or the application dialog.
 - **Color Customization Bar:** Modify YAML theme colors dynamically via quick HEX inputs or rich color pickers.
