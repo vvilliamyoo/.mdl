@@ -51,20 +51,20 @@
     <fieldset id="theme-editor">
         <legend class="visually-hidden">Color Pickers</legend>
         <label>
-            Background
-            <input type="color" value={colorBg} on:input={(event) => handleInput('background', event)}>
-        </label>
-        <label>
-            Window
-            <input type="color" value={colorWin} on:input={(event) => handleInput('window', event)}>
-        </label>
-        <label>
-            Text
-            <input type="color" value={colorText} on:input={(event) => handleInput('text', event)}>
-        </label>
-        <label>
-            Accent
             <input type="color" value={colorAcc} on:input={(event) => handleInput('accent', event)}>
+            Accent
+        </label>
+        <label>
+            <input type="color" value={colorBg} on:input={(event) => handleInput('background', event)}>
+            Background
+        </label>
+        <label>
+            <input type="color" value={colorText} on:input={(event) => handleInput('text', event)}>
+            Text
+        </label>
+        <label>
+            <input type="color" value={colorWin} on:input={(event) => handleInput('window', event)}>
+            Window
         </label>
     </fieldset>
 
