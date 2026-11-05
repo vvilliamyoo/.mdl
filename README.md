@@ -165,7 +165,7 @@ The following PMs are supported:
 | Cross-platform | Homebrew                    | `brew`     | `brew install`               |
 | Cross-platform | Homebrew Cask               | `brewcask` | `brew install --cask`        |
 | Cross-platform | Nix                         | `nix`      | `nix profile install`        |
-| Linux          | Advanced package Tool (APT) | `apt`      | `sudo apt install -y`        |
+| Linux          | Advanced Package Tool (APT) | `apt`      | `sudo apt install -y`        |
 | Linux          | Dandified YUM (DNF)         | `dnf`      | `sudo dnf install -y`        |
 | Linux          | Flatpak                     | `flatpak`  | `flatpak install -y`         |
 | Linux          | pacman                      | `pacman`   | `sudo pacman -S --noconfirm` |
