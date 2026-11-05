@@ -19,8 +19,10 @@
   --logo-light-color: color-mix(in srgb, var(--accent-color), white 45%);
 
   /* Radii */
+  --round-radius: 50%;
   --large-radius: 16px;
-  --small-radius: 8px;
+  --medium-radius: 8px;
+  --small-radius: 4px;
 }
 
 /* =========================================
@@ -151,7 +153,7 @@ button,
 .download-button {
   background-color: var(--dark-accent-color);
   border: 1px solid var(--light-accent-color);
-  border-radius: var(--small-radius);
+  border-radius: var(--medium-radius);
   box-shadow: var(--shadow);
   color: var(--button-text-color);
   cursor: pointer;
@@ -205,11 +207,11 @@ header h1 {
   align-content: left;
   background-image: linear-gradient(40deg, var(--logo-dark-color), var(--logo-light-color));
   display: block;
-  height: 60px;
+  height: 64px;
   image-rendering: auto;
   mask: url("/header.svg") center / contain no-repeat;
   -webkit-mask: url("/header.svg") center / contain no-repeat;
-  width: 60px;
+  width: 64px;
 }
 
 nav {
@@ -230,7 +232,7 @@ nav li {
 .top-section nav a :hover {
   background-color: var(--dark-accent-color);
   border: 1px solid var(--light-accent-color);
-  border-radius: var(--small-radius);
+  border-radius: var(--medium-radius);
   padding: 5px 10px;
 }
 
@@ -268,7 +270,7 @@ footer li {
 .skip-link {
   background: var(--window-color);
   border: 1px solid var(--light-text-color);
-  border-radius: var(--small-radius);
+  border-radius: var(--medium-radius);
   left: 8px;
   padding: 8px 12px;
   position: absolute;
@@ -326,7 +328,7 @@ footer li {
 .chip {
   background-color: var(--dark-accent-color);
   border: 1px solid var(--light-accent-color);
-  border-radius: var(--small-radius);
+  border-radius: var(--medium-radius);
   color: var(--button-text-color);
   display: inline-block;
   font-size: 12px;
@@ -369,7 +371,7 @@ footer li {
 .dropdown-content {
   background-color: var(--window-color);
   border: none;
-  border-radius: var(--small-radius);
+  border-radius: var(--medium-radius);
   display: none;
   flex-direction: column;
   gap: 10px;
@@ -476,9 +478,35 @@ footer li {
   width: 100%;
 }
 
+input[type="color" i] {
+  border-radius: var(--medium-radius);
+  inline-size: 30px;
+  block-size: 30px;
+
+  /* Can set padding between outer circle and color swatch for Firefox here;
+   * it doesn't support a color-swarch-wrapper pseudoclass
+   */
+  padding: 3px;
+  border-style: solid;
+}
+
+/* Affects area between outer circle and color swatch. Firefox doesn't have an equivalent. */
+input[type="color" i]::-webkit-color-swatch-wrapper {
+  padding: 1px;
+}
+
+/* Affects the inner circle, i.e. the current color selection */
+input[type="color" i]::-webkit-color-swatch {
+  border-radius: var(--small-radius);
+}
+
+input[type="color" i]::-moz-color-swatch {
+  border-radius: var(--small-radius);
+}
+
 .add-application-button {
   border: 1px solid var(--light-text-color);
-  border-radius: 50%;
+  border-radius: var(--round-radius);
   bottom: 20px;
   flex: none;
   font-size: 30px;
@@ -555,7 +583,7 @@ footer li {
 .history-version-entry {
   background: var(--dark-text-color);
   border: 1px solid var(--light-text-color);
-  border-radius: var(--small-radius);
+  border-radius: var(--medium-radius);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -768,7 +796,7 @@ button.history-delete-button {
 .history-diff {
   background: var(--background-color);
   border: none;
-  border-radius: var(--small-radius);
+  border-radius: var(--medium-radius);
   font-size: 12px;
   line-height: 1.5;
   max-height: calc(60vh - 100px);
@@ -830,7 +858,7 @@ button.history-delete-button {
 .catalog-dialog select {
   background: var(--background-color);
   border: 1px solid var(--light-text-color);
-  border-radius: var(--small-radius);
+  border-radius: var(--medium-radius);
   color: var(--text-color);
   font: inherit;
   min-width: 0;
@@ -851,7 +879,7 @@ button.history-delete-button {
 
 .catalog-results {
   border: 1px solid var(--light-text-color);
-  border-radius: var(--small-radius);
+  border-radius: var(--medium-radius);
   list-style: none;
   margin: 0;
   max-height: 220px;
@@ -901,7 +929,7 @@ button.history-delete-button {
 
 .catalog-duplicate-options {
   border: 1px solid var(--light-text-color);
-  border-radius: var(--small-radius);
+  border-radius: var(--medium-radius);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -940,7 +968,7 @@ button.history-delete-button {
 
 .catalog-tag-options {
   border: 1px solid var(--light-text-color);
-  border-radius: var(--small-radius);
+  border-radius: var(--medium-radius);
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -957,7 +985,7 @@ button.history-delete-button {
   align-items: center;
   background: var(--dark-text-color);
   border: 1px solid var(--light-text-color);
-  border-radius: var(--small-radius);
+  border-radius: var(--medium-radius);
   display: inline-flex;
   flex-direction: row;
   gap: 6px;
@@ -1117,7 +1145,7 @@ button.history-delete-button {
 
 .pm-bar-icons-container::-webkit-scrollbar-thumb {
   border: none;
-  border-radius: var(--small-radius);
+  border-radius: var(--medium-radius);
 }
 
 .pm-bar-favicon {
