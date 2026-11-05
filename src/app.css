@@ -1,3 +1,6 @@
+/* =========================================
+   Theme Tokens
+   ========================================= */
 :root {
   /* Blur */
   --blur: blur(16px);
@@ -28,7 +31,7 @@
 /* =========================================
    Fonts and Typography
    ========================================= */
-/* Source Code Pro */
+/* Local font face */
 @font-face {
   font-display: swap;
   font-family: "Source Code Pro";
@@ -37,13 +40,12 @@
   src: url("/fonts/SourceCodePro-VariableFont_wght.ttf") format("truetype");
 }
 
-/* Monospace Font Binding */
+/* Monospace content */
 .chip,
 .pm-command-text,
 .pm-bar-command,
 #editor-area,
 .hex-input,
-header h1,
 .catalog-tags,
 .catalog-tag-option,
 .catalog-id code,
@@ -52,7 +54,7 @@ header h1,
 }
 
 /* =========================================
-   Global Elements
+   Global Resets and Accessibility
    ========================================= */
 *,
 *::before,
@@ -85,7 +87,9 @@ body {
   outline-offset: 2px;
 }
 
-/* Global Scrollbar */
+/* =========================================
+   Global Scrollbars
+   ========================================= */
 ::-webkit-scrollbar {
   height: 15px;
   width: 15px;
@@ -110,7 +114,9 @@ body {
   background-color: var(--accent-color);
 }
 
-/* Base Elements */
+/* =========================================
+   Base Typography and Controls
+   ========================================= */
 h2 {
   font-size: 30px;
   font-weight: normal;
@@ -134,6 +140,8 @@ a {
   text-decoration: none;
   transition: 0.3s ease;
 }
+
+/* Link states */
 a:link,
 a:visited {
   color: var(--text-color);
@@ -149,6 +157,7 @@ a:active {
   color: var(--button-text-color);
 }
 
+/* Shared button styles */
 button,
 .download-button {
   background-color: var(--dark-accent-color);
@@ -181,7 +190,7 @@ button.quiet-button:active {
 }
 
 /* =========================================
-   Structural Layout
+   Header and Navigation
    ========================================= */
 .top-section {
   background-color: var(--background-color);
@@ -198,17 +207,16 @@ header {
 }
 header h1 {
   font-size: 48px;
+  font-family: var(--mono-font, "Source Code Pro", "Courier New", monospace);
   font-weight: normal;
   margin: 0;
   text-align: left;
 }
 
 #main-title .header-logo {
-  align-content: left;
   background-image: linear-gradient(40deg, var(--logo-dark-color), var(--logo-light-color));
   display: block;
   height: 64px;
-  image-rendering: auto;
   mask: url("/header.svg") center / contain no-repeat;
   -webkit-mask: url("/header.svg") center / contain no-repeat;
   width: 64px;
@@ -236,6 +244,9 @@ nav li {
   padding: 5px 10px;
 }
 
+/* =========================================
+   Page Layout and Footer
+   ========================================= */
 .container {
   align-items: center;
   display: flex;
@@ -282,6 +293,7 @@ footer li {
   top: 8px;
 }
 
+/* Visually hidden, but available to assistive technology */
 .visually-hidden {
   clip: rect(0, 0, 0, 0);
   clip-path: inset(50%);
@@ -293,7 +305,7 @@ footer li {
 }
 
 /* =========================================
-   App List and Utilities
+   Application List
    ========================================= */
 .d-none {
   display: none !important;
@@ -356,7 +368,7 @@ footer li {
 }
 
 /* =========================================
-   Configuration Tools
+   Header Controls and Dropdowns
    ========================================= */
 #admin-controls {
   display: flex;
@@ -400,6 +412,9 @@ footer li {
   border: 1px solid var(--light-accent-color);
 }
 
+/* =========================================
+   Configuration Editor
+   ========================================= */
 #editor-container {
   align-items: center;
   bottom: 0;
@@ -423,35 +438,68 @@ footer li {
   padding: 0;
 }
 
+/* Theme picker bar */
 #theme-editor {
   align-items: center;
-  background: var(--window-color);
-  border: none;
+  border: 1px solid var(--light-text-color);
   border-radius: var(--large-radius);
+  box-shadow: var(--shadow);
   color: var(--text-color);
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  flex-wrap: nowrap;
+  gap: 16px;
   justify-content: center;
   margin: 0;
   min-inline-size: 0;
-  padding: 15px 20px;
+  height: 60px;
+  padding: 20px;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   width: fit-content;
+  z-index: 1;
 }
 
-.theme-editor-heading {
-  align-self: flex-start;
-  font-size: 18px;
-  font-weight: normal;
-  margin: 0;
-  padding: 20px 0 5px;
+#theme-picker-toggle {
+  background-color: var(--dark-accent-color);
+  border: 1px solid var(--light-text-color);
+  display: none;
 }
 
+#theme-editor input[type="color" i] {
+  block-size: 30px;
+  border-radius: var(--medium-radius);
+  cursor: pointer;
+  inline-size: 30px;
+  padding: 3px;
+}
+
+#theme-editor input[type="color" i]::-webkit-color-swatch-wrapper {
+  padding: 0px;
+}
+
+#theme-editor input[type="color" i]::-webkit-color-swatch {
+  border-radius: var(--small-radius);
+}
+
+#theme-editor input[type="color" i]::-moz-color-swatch {
+  border-radius: var(--small-radius);
+}
+
+#theme-editor label {
+  align-items: center;
+  display: inline-flex;
+  font-size: 14px;
+  gap: 4px;
+}
+
+/* Editor text area and its floating controls */
 .editor-help {
   align-self: flex-start;
   margin: 0;
   font-size: 14px;
-  padding-top: 10px;
+  padding: 10px 0;
 }
 
 #editor-area {
@@ -478,57 +526,36 @@ footer li {
   width: 100%;
 }
 
-input[type="color" i] {
-  border-radius: var(--medium-radius);
-  inline-size: 30px;
-  block-size: 30px;
-
-  /* Can set padding between outer circle and color swatch for Firefox here;
-   * it doesn't support a color-swarch-wrapper pseudoclass
-   */
-  padding: 3px;
-  border-style: solid;
-}
-
-/* Affects area between outer circle and color swatch. Firefox doesn't have an equivalent. */
-input[type="color" i]::-webkit-color-swatch-wrapper {
-  padding: 1px;
-}
-
-/* Affects the inner circle, i.e. the current color selection */
-input[type="color" i]::-webkit-color-swatch {
-  border-radius: var(--small-radius);
-}
-
-input[type="color" i]::-moz-color-swatch {
-  border-radius: var(--small-radius);
-}
-
 .add-application-button {
   border: 1px solid var(--light-text-color);
-  border-radius: var(--round-radius);
+  border-radius: var(--large-radius);
   bottom: 20px;
   flex: none;
-  font-size: 30px;
-  height: 48px;
+  font-size: 32px;
+  height: 60px;
   line-height: 1;
   padding: 0;
   position: absolute;
   right: 20px;
   transition: 0.3s ease;
-  width: 48px;
+  width: 60px;
 }
 
+#theme-picker-toggle:hover,
+#theme-picker-toggle:active,
 .add-application-button:hover,
 .add-application-button:active {
   background-color: var(--dark-accent-color);
-  border: 1px solid var(--light-accent-color);
+  border-color: var(--light-accent-color);
 }
 
 #editor-area::-webkit-scrollbar-track {
   margin: 10px 0;
 }
 
+/* =========================================
+   Dialogs
+   ========================================= */
 .catalog-dialog {
   background: var(--window-color);
   border: 1px solid var(--light-text-color);
@@ -559,6 +586,9 @@ input[type="color" i]::-moz-color-swatch {
   background: rgb(0 0 0 / 65%);
 }
 
+/* =========================================
+   Configuration History
+   ========================================= */
 .history-content {
   display: grid;
   gap: 16px;
@@ -651,10 +681,6 @@ button.history-version-select:active {
   width: auto;
 }
 
-.history-icon-button {
-  pointer-events: auto;
-}
-
 .history-version-time {
   display: block;
   font-size: 12px;
@@ -669,12 +695,6 @@ button.history-version-select:active {
   gap: 4px;
   grid-column: 1 / -1;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  width: 100%;
-}
-
-.history-version-edit-actions button {
-  font-size: 12px;
-  padding: 4px 8px;
   width: 100%;
 }
 
@@ -694,12 +714,7 @@ button.history-version-select:active {
   width: 100%;
 }
 
-.history-version-actions > button,
-.history-export > button,
-.history-version-edit-actions button {
-  width: 100%;
-}
-
+/* Version actions and export menu */
 .history-export-menu {
   background: transparent;
   border: none;
@@ -728,6 +743,7 @@ button.history-version-select:active {
 .history-version-edit-actions button {
   font-size: 12px;
   padding: 4px 8px;
+  width: 100%;
 }
 
 .history-icon-button {
@@ -740,6 +756,7 @@ button.history-version-select:active {
   width: 30px;
   background: transparent;
   border: 0;
+  pointer-events: auto;
 }
 
 button.history-rename-button,
@@ -750,7 +767,7 @@ button.history-delete-button {
 }
 
 button.history-delete-button {
-  color: #ff9b9b;
+  color: var(--red-accent);
 }
 
 .history-icon-button svg {
@@ -767,6 +784,7 @@ button.history-delete-button {
   margin-left: auto;
 }
 
+/* Selected version states and previews */
 .history-version-entry:has(.history-version-select[aria-pressed="true"]),
 .history-version-entry:has(.history-version-select:hover) {
   background: var(--dark-accent-color);
@@ -822,6 +840,7 @@ button.history-delete-button {
   color: var(--red-accent);
 }
 
+/* Shared dialog heading */
 .catalog-heading {
   align-items: center;
   display: flex;
@@ -843,6 +862,9 @@ button.history-delete-button {
   margin: 6px 0 0;
 }
 
+/* =========================================
+   Catalog Dialog Content
+   ========================================= */
 .catalog-tag-option {
   font-size: 12px;
 }
@@ -1003,7 +1025,7 @@ button.history-delete-button {
 }
 
 .catalog-message.error {
-  color: #ff9b9b;
+  color: var(--red-accent);
 }
 
 .catalog-actions {
@@ -1056,8 +1078,41 @@ button.history-delete-button {
   }
 }
 
+/* The picker menu opens above its toggle on narrow screens. */
+@media (max-width: 700px) {
+  #theme-picker-toggle {
+    align-items: center;
+    border-radius: var(--large-radius);
+    bottom: 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex: none;
+    height: 48px;
+    justify-content: center;
+    left: 20px;
+    padding: 8px 14px;
+    position: absolute;
+    z-index: 2;
+  }
+
+  .editor-textarea-container:not(.theme-picker-open) #theme-editor {
+    display: none;
+  }
+
+  #theme-editor {
+    bottom: 78px;
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    height: auto;
+    justify-content: start;
+    left: 20px;
+    max-width: calc(100% - 40px);
+    transform: none;
+  }
+}
+
 /* =========================================
-   Bars
+   Floating Action and Package Manager Bars
    ========================================= */
 #floating-action-bar {
   align-items: center;
@@ -1086,6 +1141,8 @@ button.history-delete-button {
 }
 
 #pm-bar-container {
+  border: 1px solid var(--light-text-color);
+  border-radius: var(--large-radius);
   bottom: 0;
   box-sizing: border-box;
   display: none;
@@ -1094,7 +1151,7 @@ button.history-delete-button {
   left: 0;
   margin: 0 auto;
   max-width: 1000px;
-  padding-bottom: 20px;
+  bottom: 20px;
   position: fixed;
   right: 0;
   z-index: 1000;
@@ -1155,12 +1212,17 @@ button.history-delete-button {
   width: 22px;
 }
 
-/* Progressive Enhancement: Backdrop Filter for Floating Containers */
+/* =========================================
+   Progressive Enhancement
+   ========================================= */
+/* Backdrop blur for floating containers */
 @supports ((-webkit-backdrop-filter: var(--blur)) or (backdrop-filter: var(--blur))) {
   #floating-action-bar,
   .add-application-button,
   .catalog-dialog::backdrop,
   .dropdown-content,
+  #theme-editor,
+  #theme-picker-toggle,
   .history-export-menu button,
   .pm-bar-instance {
     -webkit-backdrop-filter: var(--blur);

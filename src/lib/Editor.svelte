@@ -18,6 +18,8 @@
     export let onsave: () => void = () => {};
     export let oncancel: () => void = () => {};
 
+    let isThemePickerOpen = false;
+
     function normalizeHex(color?: string, defaultHex = '#000000'): string {
         if (!color) return defaultHex;
         let c = color.trim();
@@ -47,30 +49,34 @@
 <div id="editor-container">
     <h2 class="editor-heading">Edit Configuration</h2>
     <p id="editor-help" class="editor-help">Edit using the color pickers or text editor, then save your changes or cancel to discard them.</p>
-    <h3 class="theme-editor-heading">Color Pickers</h3>
-    <fieldset id="theme-editor">
-        <legend class="visually-hidden">Color Pickers</legend>
-        <label>
-            <input type="color" value={colorAcc} on:input={(event) => handleInput('accent', event)}>
-            Accent
-        </label>
-        <label>
-            <input type="color" value={colorBg} on:input={(event) => handleInput('background', event)}>
-            Background
-        </label>
-        <label>
-            <input type="color" value={colorText} on:input={(event) => handleInput('text', event)}>
-            Text
-        </label>
-        <label>
-            <input type="color" value={colorWin} on:input={(event) => handleInput('window', event)}>
-            Window
-        </label>
-    </fieldset>
-
-    <h3 class="theme-editor-heading">Text Editor</h3>
-    <div class="editor-textarea-container">
+    <div class="editor-textarea-container" class:theme-picker-open={isThemePickerOpen}>
         <textarea id="editor-area" aria-describedby="editor-help" bind:value={rawText} spellcheck="false" on:input={() => onchange(rawText)}></textarea>
+        <button
+            type="button"
+            id="theme-picker-toggle"
+            aria-controls="theme-editor"
+            aria-expanded={isThemePickerOpen}
+            on:click={() => isThemePickerOpen = !isThemePickerOpen}
+        >Color Pickers</button>
+        <fieldset id="theme-editor">
+            <legend class="visually-hidden">Color Pickers</legend>
+            <label>
+                <input type="color" value={colorAcc} on:input={(event) => handleInput('accent', event)}>
+                Accent
+            </label>
+            <label>
+                <input type="color" value={colorBg} on:input={(event) => handleInput('background', event)}>
+                Background
+            </label>
+            <label>
+                <input type="color" value={colorText} on:input={(event) => handleInput('text', event)}>
+                Text
+            </label>
+            <label>
+                <input type="color" value={colorWin} on:input={(event) => handleInput('window', event)}>
+                Window
+            </label>
+        </fieldset>
         <button type="button" class="add-application-button" aria-label="Add app" title="Add app" on:click={() => onaddApplication()}>+</button>
     </div>
 
