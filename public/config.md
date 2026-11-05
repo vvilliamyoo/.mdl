@@ -115,7 +115,7 @@ Application Entry Template (* indicates a required element or parameter)
 
 # S
 
-- [Spotify](https://apps.microsoft.com/detail/9ncbcszsjrsb?hl=en-US&gl=US) #[Microsoft Store] #[winget:Spotify.Spotify]
+- [Spotify](https://open.spotify.com/download) #[winget:Spotify.Spotify]
 - [Steam](https://store.steampowered.com/about/) #[winget:Valve.Steam]
 
 # T
