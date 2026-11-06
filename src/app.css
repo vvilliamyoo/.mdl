@@ -45,7 +45,6 @@
 .pm-command-text,
 .pm-bar-command,
 #editor-area,
-.hex-input,
 .catalog-tags,
 .catalog-tag-option,
 .catalog-id code,
@@ -91,8 +90,7 @@ body {
    Global Scrollbars
    ========================================= */
 ::-webkit-scrollbar {
-  height: 15px;
-  width: 15px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-corner {
@@ -100,14 +98,15 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--dark-text-color);
+  border-radius: var(--large-radius);
 }
 
 ::-webkit-scrollbar-thumb {
   background-clip: padding-box;
   background-color: var(--text-color);
-  border: 4px solid var(--window-color);
-  border-radius: var(--small-radius);
+  border: none;
+  border-radius: var(--large-radius);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -468,10 +467,10 @@ footer li {
 }
 
 #theme-editor input[type="color" i] {
-  block-size: 30px;
+  block-size: 25px;
   border-radius: var(--medium-radius);
   cursor: pointer;
-  inline-size: 30px;
+  inline-size: 25px;
   padding: 3px;
 }
 
@@ -491,7 +490,7 @@ footer li {
   align-items: center;
   display: inline-flex;
   font-size: 14px;
-  gap: 4px;
+  gap: 3px;
 }
 
 /* Editor text area and its floating controls */
@@ -550,7 +549,7 @@ footer li {
 }
 
 #editor-area::-webkit-scrollbar-track {
-  margin: 10px 0;
+  margin: 15px 0;
 }
 
 /* =========================================
@@ -1079,7 +1078,7 @@ button.history-delete-button {
 }
 
 /* The picker menu opens above its toggle on narrow screens. */
-@media (max-width: 700px) {
+@media (max-width: 650px) {
   #theme-picker-toggle {
     align-items: center;
     border-radius: var(--large-radius);
@@ -1087,7 +1086,7 @@ button.history-delete-button {
     box-shadow: var(--shadow);
     display: flex;
     flex: none;
-    height: 48px;
+    height: 60px;
     justify-content: center;
     left: 20px;
     padding: 8px 14px;
@@ -1197,12 +1196,7 @@ button.history-delete-button {
 }
 
 .pm-bar-icons-container::-webkit-scrollbar {
-  height: 3px;
-}
-
-.pm-bar-icons-container::-webkit-scrollbar-thumb {
-  border: none;
-  border-radius: var(--medium-radius);
+  height: 4px;
 }
 
 .pm-bar-favicon {
@@ -1218,15 +1212,15 @@ button.history-delete-button {
 /* Backdrop blur for floating containers */
 @supports ((-webkit-backdrop-filter: var(--blur)) or (backdrop-filter: var(--blur))) {
   #floating-action-bar,
+  #theme-editor,
+  #theme-picker-toggle,
   .add-application-button,
   .catalog-dialog::backdrop,
   .dropdown-content,
-  #theme-editor,
-  #theme-picker-toggle,
   .history-export-menu button,
   .pm-bar-instance {
-    -webkit-backdrop-filter: var(--blur);
-    background-color: transparent;
     backdrop-filter: var(--blur);
+    background-color: transparent;
+    -webkit-backdrop-filter: var(--blur);
   }
 }
