@@ -490,7 +490,7 @@ footer li {
   align-items: center;
   display: inline-flex;
   font-size: 16px;
-  gap: 3px;
+  gap: 4px;
 }
 
 /* Editor text area and its floating controls */
