@@ -192,17 +192,18 @@ button.quiet-button:active {
    Header and Navigation
    ========================================= */
 .top-section {
-  background-color: var(--background-color);
-  padding-top: 10px;
+  background: transparent;
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
 header {
+  background-color: var(--background-color);
   align-items: center;
   display: flex;
   justify-content: space-between;
+  padding-top: 10px;
 }
 header h1 {
   font-size: 48px;
@@ -221,26 +222,38 @@ header h1 {
   width: 64px;
 }
 
-nav {
-  text-align: center;
-}
-nav ul {
-  padding: 0;
-}
-nav li {
-  display: inline;
-  margin: 0.5em;
-}
-
 #content h2 {
   scroll-margin-top: 150px;
 }
 
-.top-section nav a :hover {
-  background-color: var(--dark-accent-color);
-  border: 1px solid var(--light-accent-color);
-  border-radius: var(--medium-radius);
-  padding: 5px 10px;
+.top-section nav {
+  border-radius: var(--large-radius);
+  margin-inline: auto;
+  padding: 0 10px;
+  text-align: center;
+  width: fit-content;
+}
+
+.top-section nav ul {
+  padding: 10px;
+}
+.top-section nav li {
+  display: inline;
+  margin: 0.5em;
+}
+
+.top-section nav li a {
+  display: inline-block;
+  transition: 0.1s ease;
+  transform-origin: center;
+}
+
+.top-section nav li a:hover {
+  transform: scale(2);
+  background-color: var(--dark-text-color);
+  border: 1px solid var(--light-text-color);
+  border-radius: var(--large-radius);
+  padding: 5px;
 }
 
 /* =========================================
@@ -380,8 +393,6 @@ footer li {
 }
 
 .dropdown-content {
-  background-color: var(--window-color);
-  border: none;
   border-radius: var(--medium-radius);
   display: none;
   flex-direction: column;
@@ -396,12 +407,11 @@ footer li {
 }
 
 .dropdown-content.show {
+  border: none;
   display: flex;
 }
 
 .dropdown-content button {
-  background-color: var(--dark-text-color);
-  border: 1px solid var(--light-text-color);
   text-align: left;
   width: 100%;
 }
@@ -440,9 +450,7 @@ footer li {
 /* Theme picker bar */
 #theme-editor {
   align-items: center;
-  border: 1px solid var(--light-text-color);
   border-radius: var(--large-radius);
-  box-shadow: var(--shadow);
   color: var(--text-color);
   display: flex;
   flex-wrap: nowrap;
@@ -461,8 +469,6 @@ footer li {
 }
 
 #theme-picker-toggle {
-  background-color: var(--dark-accent-color);
-  border: 1px solid var(--light-text-color);
   display: none;
 }
 
@@ -526,7 +532,6 @@ footer li {
 }
 
 .add-application-button {
-  border: 1px solid var(--light-text-color);
   border-radius: var(--large-radius);
   bottom: 20px;
   flex: none;
@@ -571,10 +576,6 @@ footer li {
   position: fixed;
   inset: 0;
   width: 100%;
-}
-
-.catalog-dialog::backdrop {
-  background: transparent;
 }
 
 .history-dialog {
@@ -1111,56 +1112,28 @@ button.history-delete-button {
 }
 
 /* =========================================
-   Floating Action and Package Manager Bars
+   Package Manager Bars
    ========================================= */
-#floating-action-bar {
-  align-items: center;
-  background-color: var(--window-color);
-  border: none;
-  border-radius: var(--large-radius);
-  bottom: 20px;
-  display: flex;
-  gap: 15px;
-  left: 50%;
-  padding: 12px 20px;
-  position: fixed;
-  transform: translateX(-50%);
-  z-index: 1000;
-}
-
-#floating-action-bar.hidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, 20px);
-}
-
-#floating-action-bar span {
-  font-size: 14px;
-  margin-right: 5px;
-}
 
 #pm-bar-container {
   border: 1px solid var(--light-text-color);
   border-radius: var(--large-radius);
-  bottom: 0;
+  bottom: 20px;
   box-sizing: border-box;
   display: none;
   flex-direction: column;
   gap: 20px;
   left: 0;
   margin: 0 auto;
-  max-width: 1000px;
-  bottom: 20px;
   position: fixed;
   right: 0;
+  width: 1002px;
   z-index: 1000;
 }
 
 .pm-bar-instance {
   align-items: center;
-  background-color: var(--window-color);
   border-radius: var(--large-radius);
-  color: var(--text-color);
   contain: content;
   display: flex;
   justify-content: space-between;
@@ -1211,16 +1184,17 @@ button.history-delete-button {
    ========================================= */
 /* Backdrop blur for floating containers */
 @supports ((-webkit-backdrop-filter: var(--blur)) or (backdrop-filter: var(--blur))) {
-  #floating-action-bar,
   #theme-editor,
   #theme-picker-toggle,
   .add-application-button,
   .catalog-dialog::backdrop,
   .dropdown-content,
   .history-export-menu button,
-  .pm-bar-instance {
+  .pm-bar-instance,
+  .top-section nav {
     backdrop-filter: var(--blur);
     background-color: transparent;
+    border: 1px solid var(--light-text-color);
     -webkit-backdrop-filter: var(--blur);
   }
 }
