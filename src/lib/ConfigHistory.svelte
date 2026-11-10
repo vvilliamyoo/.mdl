@@ -104,7 +104,6 @@
     <div class="catalog-heading">
         <div>
             <h2 id="history-title">Configuration History</h2>
-            <p>Saved versions are stored only in this browser</p>
         </div>
         <button type="button" class="quiet-button" on:click={() => onclose()} aria-label="Close configuration history">Close</button>
     </div>
@@ -207,14 +206,12 @@
             {#if selectedVersion}
                 <section class="history-preview" aria-label="Version changes">
                     {#if previousVersion}
-                        <h3>Changes from previous saved version</h3>
                         {#if diff}
                             <pre class="history-diff" aria-label="Configuration text diff">{#each diff as line}<span class:added={line.type === 'added'} class:removed={line.type === 'removed'}>{line.type === 'added' ? '+ ' : line.type === 'removed' ? '- ' : '  '}{line.text}</span>{/each}</pre>
                         {:else}
                             <p>The diff is too large to display. The saved version can still be restored.</p>
                         {/if}
                     {:else}
-                        <h3>Oldest retained version</h3>
                         <pre class="history-diff">{selectedVersion.rawText}</pre>
                     {/if}
 

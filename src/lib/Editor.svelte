@@ -48,7 +48,7 @@
 
 <div id="editor-container">
     <h2 class="editor-heading">Configuration Editor</h2>
-    <p id="editor-help" class="editor-help">Edit using the color pickers or text editor, then save your changes or cancel to discard them.</p>
+    <p id="editor-help" class="editor-help">Edit using the color pickers or text editor, then save your changes or cancel to discard them</p>
     <div class="editor-textarea-container" class:theme-picker-open={isThemePickerOpen}>
         <textarea id="editor-area" aria-describedby="editor-help" bind:value={rawText} spellcheck="false" on:input={() => onchange(rawText)}></textarea>
         <button
