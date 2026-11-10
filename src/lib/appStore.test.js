@@ -86,7 +86,7 @@ void test("editor draft parsing is scheduled and can be flushed immediately", ()
   assert.equal(get(appStore).rawText, get(editorSessionStore).draftText);
 });
 
-void test("cancel restores the initial text and parsed config", () => {
+void test("cancel restores the initial text and parsed config without closing the editor", () => {
   const original = "# A\n- [App](https://example.com)";
   updateDraftText(original);
   beginEditing();
@@ -99,7 +99,7 @@ void test("cancel restores the initial text and parsed config", () => {
   assert.deepEqual(get(editorSessionStore), {
     draftText: original,
     initialText: original,
-    isEditing: false,
+    isEditing: true,
   });
 });
 

@@ -92,7 +92,7 @@ export function cancelEditorDraft() {
   editorSessionStore.set({
     draftText: session.initialText,
     initialText: session.initialText,
-    isEditing: false,
+    isEditing: session.isEditing,
   });
   return config;
 }
