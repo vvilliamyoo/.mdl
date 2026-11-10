@@ -21,8 +21,6 @@
     export let onclearPmQueue: (pm: string) => void = () => {};
 </script>
 
-<a class="skip-link" href="#main-content">Skip to main content</a>
-
 <Header
     {title}
     {sections}
@@ -39,7 +37,7 @@
     onreset={onreset}
 />
 
-<main id="main-content">
+<main>
     <slot />
 </main>
 
