@@ -380,7 +380,7 @@ footer li {
 /* =========================================
    Header Controls and Dropdowns
    ========================================= */
-#admin-controls {
+#header-controls {
   display: flex;
   gap: 10px;
 }
@@ -470,9 +470,10 @@ footer li {
 }
 
 /* Theme picker bar */
-#theme-editor {
+#color-picker-bar {
   align-items: center;
   border-radius: var(--large-radius);
+  box-shadow: var(--shadow);
   color: var(--text-color);
   display: flex;
   flex-wrap: nowrap;
@@ -494,7 +495,7 @@ footer li {
   display: none;
 }
 
-#theme-editor input[type="color" i] {
+#color-picker-bar input[type="color" i] {
   block-size: 25px;
   border-radius: var(--medium-radius);
   cursor: pointer;
@@ -502,19 +503,19 @@ footer li {
   padding: 3px;
 }
 
-#theme-editor input[type="color" i]::-webkit-color-swatch-wrapper {
+#color-picker-bar input[type="color" i]::-webkit-color-swatch-wrapper {
   padding: 0px;
 }
 
-#theme-editor input[type="color" i]::-webkit-color-swatch {
+#color-picker-bar input[type="color" i]::-webkit-color-swatch {
   border-radius: var(--small-radius);
 }
 
-#theme-editor input[type="color" i]::-moz-color-swatch {
+#color-picker-bar input[type="color" i]::-moz-color-swatch {
   border-radius: var(--small-radius);
 }
 
-#theme-editor label {
+#color-picker-bar label {
   align-items: center;
   display: inline-flex;
   font-size: 16px;
@@ -1072,7 +1073,7 @@ button.history-delete-button {
     flex-wrap: wrap;
   }
 
-  #admin-controls {
+  #header-controls {
     flex-wrap: wrap;
     justify-content: flex-start;
     width: 100%;
@@ -1102,7 +1103,7 @@ button.history-delete-button {
 }
 
 /* The picker menu opens above its toggle on narrow screens. */
-@media (max-width: 650px) {
+@media (max-width: 675px) {
   #theme-picker-toggle {
     align-items: center;
     border-radius: var(--large-radius);
@@ -1118,11 +1119,11 @@ button.history-delete-button {
     z-index: 2;
   }
 
-  .editor-textarea-container:not(.theme-picker-open) #theme-editor {
+  .editor-textarea-container:not(.theme-picker-open) #color-picker-bar {
     display: none;
   }
 
-  #theme-editor {
+  #color-picker-bar {
     bottom: 78px;
     display: grid;
     grid-template-columns: repeat(2, max-content);
@@ -1208,7 +1209,7 @@ button.history-delete-button {
 /* Backdrop blur for floating containers */
 @supports ((-webkit-backdrop-filter: var(--blur)) or (backdrop-filter: var(--blur))) {
   #floating-action-bar,
-  #theme-editor,
+  #color-picker-bar,
   #theme-picker-toggle,
   .add-application-button,
   .catalog-dialog::backdrop,

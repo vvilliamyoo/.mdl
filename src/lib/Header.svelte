@@ -106,7 +106,7 @@
             {/if}
         </h1>
         
-        <div id="admin-controls">
+        <div id="header-controls">
             {#if !isEditMode}
                 {@const presentPms = Object.keys(globalPmItems).filter((pm): pm is PackageManagerType => (globalPmItems[pm as PackageManagerType]?.length ?? 0) > 0)}
                 {#if presentPms.length > 0}
