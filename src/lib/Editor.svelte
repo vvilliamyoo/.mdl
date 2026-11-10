@@ -54,11 +54,11 @@
         <button
             type="button"
             id="theme-picker-toggle"
-            aria-controls="theme-editor"
+            aria-controls="color-picker-bar"
             aria-expanded={isThemePickerOpen}
             on:click={() => isThemePickerOpen = !isThemePickerOpen}
         >Color Pickers</button>
-        <fieldset id="theme-editor">
+        <fieldset id="color-picker-bar">
             <legend class="visually-hidden">Color Pickers</legend>
             <label>
                 <input type="color" value={colorAcc} on:input={(event) => handleInput('accent', event)}>
