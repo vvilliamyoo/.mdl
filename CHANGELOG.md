@@ -8,7 +8,6 @@ All notable changes to this project will be documented in this file.
 
 - Implemented Markdown syntax highlighting and line numbers in the editor for improved configuration file editing experience.
 - Implemented an application metadata panel to display detailed information (description, version, tags) for each application.
-- Added browser-local configuration history with up to five saved versions, text diffs, draft restoration, file/link export, and version rename/delete controls.
 - Integrated a dark/light theme toggle at runtime, supporting predefined presets and system preference detection.
 
 ### Changed
@@ -19,6 +18,19 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
+
+## [2.2.0] - 2026-11-1
+
+### Added
+
+- Added browser-local configuration history with up to five saved versions, text diffs, draft restoration, file/link export, and version rename/delete controls.
+
+### Changed
+
+- Redesigned the header with new branding, moved the Add app control into the configuration editor, and refined editor, navigation, and interface styling.
+- Repositioned the theme color controls and added color and font comments to the default configuration.
+- Changed Cancel to restore the saved configuration without closing the editor.
+- Updated Vite+ to v1.5.1 and Node.js to v26.13.0, and updated dependencies.
 
 ## [2.1.12] - 2026-11-02
 
