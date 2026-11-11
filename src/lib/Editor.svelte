@@ -77,14 +77,28 @@
                 Window
             </label>
         </fieldset>
-        <button type="button" class="add-application-button" aria-label="Add app" title="Add app" on:click={() => onaddApplication()}>+</button>
+        <button type="button" class="add-application-button" aria-label="Add app" title="Add app" on:click={() => onaddApplication()}>
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                <path d="M12 5v14M5 12h14"></path>
+            </svg>
+        </button>
     </div>
 
     {#if rawText !== initialRawText}
         <div id="floating-action-bar">
-            <span role="status" aria-live="polite">You have unsaved changes</span>
-            <button type="button" on:click={() => onsave()}>Save</button>
-            <button type="button" id="cancel-changes-btn" class="quiet-button" on:click={() => oncancel()}>Cancel</button>
+            <span class="visually-hidden" role="status" aria-live="polite">Changes pending</span>
+            <button type="button" id="save-changes-btn" aria-label="Save changes" title="Save changes" on:click={() => onsave()}>
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                    <path d="M4 3h13l4 4v14H3V3h1z"></path>
+                    <path d="M7 3v6h10V3M7 21v-8h10v8"></path>
+                </svg>
+            </button>
+            <button type="button" id="cancel-changes-btn" class="quiet-button" aria-label="Cancel changes" title="Cancel changes" on:click={() => oncancel()}>
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="m5.64 5.64 12.72 12.72"></path>
+                </svg>
+            </button>
         </div>
     {/if}
 </div>

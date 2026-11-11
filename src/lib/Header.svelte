@@ -111,14 +111,14 @@
                 {@const presentPms = Object.keys(globalPmItems).filter((pm): pm is PackageManagerType => (globalPmItems[pm as PackageManagerType]?.length ?? 0) > 0)}
                 {#if presentPms.length > 0}
                     <div class="dropdown" on:focusout={handleDropdownFocusout}>
-                        <button type="button" on:click={(event) => toggleDropdown('all-pm', event)} class="dropbtn" aria-label="Batch package manager actions" aria-expanded={activeDropdown === 'all-pm'} aria-controls="all-pm-menu">All PM ▾</button>
+                        <button type="button" on:click={(event) => toggleDropdown('all-pm', event)} class="quiet-button dropbtn" aria-label="Batch package manager actions" aria-expanded={activeDropdown === 'all-pm'} aria-controls="all-pm-menu">All PM ▾</button>
                         <div id="all-pm-menu" class="dropdown-content" class:show={activeDropdown === 'all-pm'} role="group" aria-label="Package manager batch actions" hidden={activeDropdown !== 'all-pm'}>
                             {#each presentPms as pm}
                                 {@const pmItems = globalPmItems[pm] ?? []}
                                 {@const isAllAdded = pmItems.every(item => pmQueues[pm]?.has(item.id))}
                                 {@const feedback = allFeedback[pm]}
                                 
-                                <button type="button" class="cmd-btn global-pm-btn {isAllAdded ? 'filled' : ''}" style="white-space: nowrap;" aria-pressed={isAllAdded} aria-label="{isAllAdded ? 'Remove all' : 'Add all'} {pm} applications to the install queue" on:click={() => handleToggleAll(pm)}>
+                                <button type="button" class="quiet-button cmd-btn global-pm-btn {isAllAdded ? 'filled' : ''}" style="white-space: nowrap;" aria-pressed={isAllAdded} aria-label="{isAllAdded ? 'Remove all' : 'Add all'} {pm} applications to the install queue" on:click={() => handleToggleAll(pm)}>
                                     {#if feedback === "Added"}
                                         Added
                                     {:else if feedback === "Removed"}
@@ -135,18 +135,18 @@
             
             {#if isEditMode}
                 <div class="dropdown" on:focusout={handleDropdownFocusout}>
-                    <button type="button" on:click={(event) => toggleDropdown('import', event)} class="dropbtn" aria-label="Import configuration" aria-expanded={activeDropdown === 'import'} aria-controls="import-menu">Import ▾</button>
+                    <button type="button" on:click={(event) => toggleDropdown('import', event)} class="quiet-button dropbtn" aria-label="Import configuration" aria-expanded={activeDropdown === 'import'} aria-controls="import-menu">Import ▾</button>
                     <div id="import-menu" class="dropdown-content" class:show={activeDropdown === 'import'} role="group" aria-label="Import configuration options" hidden={activeDropdown !== 'import'}>
-                        <button type="button" on:click={() => { closeDropdown(true); ontriggerFileInput(); }}>Import from file</button>
-                        <button type="button" on:click={() => { closeDropdown(true); onimportLink(); }}>Import from link</button>
+                        <button type="button" class="quiet-button" on:click={() => { closeDropdown(true); ontriggerFileInput(); }}>Import from File</button>
+                        <button type="button" class="quiet-button" on:click={() => { closeDropdown(true); onimportLink(); }}>Import from Link</button>
                     </div>
                 </div>
                 
                 <div class="dropdown" on:focusout={handleDropdownFocusout}>
-                    <button type="button" on:click={(event) => toggleDropdown('export', event)} class="dropbtn" aria-label="Export configuration" aria-expanded={activeDropdown === 'export'} aria-controls="export-menu">Export ▾</button>
+                    <button type="button" on:click={(event) => toggleDropdown('export', event)} class="quiet-button dropbtn" aria-label="Export configuration" aria-expanded={activeDropdown === 'export'} aria-controls="export-menu">Export ▾</button>
                     <div id="export-menu" class="dropdown-content" class:show={activeDropdown === 'export'} role="group" aria-label="Export configuration options" hidden={activeDropdown !== 'export'}>
-                        <button type="button" on:click={() => { closeDropdown(true); ondownloadConfig(); }}>Export to file</button>
-                        <button type="button" on:click={() => { closeDropdown(true); ongenerateShareLink(); }}>Export as link</button>
+                        <button type="button" class="quiet-button" on:click={() => { closeDropdown(true); ondownloadConfig(); }}>Export to File</button>
+                        <button type="button" class="quiet-button" on:click={() => { closeDropdown(true); ongenerateShareLink(); }}>Export to Link</button>
                     </div>
                 </div>
 

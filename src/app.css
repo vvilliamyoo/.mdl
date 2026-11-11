@@ -16,10 +16,15 @@
   --light-text-color: rgb(from var(--text-color) r g b / 25%);
 
   --green-accent: #a7e6b3;
-  --red-accent: #ffaaaa;
+  --dark-green-accent: rgb(from var(--green-accent) r g b / 15%);
+  --light-green-accent: rgb(from var(--green-accent) r g b / 40%);
 
-  --logo-dark-color: color-mix(in srgb, var(--accent-color), black 45%);
-  --logo-light-color: color-mix(in srgb, var(--accent-color), white 45%);
+  --red-accent: #ffaaaa;
+  --dark-red-accent: rgb(from var(--red-accent) r g b / 15%);
+  --light-red-accent: rgb(from var(--red-accent) r g b / 40%);
+
+  --dark-logo-color: color-mix(in srgb, var(--accent-color), black 45%);
+  --light-logo-color: color-mix(in srgb, var(--accent-color), white 45%);
 
   /* Radii */
   --round-radius: 50%;
@@ -241,7 +246,7 @@ header h1 {
 }
 
 #main-title .header-logo {
-  background-image: linear-gradient(40deg, var(--logo-dark-color), var(--logo-light-color));
+  background-image: linear-gradient(40deg, var(--dark-logo-color), var(--light-logo-color));
   display: block;
   height: 64px;
   mask: url("/header.svg") center / contain no-repeat;
@@ -381,7 +386,7 @@ footer li {
   gap: 10px;
   left: 0;
   margin-top: 8px;
-  padding: 5px;
+  padding: 10px;
   position: absolute;
   top: 100%;
   white-space: nowrap;
@@ -394,13 +399,11 @@ footer li {
 }
 
 .dropdown-content button {
+  background: none;
+  border-color: transparent;
+  box-shadow: none;
   text-align: left;
   width: 100%;
-}
-
-.dropdown-content button:hover {
-  background-color: var(--dark-accent-color);
-  border: 1px solid var(--light-accent-color);
 }
 
 /* =========================================
@@ -409,12 +412,14 @@ footer li {
 #floating-action-bar {
   align-items: center;
   border-radius: var(--large-radius);
-  bottom: 120px;
+  bottom: 40px;
+  box-shadow: var(--shadow);
   display: flex;
-  gap: 15px;
+  gap: 10px;
+  height: 60px;
   left: 50%;
   max-width: fit-content;
-  padding: 12px 20px;
+  padding: 8px;
   position: fixed;
   transform: translateX(-50%);
   z-index: 1000;
@@ -426,9 +431,40 @@ footer li {
   transform: translate(-50%, 20px);
 }
 
-#floating-action-bar span {
-  font-size: 14px;
-  margin-right: 5px;
+#floating-action-bar button {
+  align-items: center;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  display: inline-flex;
+  height: 40px;
+  justify-content: center;
+  padding: 8px;
+  width: 40px;
+}
+
+#floating-action-bar svg,
+.add-application-button svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+#floating-action-bar svg {
+  height: 20px;
+  width: 20px;
+}
+
+#floating-action-bar #save-changes-btn:hover {
+  background: var(--dark-green-accent);
+  border-color: var(--light-green-accent);
+}
+
+#floating-action-bar #cancel-changes-btn:hover {
+  background-color: var(--dark-red-accent);
+  border-color: var(--light-red-accent);
 }
 
 #editor-container {
@@ -459,24 +495,43 @@ footer li {
   border-radius: var(--large-radius);
   box-shadow: var(--shadow);
   color: var(--text-color);
-  display: flex;
-  flex-wrap: nowrap;
+  display: grid;
   gap: 16px;
-  justify-content: center;
+  justify-content: start;
   margin: 0;
   min-inline-size: 0;
-  height: 60px;
-  padding: 20px;
+  height: auto;
+  padding: 0px;
   position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 90px;
+  left: 20px;
+  max-width: calc(100% - 40px);
+  transform: none;
   width: fit-content;
   z-index: 1;
 }
 
-#theme-picker-toggle {
+.editor-textarea-container:not(.theme-picker-open) #color-picker-bar {
   display: none;
+}
+
+#theme-picker-toggle {
+  align-items: center;
+  border-radius: var(--large-radius);
+  bottom: 20px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex: none;
+  height: 60px;
+  justify-content: center;
+  left: 20px;
+  padding: 8px 14px;
+  position: absolute;
+  z-index: 2;
+}
+
+#color-picker-bar {
+  padding: 10px;
 }
 
 #color-picker-bar input[type="color" i] {
@@ -501,9 +556,18 @@ footer li {
 
 #color-picker-bar label {
   align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--medium-radius);
+  cursor: pointer;
   display: inline-flex;
   font-size: 16px;
-  gap: 4px;
+  gap: 8px;
+  padding: 8px 10px;
+  transition: 0.3s ease;
+}
+#color-picker-bar label:hover {
+  background-color: var(--dark-accent-color);
+  border-color: var(--light-accent-color);
 }
 
 /* Editor text area and its floating controls */
@@ -535,17 +599,23 @@ footer li {
 }
 
 .add-application-button {
+  align-items: center;
   border-radius: var(--large-radius);
   bottom: 20px;
+  display: flex;
   flex: none;
-  font-size: 32px;
   height: 60px;
-  line-height: 1;
+  justify-content: center;
   padding: 0;
   position: absolute;
   right: 20px;
   transition: 0.3s ease;
   width: 60px;
+}
+
+.add-application-button svg {
+  height: 28px;
+  width: 28px;
 }
 
 #theme-picker-toggle:hover,
@@ -799,7 +869,7 @@ button.history-delete-button {
 
 .history-version-entry:has(.history-version-select[aria-active="true"]),
 .history-version-entry:has(.history-version-select:active) {
-  transform: scale(0.95);
+  transform: scale(0.9);
 }
 
 .history-preview {
@@ -1085,39 +1155,6 @@ button.history-delete-button {
 
   .history-versions {
     max-height: 200px;
-  }
-}
-
-/* The picker menu opens above its toggle on narrow screens. */
-@media (max-width: 675px) {
-  #theme-picker-toggle {
-    align-items: center;
-    border-radius: var(--large-radius);
-    bottom: 20px;
-    box-shadow: var(--shadow);
-    display: flex;
-    flex: none;
-    height: 60px;
-    justify-content: center;
-    left: 20px;
-    padding: 8px 14px;
-    position: absolute;
-    z-index: 2;
-  }
-
-  .editor-textarea-container:not(.theme-picker-open) #color-picker-bar {
-    display: none;
-  }
-
-  #color-picker-bar {
-    bottom: 78px;
-    display: grid;
-    grid-template-columns: repeat(2, max-content);
-    height: auto;
-    justify-content: start;
-    left: 20px;
-    max-width: calc(100% - 40px);
-    transform: none;
   }
 }
 
