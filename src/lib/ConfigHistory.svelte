@@ -191,8 +191,8 @@
                                         >Export ▾</button>
                                         {#if activeExportIndex === index}
                                             <div id="history-export-menu-{index}" class="history-export-menu" role="group" aria-label="Export configuration version">
-                                                <button type="button" class="quiet-button" on:click={() => handleExportFile(version.rawText)}>Export to file</button>
-                                                <button type="button" class="quiet-button" on:click={() => handleExportLink(version.rawText)}>Export as link</button>
+                                                <button type="button" class="quiet-button" on:click={() => handleExportFile(version.rawText)}>Export as File</button>
+                                                <button type="button" class="quiet-button" on:click={() => handleExportLink(version.rawText)}>Export as Link</button>
                                             </div>
                                         {/if}
                                     </div>
