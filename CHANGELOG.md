@@ -30,7 +30,8 @@ All notable changes to this project will be documented in this file.
 - Redesigned the header with new branding, moved the Add app control into the configuration editor, and refined editor, navigation, and interface styling.
 - Repositioned the theme color controls and added color and font comments to the default configuration.
 - Changed Cancel to restore the saved configuration without closing the editor.
-- Updated Vite+ to v1.5.1 and Node.js to v26.13.0, and updated dependencies.
+- Updated Vite+ to v1.6.0 and Node.js to v26.13.0, and updated dependencies.
+- Migrated the test suite to use Vitest from Node.
 
 ## [2.1.12] - 2026-11-02
 
