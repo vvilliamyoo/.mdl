@@ -59,7 +59,7 @@ While not necessarily fully WCAG-compliant, `.mdl` implements good-faith accessi
 - **Configuration History:** Review diffs for up to ten distinct, successfully saved configurations, rename or delete history entries, restore a version to the editor as an unsaved draft, or export it to a file or share link. History is stored only in the current browser and is cleared by Reset, which returns to the shipped default configuration; it is not a backup or cross-device sync.
 - **Package Manager Catalog (PMC):** Search the built-in catalog while editing, review or change an application's name and URL, select its tags, and add it to an existing or new section. Resolve same-name entries by keeping the current entry, replacing it, or merging the application ID. The PMC currently supports Winget, with other PMs being considered.
 - **Keyboard and Assistive Technology Support:** Use the skip-to-content link, labeled navigation and editor controls, native keyboard-operable buttons and dialogs, and Escape to dismiss open menus or the application dialog.
-- **Color Customization Bar:** Modify YAML theme colors dynamically via quick HEX inputs or rich color pickers.
+- **Color Customization:** Modify YAML theme colors dynamically using the editor's compact color-picker dropdown.
 - **Import & Export:** Import/export a configuration file or encode its minified data into a URL via [`brotli-wasm`](https://github.com/google/brotli) compression.
 - **Configuration Validation:** Importing or saving an edited configuration file triggers a validator to ensure that configurations adhere to key (but not all) aspects of required configuration file structure and syntax.
 
