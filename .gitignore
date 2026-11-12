@@ -24,3 +24,4 @@ public/data/
 *.njsproj
 *.sln
 *.sw?
+.vitest/
