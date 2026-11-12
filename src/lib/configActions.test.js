@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test } from "vite-plus/test";
 import { createConfigActions } from "./configActions.js";
 
 /** @typedef {import('./configActions.js').ConfigActionDependencies} ConfigActionDependencies */
@@ -48,7 +48,7 @@ function createDependencies(overrides = {}) {
   };
 }
 
-void test("link import updates draft and reports success", async () => {
+test("link import updates draft and reports success", async () => {
   const { calls, dependencies } = createDependencies();
   const actions = createConfigActions(dependencies);
 
@@ -57,7 +57,7 @@ void test("link import updates draft and reports success", async () => {
   assert.deepEqual(calls.notifications, ["Config imported from link! Click 'Save' to apply."]);
 });
 
-void test("file import updates draft and reports success", async () => {
+test("file import updates draft and reports success", async () => {
   const { calls, dependencies } = createDependencies();
   const actions = createConfigActions(dependencies);
 
@@ -66,7 +66,7 @@ void test("file import updates draft and reports success", async () => {
   assert.deepEqual(calls.notifications, ["Config imported! Click 'Save' to apply."]);
 });
 
-void test("share generation and download delegate to configured workflows", async () => {
+test("share generation and download delegate to configured workflows", async () => {
   const { calls, dependencies } = createDependencies();
   const actions = createConfigActions(dependencies);
 
@@ -76,7 +76,7 @@ void test("share generation and download delegate to configured workflows", asyn
   assert.deepEqual(calls.downloads, ["draft"]);
 });
 
-void test("reset only clears and reloads after confirmation", () => {
+test("reset only clears and reloads after confirmation", () => {
   const { calls, dependencies } = createDependencies({ confirmReset: () => false });
   const actions = createConfigActions(dependencies);
 

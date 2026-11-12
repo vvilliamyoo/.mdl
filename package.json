@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vp dev",
     "build": "vp build",
-    "test": "node --test",
+    "test": "vitest run",
     "build:catalog": "node tools/build-catalog.mjs",
     "preview": "vp preview",
     "predeploy": "npm run build:catalog && npm run build",

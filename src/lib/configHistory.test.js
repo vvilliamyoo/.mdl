@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test } from "vite-plus/test";
 import {
   CONFIG_HISTORY_KEY,
   CONFIG_HISTORY_LIMIT,
@@ -21,7 +21,7 @@ function createStorage(values = new Map()) {
   };
 }
 
-void test("records only distinct changed saves and retains the five newest versions", () => {
+test("records only distinct changed saves and retains the ten newest versions", () => {
   const values = new Map();
   const storage = createStorage(values);
 
@@ -35,19 +35,30 @@ void test("records only distinct changed saves and retains the five newest versi
   assert.equal(versions.length, CONFIG_HISTORY_LIMIT);
   assert.deepEqual(
     versions.map((version) => version.rawText),
-    ["Config 6", "Config 5", "Config 4", "Config 3", "Config 2"],
+    [
+      "Config 11",
+      "Config 10",
+      "Config 9",
+      "Config 8",
+      "Config 7",
+      "Config 6",
+      "Config 5",
+      "Config 4",
+      "Config 3",
+      "Config 2",
+    ],
   );
   assert.ok(versions.every((version) => !Number.isNaN(Date.parse(version.savedAt))));
   assert.ok(values.has(CONFIG_HISTORY_KEY));
 });
 
-void test("rejects malformed saved history instead of silently discarding it", () => {
+test("rejects malformed saved history instead of silently discarding it", () => {
   const storage = createStorage(new Map([[CONFIG_HISTORY_KEY, '{"unexpected":true}']]));
 
   assert.throws(() => getConfigHistory(storage), /invalid format/);
 });
 
-void test("renames a version without changing its content or timestamp", () => {
+test("renames a version without changing its content or timestamp", () => {
   const storage = createStorage(
     new Map([
       [
@@ -67,7 +78,7 @@ void test("renames a version without changing its content or timestamp", () => {
   assert.throws(() => renameConfigVersion(1, "Missing", storage), /no longer exists/);
 });
 
-void test("deletes only the selected version and rejects stale indexes", () => {
+test("deletes only the selected version and rejects stale indexes", () => {
   const versions = [
     { savedAt: "2026-01-03T00:00:00.000Z", rawText: "new" },
     { savedAt: "2026-01-02T00:00:00.000Z", rawText: "middle" },
@@ -80,7 +91,7 @@ void test("deletes only the selected version and rejects stale indexes", () => {
   assert.throws(() => deleteConfigVersion(4, storage), /no longer exists/);
 });
 
-void test("diffs multiple changed lines while preserving unchanged context", () => {
+test("diffs multiple changed lines while preserving unchanged context", () => {
   assert.deepEqual(diffConfigText("A\nB\nC\nD", "A\nBee\nC\nDee"), [
     { type: "unchanged", text: "A" },
     { type: "removed", text: "B" },
@@ -91,7 +102,7 @@ void test("diffs multiple changed lines while preserving unchanged context", () 
   ]);
 });
 
-void test("diffs additions and removals and declines an oversized comparison", () => {
+test("diffs additions and removals and declines an oversized comparison", () => {
   assert.deepEqual(diffConfigText("A\nB", "A\nB\nC"), [
     { type: "unchanged", text: "A" },
     { type: "unchanged", text: "B" },
