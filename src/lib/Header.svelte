@@ -145,8 +145,8 @@
                 <div class="dropdown" on:focusout={handleDropdownFocusout}>
                     <button type="button" on:click={(event) => toggleDropdown('export', event)} class="quiet-button dropbtn" aria-label="Export configuration" aria-expanded={activeDropdown === 'export'} aria-controls="export-menu">Export ▾</button>
                     <div id="export-menu" class="dropdown-content" class:show={activeDropdown === 'export'} role="group" aria-label="Export configuration options" hidden={activeDropdown !== 'export'}>
-                        <button type="button" class="quiet-button" on:click={() => { closeDropdown(true); ondownloadConfig(); }}>Export to File</button>
-                        <button type="button" class="quiet-button" on:click={() => { closeDropdown(true); ongenerateShareLink(); }}>Export to Link</button>
+                        <button type="button" class="quiet-button" on:click={() => { closeDropdown(true); ondownloadConfig(); }}>Export as File</button>
+                        <button type="button" class="quiet-button" on:click={() => { closeDropdown(true); ongenerateShareLink(); }}>Export as Link</button>
                     </div>
                 </div>
 
