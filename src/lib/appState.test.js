@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { afterEach, test } from "node:test";
+import { afterEach, test } from "vite-plus/test";
 import {
   STORAGE_KEY,
   createEmptyConfig,
@@ -44,7 +44,7 @@ afterEach(() => {
   globalThis.fetch = originalFetch;
 });
 
-void test("creates and hydrates the default config shape", () => {
+test("creates and hydrates the default config shape", () => {
   assert.deepEqual(createEmptyConfig(), {
     theme: {
       monoFont: "'Source Code Pro', monospace",
@@ -64,7 +64,7 @@ void test("creates and hydrates the default config shape", () => {
   assert.deepEqual(config.state?.[0]?.apps[0]?.pmData, [{ type: "port", id: "example" }]);
 });
 
-void test("persists config as parsed state under the configured storage key", () => {
+test("persists config as parsed state under the configured storage key", () => {
   const storage = createStorage();
   Object.defineProperty(globalThis, "localStorage", { configurable: true, value: storage });
   const config = persistConfig("# Apps\n- [Example](https://example.com)");
@@ -73,7 +73,7 @@ void test("persists config as parsed state under the configured storage key", ()
   assert.deepEqual(JSON.parse(storage.values.get(STORAGE_KEY) ?? ""), config);
 });
 
-void test("prefers saved configuration to the network default", async () => {
+test("prefers saved configuration to the network default", async () => {
   const saved = hydrateConfig("# Saved\n- [Saved](https://saved.example)");
   const storage = createStorage(new Map([[STORAGE_KEY, JSON.stringify(saved)]]));
   Object.defineProperty(globalThis, "localStorage", { configurable: true, value: storage });
@@ -89,7 +89,7 @@ void test("prefers saved configuration to the network default", async () => {
   assert.equal(config.markdown, saved.markdown);
 });
 
-void test("removes corrupt saved data and falls back to the default config", async () => {
+test("removes corrupt saved data and falls back to the default config", async () => {
   const storage = createStorage(new Map([[STORAGE_KEY, "{invalid json"]]));
   Object.defineProperty(globalThis, "localStorage", { configurable: true, value: storage });
   Object.defineProperty(globalThis, "window", {

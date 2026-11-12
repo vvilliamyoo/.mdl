@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test } from "vite-plus/test";
 import { buildAppState, isValidConfigStructure, isValidHex, parseConfig } from "./config.js";
 
-void test("app tags escape unrecognized HTML without rendering package manager chips", () => {
+test("app tags escape unrecognized HTML without rendering package manager chips", () => {
   const state = buildAppState(
     "# Apps\n- [Example](https://example.com) #portable #[winget:Example.App] <img src=x onerror=alert(1)>",
   );
@@ -16,7 +16,7 @@ void test("app tags escape unrecognized HTML without rendering package manager c
   assert.deepEqual(app.pmData, [{ type: "winget", id: "Example.App" }]);
 });
 
-void test("parses frontmatter and preserves Markdown and title", () => {
+test("parses frontmatter and preserves Markdown and title", () => {
   const rawText =
     "---\ntitle: Applications\naccent: #123456\n---\n\n# Apps\n- [Example](https://example.com)";
   const config = parseConfig(rawText);
@@ -27,7 +27,7 @@ void test("parses frontmatter and preserves Markdown and title", () => {
   assert.equal(config.rawText, rawText);
 });
 
-void test("validates config structure and reports invalid entries", () => {
+test("validates config structure and reports invalid entries", () => {
   assert.deepEqual(isValidConfigStructure("# Apps\n- [Example](https://example.com)"), {
     valid: true,
   });
@@ -41,7 +41,7 @@ void test("validates config structure and reports invalid entries", () => {
   });
 });
 
-void test("validates hexadecimal colors, including quoted values", () => {
+test("validates hexadecimal colors, including quoted values", () => {
   assert.equal(isValidHex("#abc"), true);
   assert.equal(isValidHex("'#123456'"), true);
   assert.equal(isValidHex("#abcd"), false);

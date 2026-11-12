@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { afterEach, test } from "node:test";
+import { afterEach, test } from "vite-plus/test";
 import { get } from "svelte/store";
 import { clearAllFeedback, feedbackStore, showFeedback } from "./uiFeedback.js";
 
@@ -7,7 +7,7 @@ afterEach(() => {
   clearAllFeedback();
 });
 
-void test("new feedback replaces the previous action and timeout for the same key", async () => {
+test("new feedback replaces the previous action and timeout for the same key", async () => {
   showFeedback("winget-app", "Added", 15);
   await new Promise((resolve) => setTimeout(resolve, 5));
   showFeedback("winget-app", "Removed", 35);
@@ -19,7 +19,7 @@ void test("new feedback replaces the previous action and timeout for the same ke
   assert.equal(get(feedbackStore)["winget-app"], null);
 });
 
-void test("clearing all feedback cancels pending timers and resets state", async () => {
+test("clearing all feedback cancels pending timers and resets state", async () => {
   showFeedback("choco-app", "Added", 15);
   clearAllFeedback();
 

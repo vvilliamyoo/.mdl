@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test } from "vite-plus/test";
 import { get } from "svelte/store";
 import { appStore, beginEditing, setEditorDraft } from "./appStore.js";
 import { queueStore, toggleQueuedItem } from "./queueStore.js";
@@ -10,7 +10,7 @@ import {
 } from "./configWorkflow.js";
 import { CONFIG_HISTORY_KEY } from "./configHistory.js";
 
-void test("share workflow copies the generated link and returns it", async () => {
+test("share workflow copies the generated link and returns it", async () => {
   /** @type {string[]} */
   const copied = [];
   const link = await generateAndCopyShareLink(
@@ -26,7 +26,7 @@ void test("share workflow copies the generated link and returns it", async () =>
   assert.deepEqual(copied, [link]);
 });
 
-void test("share workflow propagates clipboard failures", async () => {
+test("share workflow propagates clipboard failures", async () => {
   await assert.rejects(
     generateAndCopyShareLink(
       "# Apps",
@@ -40,17 +40,17 @@ void test("share workflow propagates clipboard failures", async () => {
   );
 });
 
-void test("imports a non-empty file as configuration text", async () => {
+test("imports a non-empty file as configuration text", async () => {
   const file = { text: async () => "# Apps\n- [Example](https://example.com)" };
 
   assert.equal(await importConfigFile(file), "# Apps\n- [Example](https://example.com)");
 });
 
-void test("rejects an empty config file", async () => {
+test("rejects an empty config file", async () => {
   await assert.rejects(importConfigFile({ text: async () => "" }), /empty/);
 });
 
-void test("reset removes persisted config and resets in-memory app and queue state", () => {
+test("reset removes persisted config and resets in-memory app and queue state", () => {
   appStore.set({
     theme: {},
     markdown: "# Apps",

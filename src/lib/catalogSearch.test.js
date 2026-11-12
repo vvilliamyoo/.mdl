@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test } from "vite-plus/test";
 import { getCatalogTags, searchCatalog } from "./catalogSearch.js";
 
 /**
@@ -27,11 +27,11 @@ function catalogApp(id, name, overrides = {}) {
   return { ...app, idSlug };
 }
 
-void test("returns no catalog results for blank queries", () => {
+test("returns no catalog results for blank queries", () => {
   assert.deepEqual(searchCatalog([catalogApp("Mozilla.Firefox", "Firefox")], "   "), []);
 });
 
-void test("normalizes catalog fields once and reuses them across searches", () => {
+test("normalizes catalog fields once and reuses them across searches", () => {
   const app = catalogApp("Mozilla.Firefox", "Firefox");
   let nameReads = 0;
   Object.defineProperty(app, "name", {
@@ -46,7 +46,7 @@ void test("normalizes catalog fields once and reuses them across searches", () =
   assert.equal(nameReads, 1);
 });
 
-void test("ranks exact name matches above earlier catalog substring matches", () => {
+test("ranks exact name matches above earlier catalog substring matches", () => {
   const searchFixture = [
     catalogApp("A.First", "Alpha", { description: "Supports Firefox bookmarks" }),
     catalogApp("B.Second", "Beta", { tags: ["Firefox compatible"] }),
@@ -59,7 +59,7 @@ void test("ranks exact name matches above earlier catalog substring matches", ()
   );
 });
 
-void test("ranks exact package IDs above exact names and partial name matches", () => {
+test("ranks exact package IDs above exact names and partial name matches", () => {
   const exactId = catalogApp("Mozilla.Firefox", "Web Browser");
   const exactName = catalogApp("Example.Firefox", "Mozilla Firefox");
   const partialName = catalogApp("Other.Browser", "Mozilla Firefox ESR");
@@ -70,7 +70,7 @@ void test("ranks exact package IDs above exact names and partial name matches", 
   );
 });
 
-void test("matches all query words across catalog fields, including package IDs", () => {
+test("matches all query words across catalog fields, including package IDs", () => {
   const result = searchCatalog(
     [
       catalogApp("Mozilla.Firefox", "Browser", {
@@ -87,7 +87,7 @@ void test("matches all query words across catalog fields, including package IDs"
   );
 });
 
-void test("matches query tokens regardless of order within a field", () => {
+test("matches query tokens regardless of order within a field", () => {
   const result = searchCatalog(
     [catalogApp("Mozilla.Firefox", "Web Browser"), catalogApp("Other.Browser", "Firefox Mozilla")],
     "Firefox Mozilla",
@@ -99,7 +99,7 @@ void test("matches query tokens regardless of order within a field", () => {
   );
 });
 
-void test("normalizes accented and non-Latin application names", () => {
+test("normalizes accented and non-Latin application names", () => {
   const catalog = [catalogApp("Vendor.Cafe", "Café Tool"), catalogApp("Vendor.Tokyo", "東京")];
 
   assert.deepEqual(
@@ -112,14 +112,14 @@ void test("normalizes accented and non-Latin application names", () => {
   );
 });
 
-void test("matches a misspelled name token within a bounded edit distance", () => {
+test("matches a misspelled name token within a bounded edit distance", () => {
   assert.deepEqual(
     searchCatalog([catalogApp("Mozilla.Firefox", "Firefox")], "fierfox").map(({ id }) => id),
     ["Mozilla.Firefox"],
   );
 });
 
-void test("does not use edit distance for description-only matches", () => {
+test("does not use edit distance for description-only matches", () => {
   const app = catalogApp("Vendor.Browser", "Web Browser", {
     description: "Firefox compatible",
   });
@@ -127,7 +127,7 @@ void test("does not use edit distance for description-only matches", () => {
   assert.deepEqual(searchCatalog([app], "fierfox"), []);
 });
 
-void test("uses package ID as a deterministic secondary sort key", () => {
+test("uses package ID as a deterministic secondary sort key", () => {
   const catalog = [
     catalogApp("Vendor.zulu", "Shared Tool"),
     catalogApp("Vendor.Zulu", "Shared Tool"),
@@ -139,7 +139,7 @@ void test("uses package ID as a deterministic secondary sort key", () => {
   );
 });
 
-void test("sorts by relevance before applying the 50-result limit", () => {
+test("sorts by relevance before applying the 50-result limit", () => {
   const broadMatches = Array.from({ length: 55 }, (_, index) =>
     catalogApp(`A.Description${index}`, `Browser ${index}`, {
       description: "Firefox compatible",
@@ -152,7 +152,7 @@ void test("sorts by relevance before applying the 50-result limit", () => {
   assert.equal(results[0]?.id, exactMatch.id);
 });
 
-void test("ranks package-name matches above description matches", () => {
+test("ranks package-name matches above description matches", () => {
   const broadMatches = Array.from({ length: 55 }, (_, index) =>
     catalogApp(`A.Tool${index}`, `Browser Tool ${index}`, {
       description: "Firefox compatible",
@@ -163,7 +163,7 @@ void test("ranks package-name matches above description matches", () => {
   assert.equal(searchCatalog([...broadMatches, firefox], "Firefox")[0]?.id, firefox.id);
 });
 
-void test("normalizes punctuation for multi-word names and package IDs", () => {
+test("normalizes punctuation for multi-word names and package IDs", () => {
   const desktop = catalogApp("GitHub.GitHubDesktop", "GitHub Desktop");
   const noise = catalogApp("Other.NotDesktop", "Other Utility");
 
@@ -179,7 +179,7 @@ void test("normalizes punctuation for multi-word names and package IDs", () => {
   );
 });
 
-void test("offers inferred category and unique catalog tags", () => {
+test("offers inferred category and unique catalog tags", () => {
   assert.deepEqual(getCatalogTags("development", ["git", "editor", "git"]), [
     "development",
     "git",

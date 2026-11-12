@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { afterEach, test } from "node:test";
+import { afterEach, test } from "vite-plus/test";
 import { get } from "svelte/store";
 import {
   clearQueuedItems,
@@ -13,7 +13,7 @@ import {
 
 afterEach(() => resetQueueState());
 
-void test("queue store toggles, clears, and resets queued items", () => {
+test("queue store toggles, clears, and resets queued items", () => {
   toggleQueuedItem("winget", "Example.App", "example.com", "Example");
   assert.equal(getQueueState().winget.size, 1);
   assert.equal(getQueuedCommand("winget"), "winget install -e --id Example.App");
@@ -26,7 +26,7 @@ void test("queue store toggles, clears, and resets queued items", () => {
   assert.equal(get(queueStore).choco.size, 0);
 });
 
-void test("queue store adds and removes all manager items from app state", () => {
+test("queue store adds and removes all manager items from app state", () => {
   /** @type {import("./types.js").AppSection[]} */
   const state = [
     {

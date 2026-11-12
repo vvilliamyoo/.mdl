@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test } from "vite-plus/test";
 import { PACKAGE_MANAGERS } from "./packageManagers.js";
 import {
   buildPmCommand,
@@ -36,7 +36,7 @@ const state = [
   },
 ];
 
-void test("creates an independent empty queue for each registered package manager", () => {
+test("creates an independent empty queue for each registered package manager", () => {
   const queues = createPmQueues();
 
   assert.deepEqual(Object.keys(queues), Object.keys(PACKAGE_MANAGERS));
@@ -44,7 +44,7 @@ void test("creates an independent empty queue for each registered package manage
   assert.notStrictEqual(queues.winget, queues.choco);
 });
 
-void test("returns application items for the requested manager", () => {
+test("returns application items for the requested manager", () => {
   assert.deepEqual(getQueueItemsForManager(state, "winget"), [
     { id: "Alpha.App", domain: "alpha.example", appName: "Alpha" },
     { id: "Beta.App", domain: "", appName: "Beta" },
@@ -55,7 +55,7 @@ void test("returns application items for the requested manager", () => {
   assert.deepEqual(getQueueItemsForManager(undefined, "winget"), []);
 });
 
-void test("toggles a queue item and reports its stable feedback key", () => {
+test("toggles a queue item and reports its stable feedback key", () => {
   const queues = createPmQueues();
   const added = toggleQueueItem(queues, "winget", "Alpha.App", "alpha.example", "Alpha");
 
@@ -68,7 +68,7 @@ void test("toggles a queue item and reports its stable feedback key", () => {
   assert.equal(isQueueItemAdded(removed.queues, "winget", "Alpha.App"), false);
 });
 
-void test("toggles all matching items on, then off", () => {
+test("toggles all matching items on, then off", () => {
   const queues = createPmQueues();
   const added = toggleAllQueueItems(queues, state, "winget");
 
@@ -80,7 +80,7 @@ void test("toggles all matching items on, then off", () => {
   assert.equal(removed.queues.winget.size, 0);
 });
 
-void test("builds commands from queued IDs and preserves registry commands", () => {
+test("builds commands from queued IDs and preserves registry commands", () => {
   const queues = createPmQueues();
   queues.winget.set("Alpha.App", {
     id: "Alpha.App",
