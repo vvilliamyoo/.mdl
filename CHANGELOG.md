@@ -19,6 +19,16 @@ All notable changes to this project will be documented in this file.
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
+## [2.2.1] - 2026-11-15
+
+### Added
+
+- Added a CSS regression test.
+
+### Fixed
+
+- Fixed production CSS optimization dropping the standard backdrop-filter declaration, restoring blur effects in Chromium while retaining the WebKit fallback.
+
 ## [2.2.0] - 2026-11-15
 
 ### Added

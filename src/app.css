@@ -1232,8 +1232,8 @@ button.history-delete-button {
 /* =========================================
    Progressive Enhancement
    ========================================= */
-/* Backdrop blur for floating containers */
-@supports ((-webkit-backdrop-filter: var(--blur)) or (backdrop-filter: var(--blur))) {
+/* Keep the prefixed and standard declarations separate for Lightning CSS. */
+@supports (backdrop-filter: var(--blur)) {
   #floating-action-bar,
   #color-picker-bar,
   #theme-picker-toggle,
@@ -1246,6 +1246,22 @@ button.history-delete-button {
     backdrop-filter: var(--blur);
     background-color: transparent;
     border: 1px solid var(--light-text-color);
+  }
+}
+
+@supports (-webkit-backdrop-filter: var(--blur)) {
+  #floating-action-bar,
+  #color-picker-bar,
+  #theme-picker-toggle,
+  .add-application-button,
+  .catalog-dialog::backdrop,
+  .dropdown-content,
+  .history-export-menu button,
+  .pm-bar-instance,
+  .top-section nav {
+    backdrop-filter: var(--blur);
     -webkit-backdrop-filter: var(--blur);
+    background-color: transparent;
+    border: 1px solid var(--light-text-color);
   }
 }
