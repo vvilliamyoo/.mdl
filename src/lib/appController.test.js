@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { afterEach, test } from "node:test";
+import { afterEach, test } from "vite-plus/test";
 import { saveConfig, updateConfigFromText, updateThemeForConfig } from "./appController.js";
 
 const originalLocalStorage = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
@@ -24,7 +24,7 @@ afterEach(() => {
   }
 });
 
-void test("updates parsed config fields from Markdown text", () => {
+test("updates parsed config fields from Markdown text", () => {
   const config = updateConfigFromText(
     { theme: {}, markdown: "", title: "", rawText: "" },
     "---\ntitle: Applications\n---\n# A\n- [App](https://example.com)",
@@ -34,7 +34,7 @@ void test("updates parsed config fields from Markdown text", () => {
   assert.equal(config.state?.[0]?.apps[0]?.name, "App");
 });
 
-void test("updates theme values in text while preserving parsed application state", () => {
+test("updates theme values in text while preserving parsed application state", () => {
   const current = updateConfigFromText(
     { theme: {}, markdown: "", title: "", rawText: "" },
     "# A\n- [App](https://example.com)",
@@ -46,7 +46,7 @@ void test("updates theme values in text while preserving parsed application stat
   assert.match(updated.rawText, /^---\naccent: #123456/);
 });
 
-void test("persists valid configuration and returns the hydrated save result", () => {
+test("persists valid configuration and returns the hydrated save result", () => {
   const storage = createLocalStorage();
   Object.defineProperty(globalThis, "localStorage", { configurable: true, value: storage });
   const config = updateConfigFromText(
@@ -62,7 +62,7 @@ void test("persists valid configuration and returns the hydrated save result", (
   assert.equal(JSON.parse(storage.values.get("mdl_full_data") ?? "").rawText, config.rawText);
 });
 
-void test("does not persist invalid configuration", () => {
+test("does not persist invalid configuration", () => {
   const storage = createLocalStorage();
   Object.defineProperty(globalThis, "localStorage", { configurable: true, value: storage });
   const config = updateConfigFromText(

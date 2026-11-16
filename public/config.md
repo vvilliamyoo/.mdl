@@ -1,11 +1,13 @@
 ---
 title: .mdl
+# Colors
+accent: #375534
+background: #191919
+text: #f5f5f5
+window: #29292b
+# Fonts
 monoFont: 'Source Code Pro', monospace
 sansFont: system-ui, sans-serif
-background: #191919
-window: #29292b
-text: #f5f5f5
-accent: #375534
 ---
 
 <!--
@@ -29,8 +31,6 @@ Application Entry Template (* indicates a required element or parameter)
 - [Bulk Crap Uninstaller](https://www.bcuninstaller.com/) #portable
 
 # C
-
-<!-- - [Cherry Studio](https://cherryai.com/download) #[winget:kangfenmao.CherryStudio] -->
 
 # D
 
@@ -115,7 +115,7 @@ Application Entry Template (* indicates a required element or parameter)
 
 # S
 
-- [Spotify](https://apps.microsoft.com/detail/9ncbcszsjrsb?hl=en-US&gl=US) #[Microsoft Store] #[winget:Spotify.Spotify]
+- [Spotify](https://open.spotify.com/download) #[winget:Spotify.Spotify]
 - [Steam](https://store.steampowered.com/about/) #[winget:Valve.Steam]
 
 # T

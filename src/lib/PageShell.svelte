@@ -15,13 +15,11 @@
     export let onimportLink: () => void = () => {};
     export let ondownloadConfig: () => void = () => {};
     export let ongenerateShareLink: () => void = () => {};
-    export let onaddApplication: () => void = () => {};
+    export let onshowHistory: () => void = () => {};
     export let onreset: () => void = () => {};
     export let oncopyPmCommand: (pm: string) => void = () => {};
     export let onclearPmQueue: (pm: string) => void = () => {};
 </script>
-
-<a class="skip-link" href="#main-content">Skip to main content</a>
 
 <Header
     {title}
@@ -35,11 +33,11 @@
     onimportLink={onimportLink}
     ondownloadConfig={ondownloadConfig}
     ongenerateShareLink={ongenerateShareLink}
-    onaddApplication={onaddApplication}
+    onshowHistory={onshowHistory}
     onreset={onreset}
 />
 
-<main id="main-content">
+<main>
     <slot />
 </main>
 

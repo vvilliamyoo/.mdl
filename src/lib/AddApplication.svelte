@@ -240,7 +240,7 @@
         <div class="catalog-heading">
             <div>
                 <h2 id="catalog-title">Add Winget application</h2>
-                <p id="catalog-description">Search the built-in Winget catalog and add a Markdown entry. Press Escape or choose Cancel to close.</p>
+                <p id="catalog-description">Search the built-in Winget catalog to add a Markdown entry</p>
             </div>
         </div>
 
