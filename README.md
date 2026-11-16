@@ -89,13 +89,12 @@ While not necessarily fully WCAG-compliant, `.mdl` implements good-faith accessi
 - **[Vite+](https://viteplus.dev/):** Provides the development server, production build, and project toolchain.
 - **[`@sveltejs/vite-plugin-svelte`](https://github.com/sveltejs/vite-plugin-svelte):** Integrates Svelte with the Vite build pipeline.
 - **[TypeScript](https://www.typescriptlang.org/) and [`@types/node`](https://www.npmjs.com/package/@types/node):** Provide type-checking and Node.js type definitions for development.
-- **[`gh-pages`](https://github.com/tschaub/gh-pages):** Publishes the production build to GitHub Pages.
 
 #### Package Manager Catalog (PMC)
 
 The PMC currently only supports Winget. Its catalog is generated from [Microsoft’s `winget-pkgs` manifests](https://github.com/microsoft/winget-pkgs/tree/master/manifests) and served as `public/data/catalog-full.json`. The catalog generation script was adapted from [OpenWin](https://github.com/fsamod/openwin) and refactored for `.mdl`.
 
-The Winget catalog is automatically updated every Sunday at 06:00 UTC via a GitHub Action (`.github/workflows/build-winget-catalog.yml`) and can be manually triggered using `workflow_dispatch`.
+The GitHub Actions workflow in `.github/workflows/pages.yml` builds the catalog and site, then deploys them to GitHub Pages on pushes to `main`. It also refreshes and deploys the catalog every Sunday at 06:00 UTC, and can be run manually with `workflow_dispatch`.
 
 Build the catalog before local development or previewing the app:
 
@@ -104,7 +103,7 @@ npm run build:catalog
 npm run dev
 ```
 
-`npm run deploy` builds the catalog before producing the site. The first catalog build requires Git and network access; subsequent runs reuse the checkout and persistent manifest cache under `.cache/`. Unchanged manifests are reused across upstream commits, while new or changed manifests are downloaded. The cache must persist between runs for this reuse (for example, configure CI to cache `.cache/`). Use `node tools/build-catalog.mjs --max-packages 20` to smoke-test the generator without enforcing the full-catalog threshold.
+`npm run build:site` builds the catalog before producing the site. The first catalog build requires Git and network access; subsequent runs reuse the checkout and manifest cache under `.cache/`. The Pages workflow caches this directory between runs. Unchanged manifests are reused across upstream commits, while new or changed manifests are downloaded. Use `node tools/build-catalog.mjs --max-packages 20` to smoke-test the generator without enforcing the full-catalog threshold.
 
 ### External Services and Assets
 

@@ -8,9 +8,8 @@
     "build": "vp build",
     "test": "vp test run",
     "build:catalog": "node tools/build-catalog.mjs",
+    "build:site": "npm run build:catalog && npm run build",
     "preview": "vp preview",
-    "predeploy": "npm run build:catalog && npm run build",
-    "deploy": "gh-pages -d dist --dotfiles",
     "prepare": "vp config"
   },
   "dependencies": {
@@ -20,7 +19,6 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "@types/node": "^26.6.5",
-    "gh-pages": "^6.3.0",
     "svelte": "^5.57.0",
     "typescript": "^7.0.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@1.6.0",
