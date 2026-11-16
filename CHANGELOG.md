@@ -32,6 +32,7 @@ All notable changes to this project will be documented in this file.
 - Changed Cancel to restore the saved configuration without closing the editor.
 - Updated Vite+ to v1.6.0 and Node.js to v26.13.0, and updated dependencies.
 - Migrated the test suite to use Vitest from Node.
+- Migrated GitHub Pages deployment to GitHub Actions, including the weekly Winget catalog refresh; removed branch-based publishing.
 
 ## [2.1.12] - 2026-11-02
 
