@@ -47,9 +47,10 @@ export function persistHydratedConfig(config) {
 
 /**
  * @param {string} baseUrl
+ * @param {string} [defaultConfigText]
  * @returns {Promise<AppConfig>}
  */
-export async function loadInitialConfig(baseUrl) {
+export async function loadInitialConfig(baseUrl, defaultConfigText) {
   let config = createEmptyConfig();
 
   const hash = window.location.hash;
@@ -80,16 +81,20 @@ export async function loadInitialConfig(baseUrl) {
     }
 
     if (!config.markdown) {
-      try {
-        const res = await fetch(`${baseUrl}config.md`);
-        if (res.ok) {
-          const text = await res.text();
-          config = hydrateConfig(text);
-        } else {
-          console.error("Failed to load config.md:", res.status, res.statusText);
+      if (defaultConfigText !== undefined) {
+        config = hydrateConfig(defaultConfigText);
+      } else {
+        try {
+          const res = await fetch(`${baseUrl}config.md`);
+          if (res.ok) {
+            const text = await res.text();
+            config = hydrateConfig(text);
+          } else {
+            console.error("Failed to load config.md:", res.status, res.statusText);
+          }
+        } catch (err) {
+          console.error("Error loading config.md", err);
         }
-      } catch (err) {
-        console.error("Error loading config.md", err);
       }
     }
   }

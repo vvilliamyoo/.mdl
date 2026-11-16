@@ -5,9 +5,30 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>.mdl</title>
+    <style>
+      #app {
+        min-height: 100vh;
+      }
+
+      .startup-status {
+        align-items: center;
+        background: #191919;
+        color: #f5f5f5;
+        display: flex;
+        font:
+          16px system-ui,
+          sans-serif;
+        inset: 0;
+        justify-content: center;
+        margin: 0;
+        position: fixed;
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <div class="startup-status" role="status">Loading configuration…</div>
+    </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

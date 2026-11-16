@@ -102,3 +102,18 @@ test("removes corrupt saved data and falls back to the default config", async ()
   assert.equal(storage.values.has(STORAGE_KEY), false);
   assert.equal(config.state?.[0]?.apps[0]?.name, "Default");
 });
+
+test("uses the bundled default config without a network request", async () => {
+  const storage = createStorage();
+  Object.defineProperty(globalThis, "localStorage", { configurable: true, value: storage });
+  Object.defineProperty(globalThis, "window", {
+    configurable: true,
+    value: { location: { hash: "", pathname: "/" } },
+  });
+  globalThis.fetch = async () => {
+    throw new Error("should not fetch when the bundled default config is available");
+  };
+
+  const config = await loadInitialConfig("/", "# Bundled\n- [Bundled](https://bundled.example)");
+  assert.equal(config.state?.[0]?.apps[0]?.name, "Bundled");
+});

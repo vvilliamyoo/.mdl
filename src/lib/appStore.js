@@ -40,9 +40,13 @@ const draftParseScheduler = createParseScheduler((text) => {
   appStore.set(next);
 });
 
-/** @param {string} baseUrl @returns {Promise<AppConfig>} */
-export async function initializeAppStore(baseUrl) {
-  const config = await loadInitialConfig(baseUrl);
+/**
+ * @param {string} baseUrl
+ * @param {string} [defaultConfigText]
+ * @returns {Promise<AppConfig>}
+ */
+export async function initializeAppStore(baseUrl, defaultConfigText) {
+  const config = await loadInitialConfig(baseUrl, defaultConfigText);
   appStore.set(config);
   editorSessionStore.set({
     draftText: config.rawText,
