@@ -19,6 +19,12 @@ All notable changes to this project will be documented in this file.
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
+## [2.2.2] - 2026-11-16
+
+### Fixed
+
+- Improved cumulative layout shift (CLS) performance by initializing the app with its selected configuration before mounting.
+
 ## [2.2.1] - 2026-11-15
 
 ### Added

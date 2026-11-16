@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount, onDestroy } from 'svelte';
+    import { onDestroy } from 'svelte';
     import Editor from './lib/Editor.svelte';
     import AddApplication from './lib/AddApplication.svelte';
     import AppList from './lib/AppList.svelte';
@@ -18,7 +18,6 @@
     import {
         appStore,
         editorSessionStore,
-        initializeAppStore,
         updateDraftThemeText,
         setEditorDraft,
         beginEditing,
@@ -71,12 +70,6 @@
             window.location.reload();
         },
         getLocation: () => `${window.location.origin}${window.location.pathname}`
-    });
-
-    onMount(async () => {
-        const config = await initializeAppStore((import.meta as ImportMeta & { env: { BASE_URL: string } }).env.BASE_URL);
-        appConfig = config;
-        applyTheme(appConfig.theme);
     });
 
     onDestroy(() => {
