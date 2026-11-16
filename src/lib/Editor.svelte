@@ -14,6 +14,7 @@
 
     export let onupdateColor: (detail: { key: keyof ThemeColors; value: string }) => void = () => {};
     export let onchange: (text: string) => void = () => {};
+    export let onaddApplication: () => void = () => {};
     export let onsave: () => void = () => {};
     export let oncancel: () => void = () => {};
 
@@ -44,37 +45,54 @@
 </script>
 
 <div id="editor-container">
-    <h2 class="editor-heading">Edit Configuration</h2>
-    <h3 class="theme-editor-heading">Color Pickers</h3>
-    <fieldset id="theme-editor">
-        <legend class="visually-hidden">Color Pickers</legend>
-        <label>
-            Background
-            <input type="color" value={colorBg} on:input={(event) => handleInput('background', event)}>
-        </label>
-        <label>
-            Window
-            <input type="color" value={colorWin} on:input={(event) => handleInput('window', event)}>
-        </label>
-        <label>
-            Text
-            <input type="color" value={colorText} on:input={(event) => handleInput('text', event)}>
-        </label>
-        <label>
-            Accent
-            <input type="color" value={colorAcc} on:input={(event) => handleInput('accent', event)}>
-        </label>
-    </fieldset>
-
-    <h3 class="theme-editor-heading">Text Editor</h3>
-    <textarea id="editor-area" aria-describedby="editor-help" bind:value={rawText} spellcheck="false" on:input={() => onchange(rawText)}></textarea>
-    <p id="editor-help" class="editor-help">Edit using the color pickers or text editor, then save your changes or cancel to discard them.</p>
+    <h2 class="editor-heading">Configuration Editor</h2>
+    <p id="editor-help" class="editor-help">Edit using the color pickers or text editor, then save your changes or cancel to discard them</p>
+    <div class="editor-textarea-container">
+        <textarea id="editor-area" aria-describedby="editor-help" bind:value={rawText} spellcheck="false" on:input={() => onchange(rawText)}></textarea>
+        <details class="theme-picker">
+            <summary id="theme-picker-toggle">Color Pickers</summary>
+            <fieldset id="color-picker-bar">
+                <legend class="visually-hidden">Theme colors</legend>
+                <label>
+                    <input type="color" value={colorAcc} on:input={(event) => handleInput('accent', event)}>
+                    Accent
+                </label>
+                <label>
+                    <input type="color" value={colorBg} on:input={(event) => handleInput('background', event)}>
+                    Background
+                </label>
+                <label>
+                    <input type="color" value={colorText} on:input={(event) => handleInput('text', event)}>
+                    Text
+                </label>
+                <label>
+                    <input type="color" value={colorWin} on:input={(event) => handleInput('window', event)}>
+                    Window
+                </label>
+            </fieldset>
+        </details>
+        <button type="button" class="add-application-button" aria-label="Add app" title="Add app" on:click={() => onaddApplication()}>
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                <path d="M12 5v14M5 12h14"></path>
+            </svg>
+        </button>
+    </div>
 
     {#if rawText !== initialRawText}
         <div id="floating-action-bar">
-            <span role="status" aria-live="polite">You have unsaved changes</span>
-            <button type="button" on:click={() => onsave()}>Save</button>
-            <button type="button" id="cancel-changes-btn" class="quiet-button" on:click={() => oncancel()}>Cancel</button>
+            <span class="visually-hidden" role="status" aria-live="polite">Changes pending</span>
+            <button type="button" id="save-changes-btn" aria-label="Save changes" title="Save changes" on:click={() => onsave()}>
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                    <path d="M4 3h13l4 4v14H3V3h1z"></path>
+                    <path d="M7 3v6h10V3M7 21v-8h10v8"></path>
+                </svg>
+            </button>
+            <button type="button" id="cancel-changes-btn" class="quiet-button" aria-label="Cancel changes" title="Cancel changes" on:click={() => oncancel()}>
+                <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="m5.64 5.64 12.72 12.72"></path>
+                </svg>
+            </button>
         </div>
     {/if}
 </div>

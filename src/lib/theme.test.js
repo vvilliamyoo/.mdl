@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { afterEach, test } from "node:test";
+import { afterEach, test } from "vite-plus/test";
 import { DEFAULTS } from "./config.js";
 import { applyTheme, normalizeHex, updateThemeValue } from "./theme.js";
 
@@ -13,14 +13,14 @@ afterEach(() => {
   }
 });
 
-void test("normalizes short and long hex colors and falls back on invalid values", () => {
+test("normalizes short and long hex colors and falls back on invalid values", () => {
   assert.equal(normalizeHex("#AbC"), "#aabbcc");
   assert.equal(normalizeHex("123456"), "#123456");
   assert.equal(normalizeHex("invalid"), DEFAULTS.theme.background);
   assert.equal(normalizeHex(undefined, "#ffffff"), "#ffffff");
 });
 
-void test("updates an existing theme key without replacing other frontmatter", () => {
+test("updates an existing theme key without replacing other frontmatter", () => {
   const text = "---\ntitle: Apps\naccent: #000000\n---\n\n# A";
   assert.equal(
     updateThemeValue(text, "accent", "#123456"),
@@ -28,11 +28,11 @@ void test("updates an existing theme key without replacing other frontmatter", (
   );
 });
 
-void test("adds frontmatter when updating a theme value in a plain config", () => {
+test("adds frontmatter when updating a theme value in a plain config", () => {
   assert.equal(updateThemeValue("# A", "accent", "#123456"), "---\naccent: #123456\n---\n\n# A");
 });
 
-void test("applies validated colors and configured fonts to document variables", () => {
+test("applies validated colors and configured fonts to document variables", () => {
   /** @type {Map<string, string>} */
   const variables = new Map();
   Object.defineProperty(globalThis, "document", {

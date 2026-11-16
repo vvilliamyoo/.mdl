@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test } from "vite-plus/test";
 import { createParseScheduler } from "./editorScheduler.js";
 
-void test("scheduler emits only the latest text after the pause", async () => {
+test("scheduler emits only the latest text after the pause", async () => {
   /** @type {string[]} */
   const emitted = [];
   const scheduler = createParseScheduler((text) => emitted.push(text), 10);
@@ -14,7 +14,7 @@ void test("scheduler emits only the latest text after the pause", async () => {
   assert.deepEqual(emitted, ["latest"]);
 });
 
-void test("flush immediately emits pending text once", () => {
+test("flush immediately emits pending text once", () => {
   /** @type {string[]} */
   const emitted = [];
   const scheduler = createParseScheduler((text) => emitted.push(text), 1000);
@@ -26,7 +26,7 @@ void test("flush immediately emits pending text once", () => {
   scheduler.clear();
 });
 
-void test("clear discards pending text", async () => {
+test("clear discards pending text", async () => {
   /** @type {string[]} */
   const emitted = [];
   const scheduler = createParseScheduler((text) => emitted.push(text), 10);

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { afterEach, test } from "node:test";
+import { afterEach, test } from "vite-plus/test";
 import { copyText, readFileAsText, showAlert, showConfirm } from "./browserApi.js";
 
 const originalFileReader = Object.getOwnPropertyDescriptor(globalThis, "FileReader");
@@ -17,7 +17,7 @@ afterEach(() => {
   else Reflect.deleteProperty(globalThis, "window");
 });
 
-void test("reads file text and rejects empty or unreadable files", async () => {
+test("reads file text and rejects empty or unreadable files", async () => {
   let result = "configuration";
   class MockFileReader {
     /** @type {((event: ProgressEvent<FileReader>) => void) | null} */
@@ -48,7 +48,7 @@ void test("reads file text and rejects empty or unreadable files", async () => {
   await assert.rejects(readFileAsText(/** @type {File} */ ({})), /Failed to read file/);
 });
 
-void test("copies text and reports when clipboard support is unavailable", async () => {
+test("copies text and reports when clipboard support is unavailable", async () => {
   /** @type {string[]} */
   const copied = [];
   Object.defineProperty(globalThis, "navigator", {
@@ -68,7 +68,7 @@ void test("copies text and reports when clipboard support is unavailable", async
   await assert.rejects(copyText("not copied"), /Clipboard API unavailable/);
 });
 
-void test("delegates alerts and confirmation to the browser window", () => {
+test("delegates alerts and confirmation to the browser window", () => {
   /** @type {string[]} */
   const alerts = [];
   Object.defineProperty(globalThis, "window", {

@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
-import { afterEach, test } from "node:test";
+import { afterEach, test } from "vite-plus/test";
 import { get } from "svelte/store";
 import { PACKAGE_MANAGERS } from "./packageManagers.js";
 import { createPmQueues } from "./pmQueue.js";
+import { CONFIG_HISTORY_KEY } from "./configHistory.js";
 import {
   appStore,
   beginEditing,
@@ -57,14 +58,14 @@ afterEach(() => {
   }
 });
 
-void test("package manager state is initialized from the support registry", () => {
+test("package manager state is initialized from the support registry", () => {
   const packageManagerTypes = Object.keys(PACKAGE_MANAGERS);
 
   assert.deepEqual(Object.keys(createPmQueues()), packageManagerTypes);
   assert.deepEqual(Object.keys(get(pmItemsStore)), packageManagerTypes);
 });
 
-void test("editor session tracks draft changes and blocks closing unsaved edits", () => {
+test("editor session tracks draft changes and blocks closing unsaved edits", () => {
   updateDraftText("# A\n- [App](https://example.com)");
   beginEditing();
   setEditorDraft("# B\n- [Other](https://example.org)");
@@ -74,7 +75,7 @@ void test("editor session tracks draft changes and blocks closing unsaved edits"
   assert.equal(get(editorSessionStore).isEditing, true);
 });
 
-void test("editor draft parsing is scheduled and can be flushed immediately", () => {
+test("editor draft parsing is scheduled and can be flushed immediately", () => {
   updateDraftText("# A\n- [App](https://example.com)");
   beginEditing();
   setEditorDraft("# B\n- [Other](https://example.org)");
@@ -85,7 +86,7 @@ void test("editor draft parsing is scheduled and can be flushed immediately", ()
   assert.equal(get(appStore).rawText, get(editorSessionStore).draftText);
 });
 
-void test("cancel restores the initial text and parsed config", () => {
+test("cancel restores the initial text and parsed config without closing the editor", () => {
   const original = "# A\n- [App](https://example.com)";
   updateDraftText(original);
   beginEditing();
@@ -98,11 +99,11 @@ void test("cancel restores the initial text and parsed config", () => {
   assert.deepEqual(get(editorSessionStore), {
     draftText: original,
     initialText: original,
-    isEditing: false,
+    isEditing: true,
   });
 });
 
-void test("save parses, persists, and closes the current draft", () => {
+test("save parses, persists, and closes the current draft", () => {
   const savedValues = new Map();
   globalThis.localStorage = createLocalStorage(savedValues);
   updateDraftText("# A\n- [App](https://example.com)");
@@ -117,6 +118,7 @@ void test("save parses, persists, and closes the current draft", () => {
   assert.equal(result.config.rawText, draft);
   assert.equal(result.config.state?.[0]?.letter, "B");
   assert.equal(JSON.parse(savedValues.get("mdl_full_data")).rawText, draft);
+  assert.equal(JSON.parse(savedValues.get(CONFIG_HISTORY_KEY))[0].rawText, draft);
   assert.deepEqual(get(editorSessionStore), {
     draftText: draft,
     initialText: draft,
@@ -124,7 +126,46 @@ void test("save parses, persists, and closes the current draft", () => {
   });
 });
 
-void test("invalid drafts are not persisted and remain editable", () => {
+test("unchanged valid saves do not create duplicate history entries", () => {
+  const savedValues = new Map();
+  globalThis.localStorage = createLocalStorage(savedValues);
+  const draft = "# A\n- [App](https://example.com)";
+  updateDraftText(draft);
+  beginEditing();
+  setEditorDraft("# B\n- [Other](https://example.org)");
+  assert.equal(saveEditorDraft().valid, true);
+
+  beginEditing();
+  setEditorDraft(get(appStore).rawText);
+  assert.equal(saveEditorDraft().valid, true);
+
+  assert.equal(JSON.parse(savedValues.get(CONFIG_HISTORY_KEY)).length, 1);
+});
+
+test("history storage failure does not hide a successful configuration save", () => {
+  const savedValues = new Map();
+  const storage = createLocalStorage(savedValues);
+  storage.setItem = (key, value) => {
+    if (key === CONFIG_HISTORY_KEY) throw new Error("history storage unavailable");
+    savedValues.set(key, value);
+  };
+  globalThis.localStorage = storage;
+  updateDraftText("# A\n- [App](https://example.com)");
+  beginEditing();
+  setEditorDraft("# B\n- [Other](https://example.org)");
+
+  const result = saveEditorDraft();
+
+  assert.equal(result.valid, true);
+  if (!result.valid) return;
+  assert.equal(result.historyError, "history storage unavailable");
+  assert.equal(
+    JSON.parse(savedValues.get("mdl_full_data")).rawText,
+    "# B\n- [Other](https://example.org)",
+  );
+});
+
+test("invalid drafts are not persisted and remain editable", () => {
   const savedValues = new Map();
   globalThis.localStorage = createLocalStorage(savedValues);
   updateDraftText("# A\n- [App](https://example.com)");
