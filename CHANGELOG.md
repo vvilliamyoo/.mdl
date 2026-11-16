@@ -19,11 +19,11 @@ All notable changes to this project will be documented in this file.
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
-## [2.2.0] - 2026-11-1
+## [2.2.0] - 2026-11-15
 
 ### Added
 
-- Added browser-local configuration history with up to five saved versions, text diffs, draft restoration, file/link export, and version rename/delete controls.
+- Added browser-local configuration history with up to ten saved versions, text diffs, draft restoration, file/link export, and version rename/delete controls.
 
 ### Changed
 
