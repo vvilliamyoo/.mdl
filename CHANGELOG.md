@@ -19,6 +19,12 @@ All notable changes to this project will be documented in this file.
 
 - Introduced error boundaries to gracefully handle unexpected errors within components.
 
+## [2.2.3] - 2026-11-23
+
+### Changed
+
+- Updated Vite+ to v1.7.0 and dependencies.
+
 ## [2.2.2] - 2026-11-16
 
 ### Fixed
